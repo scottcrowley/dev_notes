@@ -1,5 +1,220 @@
 # Vue 2 Examples
 
+* ### [Practical Vue Components](https://laracasts.com/series/practical-vue-components) examples
+    * **Smooth Scrolling** - [Episode #1](https://laracasts.com/series/practical-vue-components/episodes/1)
+        * This is an example of how to make a link scroll to a link on a page smoothly. This example is using a CDN version of `tailwind.js` 1.0 official release.
+
+            *`resources/js/app.js`*
+            ```
+            import Vue from 'vue';
+            import ScrollLink from './components/ScrollLink';
+
+            window.Vue = Vue;
+
+            Vue.component('scroll-link', ScrollLink);
+
+            new Vue({
+                el: '#app'
+            });
+            ```
+
+            *`resources/js/components/ScrollLink.vue`*
+            ```
+            <template>
+                <a :href="href" @click.prevent="scroll">
+                    <slot></slot>
+                </a>
+            </template>
+
+            <script>
+                export default {
+                    props: ['href'],
+
+                    methods: {
+                        scroll() {
+                            // For older browsers, consider pulling in a polyfill.
+                            // https://www.npmjs.com/package/smoothscroll-polyfill
+
+                            document.querySelector(this.href)
+                                    .scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            </script>
+            ```
+
+            *`resources/views/smooth-scroll.php`*
+            ```
+            <!doctype html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+                <title>Smooth Scrolling</title>
+            </head>
+            <body>
+                <div id="app" class="p-8">
+                    <h1 class="text-2xl font-bold">Smooth Scroll</h1>
+
+                    <scroll-link href="#categories" class="text-blue-500">Go To Testimonials</scroll-link>
+
+                    <div style="height: 2000px"></div>
+
+                    <div id="categories">
+                        <h2 class="font-bold mb-6">Testimonials</h2>
+
+                        <div class="flex">
+                            <div class="w-1/3 h-48 bg-gray-200 p-4">
+                                <scroll-link href="#app" class="text-blue-500">Go Back Up</scroll-link>
+                            </div>
+                            <div class="w-1/3 h-48 bg-gray-400 p-4">Item</div>
+                            <div class="w-1/3 h-48 bg-gray-200 p-4">Item</div>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="/js/app.js"></script>
+            </body>
+            </html>
+            ```
+    * **Context Menus** - [Episode #2](https://laracasts.com/series/practical-vue-components/episodes/2)
+        * This is an example of how to make a contextual menu dropdown menu with mild animations. This example is using a CDN version of `tailwind.js` 1.0 official release.
+            
+            *`resources/js/app.js`*
+            ```
+            import Vue from 'vue';
+            import Dropdown from './components/Dropdown';
+
+            window.Vue = Vue;
+
+            Vue.component('dropdown', Dropdown);
+
+            new Vue({
+                el: '#app'
+            });
+            ```
+
+            *`resources/js/components/Dropdown.vue`*
+            ```
+            <template>
+                <div class="dropdown relative">
+                    <div class="dropdown-trigger"
+                        @click.prevent="isOpen = ! isOpen"
+                        aria-haspopup="true"
+                        :aria-expanded="isOpen"
+                    >
+                        <slot name="trigger"></slot>
+                    </div>
+
+                    <transition name="pop-out-quick">
+                        <ul v-show="isOpen"
+                            class="dropdown-menu absolute bg-black mt-2 py-2 rounded shadow text-white z-10"
+                            :class="classes"
+                        >
+                            <slot></slot>
+                        </ul>
+                    </transition>
+                </div>
+            </template>
+
+            <script>
+                export default {
+                    props: ['classes'],
+                    data() {
+                        return {
+                            isOpen: false
+                        };
+                    },
+                    watch: {
+                        isOpen(isOpen) {
+                            if (isOpen) {
+                                document.addEventListener(
+                                    'click',
+                                    this.closeIfClickedOutside
+                                );
+                            }
+                        }
+                    },
+                    methods: {
+                        closeIfClickedOutside(event) {
+                            if (! event.target.closest('.dropdown')) {
+                                this.isOpen = false;
+                                document.removeEventListener('click', this.closeIfClickedOutside);
+                            }
+                        }
+                    }
+                }
+            </script>
+
+            <style>
+                .pop-out-quick-enter-active,
+                .pop-out-quick-leave-active {
+                    transition: all 0.4s;
+                }
+                .pop-out-quick-enter,
+                .pop-out-quick-leave-active {
+                    opacity: 0;
+                    transform: translateY(-7px);
+                }
+            </style>
+            ```
+            
+            *`resources/views/context-menu.php`* - example page to show off the menu
+            ```
+            <!doctype html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+                <title>Smooth Scrolling</title>
+            </head>
+
+            <body>
+                <div id="app" class="flex flex-col items-center p-8">
+                    <h1 class="text-2xl font-bold mb-8">Context Menu</h1>
+
+                    <div>
+                        <div class="bg-gray-400 w-64 h-64 flex items-center justify-center">
+                            <!-- Example 1 -->
+                            <dropdown>
+                                <template v-slot:trigger>
+                                    <button class="hover:text-blue-500">...</button>
+                                </template>
+
+                                <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Edit</a></li>
+                                <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Delete</a></li>
+                                <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Report</a></li>
+                            </dropdown>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Example 2 -->
+                    <dropdown classes="w-full">
+                        <template v-slot:trigger>
+                            <button class="text-blue-500">Example With Full Width Menu<button>
+                        </template>
+
+                        <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Edit</a></li>
+                        <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Delete</a></li>
+                        <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Report</a></li>
+                    </dropdown>
+                </div>
+
+                <script src="/js/app.js"></script>
+            </body>
+            </html>
+            ```
+
 * ### Custom Input Example:
     * Say you want to be able to reuse an input that has validation logic, sanitizing, etc attached to it. i.e. `<coupon></coupon>` instead of `<input type="text" v-model="coupon">`
         * On your page you can still use `v-model` on the component `<coupon v-model="coupon"></coupon>`
