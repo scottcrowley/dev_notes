@@ -1039,6 +1039,37 @@
             php artisan migrate
             ```
         * Now all jobs are stored in the database and will be executed only when a worker is running
+* ### Laravels Pipeline API
+    * Taken from a [lesson](https://laracasts.com/series/queue-it-up/episodes/9) within the [Queue it Up](https://laracasts.com/series/queue-it-up) series.
+    * JW talks about the concept of pipelines and how Laravel uses them to modify data. Middleware is a good example of something being sent through a series of pipes.
+    * In `app/Http/Kernel.php` there is the `$middleware` property. Consider this a list of pipes that Laravel will send the request through. Each middleware class has a `handle` method, which is required to be used as a pipe. A string, object, class or array can be sent through a pipe. Below is a basic example of how the Pipeline system can be used to modify some sort of input. In the example, we are using closures but a class can be used as long as it has a `handle` method.
+        
+        `routes/web.php`
+        ```
+        Route::get('/', function() {
+            $pipeline = app(Pipeline::class);
+
+            $pipeline->send('hello freaking world')
+                ->through([
+                    function ($string, $next) {
+                        $string = ucwords($string); //Hello Freaking World
+
+                        return $next($string);
+                    },
+                    function ($string, $next) {
+                        $string = str_ireplace('freaking', '', $string); //Hello  World
+
+                        return $next($string);
+                    }
+                ])
+                ->then(function ($string) {
+                    dump($string); //Hello  World
+                });
+            
+            return 'Done!';
+        });
+        ```
+        In this example, a string is being sent (`send`) into the pipeline and then it is run `through` an array of pipes. Each pipe can modify the string or throw an exception if needed and then it passes the string off to the next pipe in the array. Once the string has been sent through all the pipes, `then` it dumped.
 * ### Scheduling
     * Queued jobs or commands can be executed on a schedule.
     * The only thing that needs to be added to the server to have Laravel execute a schedule is the following cron
