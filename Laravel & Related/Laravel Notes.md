@@ -73,9 +73,9 @@
 		…html
         ```
     * Blade Components
-        * A component can be used if there are several different partials that a template is using and each of those partials has a lot of duplicate code. See manual for examples and more detail <https://laravel.com/docs/5.6/blade#components-and-slots>
+        * A component can be used if there are several different partials that a template is using and each of those partials has a lot of duplicate code. See manual for examples and more detail <https://laravel.com/docs/master/blade#components-and-slots>
     * Blade statements are automatically sent through php's `htmlspecialcharacters` method to escape the data and prevent XSS attacks. To disable this use `{!! $var !!}`. Be very careful if the unescaped data is going to be sent to the server again because it can be used to make an attack.
-    * There is a helper function to retrieve messages from language files. `{{ __('messages.welcome') }}` fetches the welcome message from the `resources/lang/messages.php` file. <https://laravel.com/docs/5.6/localization#retrieving-translation-strings>
+    * There is a helper function to retrieve messages from language files. `{{ __('messages.welcome') }}` fetches the welcome message from the `resources/lang/messages.php` file. <https://laravel.com/docs/master/localization#retrieving-translation-strings>
 * ### Forms
     * All forms must have a `CSRF` field in it to protect against hacking attempts. The following needs to be with the form tags in a view: `{{ csrf_field() }}` This will create a hidden field in the form with a token that is used to verify the form.
         * There is a new blade directive that can be used instead: `@csrf`
@@ -371,7 +371,7 @@
         * A `file` method can be used to display a file in the users browser instead of initiating a download. This would be useful for PDF's or certain images. The file path is required as the first argument and an array of headers as an option second.
             * `return response()->file($pathToFile);`
             * `return response()->file($pathToFile, $headers);`
-    * Response Macros are also an option. See the documentation for more info. <https://laravel.com/docs/5.7/responses#response-macros>
+    * Response Macros are also an option. See the documentation for more info. <https://laravel.com/docs/master/responses#response-macros>
 * ### URL Helper Function
     * The `url` helper function is used to generate or retrieve a url for the application
     * `echo url("/posts/{$post->id}"); //http://example.com/posts/1`
@@ -1402,7 +1402,7 @@
             ```
             This will fire a deleting event for every favorite in the collection because `get()` was used to create the model collection.
             
-            You can also use a `higher order collection` (or higher order messaging <https://laravel.com/docs/5.7/collections#higher-order-messages>) by calling each as a property and not a method. 
+            You can also use a `higher order collection` (or higher order messaging <https://laravel.com/docs/master/collections#higher-order-messages>) by calling each as a property and not a method. 
             ```
             $this->favorites()
                 ->where([ 'user_id' => auth()->id()])
@@ -1516,7 +1516,7 @@
             * cd to the working directory of the site and type `valet link app-name` where `app-name` is the name of the app you want to use in the url. i.e. `app-name.dev`
             * To see all linked apps, type `valet links`
             * To removed a linked app, type `valet unlink app-name` where `app-name` is the name of the app you want to remove
-        * Other options are available to serve the site using a secure connection and to share a served app to someone that isn't local. See docs at <https://laravel.com/docs/5.4/valet>
+        * Other options are available to serve the site using a secure connection and to share a served app to someone that isn't local. See docs at <https://laravel.com/docs/master/valet>
     * To use Bootstrap 4 instead of Bootstrap 3
         * Run `npm uninstall bootstrap-sass --save-dev` and then `npm install bootstrap@4.0.0-alpha.6 --save-dev`
         * Remove `resources/assets/sass/_variables.scss` and create a `resources/assets/sass/_custom.scss` file

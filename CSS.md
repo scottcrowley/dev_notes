@@ -61,3 +61,73 @@
         * within your `.sass` file you can use `@screen` followed by either `sm`, `md`, `lg` or `xl`. This allows you to specify a breakpoint without hard coding a screen size value.
 * ### Miscellaneous CSS add-ons & plugins
     * `Custom Margin & Padding` helper utilities. James Furey <https://github.com/furey>
+* ### How-to's
+    * #### Modal with zero Javascript
+        * How to create a modal without using any javascript at all and using `Blade Components` to make it reuseable. This works by using anchor tags and the `:target` psuedo class to toggle visibility.
+
+            **`modal.blade.php`**
+            ```
+            <div id="{{ $name }}" class="overlay">
+                <a href="#" class="cancel"></a>
+
+                <div class="modal">
+                    {{ $slot }}
+
+                    <a href="#" class="close">&times;</a>
+                </div>
+            </div>
+            ```
+            **`modal.css`**
+            ```
+            .overlay {
+                visibility: hidden;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, .7);
+            }
+
+            .overlay:target {
+                visibility: visible;
+            }
+
+            .modal {
+                position: relative;
+                width: 600px;
+                max-width: 80%;
+                background: white;
+                border-radius: 8px;
+                padding: 1em 2em;
+            }
+
+            .modal .close {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                color: grey;
+                text-decoration: none;
+            }
+
+            .overlay .cancel {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+            ```
+            **`usage.blade.php`**
+            ```
+            <a href="#join-modal">Join</a>
+
+            @component('modal', ['name' => 'join-modal'])
+                <h1>Pick a Plan</h1>
+
+                <p>
+                Lorem ipsum...
+                </p>
+            @endcomponent
+            ```
