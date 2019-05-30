@@ -89,16 +89,21 @@
     * `Import Cost` - Wix
     * `ESLint` - Dirk Baeumer
     * `Laravel Blade Snippets` - Winnie Lin
-    * `Php DocBlock Generator` - vincentkos FOUND ON MY OWN
-    * `Quick and Simple Text Selection` - David Bankier FOUND ON MY OWN. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
-    * `stylelint` - Shinnosuke Watanabe FOUND ON MY OWN. Use this if using tailwind.css. See note in the Miscellaneous Settings
-    * `Tailwind CSS IntelliSense` - Brad Cornes FOUND ON MY OWN. Use this if using tailwind.css. Autocomplete for tailwind classes
-    * `Tailwind sass syntax` - Maciej Ładoś FOUND ON MY OWN. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
-    * `Vue VSCode Snippets` - sarah.drasner FOUND ON MY OWN. Helpful snippets when using vue.
+    * `Php DocBlock Generator` - vincentkos ***FOUND ON MY OWN***
+    * `Quick and Simple Text Selection` - David Bankier ***FOUND ON MY OWN***. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
+    * `stylelint` - Shinnosuke Watanabe ***FOUND ON MY OWN***. Use this if using tailwind.css. See note in the Miscellaneous Settings
+    * `Tailwind CSS IntelliSense` - Brad Cornes ***FOUND ON MY OWN***. Use this if using tailwind.css. Autocomplete for tailwind classes
+    * `Tailwind sass syntax` - Maciej Ładoś ***FOUND ON MY OWN***. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
+    * `Vue VSCode Snippets` - sarah.drasner ***FOUND ON MY OWN***. Helpful snippets when using vue.
         * `vmethod` - sets up the methods object within the vue instance
         * `vbase` - sets up the document from scratch
         * `vcreated` - sets up the created method
         * many more available
+    * `PHP Extension Pack` - Felix Becker Must have PHP extension pack
+    * `Auto Rename Tag` - Jun Han ***FOUND ON MY OWN*** Renames paired HTML tags
+    * `Auto-Open Markdown Preview` - hnw ***FOUND ON MY OWN*** Automatically opens side panel with Markdown preview
+    * `IntelliSense for CSS class names in HTML` - Zignd ***FOUND ON MY OWN*** CSS classname completion
+    * `Sass` - Robin Bentley ***FOUND ON MY OWN*** Indented Sass syntax highlighting, autocomplete & snippets
 * ### UI Extensions:
     * `Slime Theme` - smlombardi
     * `vscode-icons` - VSCode Icons Team
