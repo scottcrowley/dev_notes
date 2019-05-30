@@ -36,7 +36,7 @@
                 * After that you can access the config file by typing `zshconfig` in the terminal.
             * You will want to uncomment the `export PATH` line in the config
                 * `export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$PATH`
-                * After composer is installed, make sure that `$HOME/.composer/vendor/bin:` is added to the path as well, as it is above.
+                * After composer is installed, make sure that `$HOME/.composer/vendor/bin:` is added to the path as well, as it is above. See the section below on Installing PHP 7.2 with Homebrew for additional path requirements. The ones listed in that section should be all that is needed.
         * If you want to use aliases in the terminal:
             * In the `.zshrc` file
                 * At the very bottom type `source ~/.aliases`
@@ -64,10 +64,12 @@
         brew upgrade
         brew install php@7.2
         brew link --force php@7.2
+        # --force is needed since we are installing v7.2 which is not the most current.
         ```
         If you have `Composer` and `Oh My Zsh` installed, replace the `export PATH` line of of the `.zshrc` file with the following:
         ```
         # export PATH=$HOME/bin:/usr/local/bin:$PATH
+        export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH
         export PATH="$(brew --prefix homebrew/core/php@7.2)/bin:$HOME/.composer/vendor/bin:$PATH"
         ```
         You may need to resource the `.zshrc` file to have it reload the config
@@ -83,7 +85,7 @@
         * `brew install yarn`
         * or s`udo npm install -g yarn`
     * `MySQL` or `MariaDB` (drop in replacement for MySQL)
-        * Both can be installed via Homebrew
+        * Both can be installed via Homebrew. Below is how to install mysql 5.7. Current version is 8
             ```
             brew install mysql@5.7
             brew link --force mysql@5.7
@@ -92,6 +94,75 @@
             ```
             brew services start mysql@5.7
             ```
+        * To install mysql version 8 or the current version
+            ```
+            brew install mysql
+            brew services start mysql
+            mysql_secure_installation
+            # type y enter when asked to VALIDATE PASSWORD COMPONENT
+            # type 0 enter when asked for password validation policy. Low is only needed for local
+            # type the new password you want for the root user.
+            # type y enter when asked to Remove anonymous users
+            # type y enter when asked to Disallow root login remotely
+            # type y enter when asked to Remove test database
+            # type y enter when asked to Reload privilege tables
+            # you should then get a message that says All Done!
+            ```
+            or use the following from <https://coderwall.com/p/os6woq/uninstall-all-those-broken-versions-of-mysql-and-re-install-it-with-brew-on-mac-mavericks>
+            ```
+            brew doctor
+            # fix any issues found
+            brew update
+            brew install mysql
+            unset TMPDIR
+            mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix mysql)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
+            mysql.server start
+            # run the commands Brew suggests, add MySQL to launchctl so it automatically launches at startup
+            ```
+        * To uninstall all versions of mysql. Taken from <https://coderwall.com/p/os6woq/uninstall-all-those-broken-versions-of-mysql-and-re-install-it-with-brew-on-mac-mavericks>
+            ```
+            ps -ax | grep mysql
+            # stop and kill any MySQL processes
+            brew remove mysql
+            brew cleanup
+            sudo rm /usr/local/mysql
+            sudo rm -rf /usr/local/var/mysql
+            sudo rm -rf /usr/local/mysql*
+            sudo rm ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+            sudo rm -rf /Library/StartupItems/MySQLCOM
+            sudo rm -rf /Library/PreferencePanes/My*
+            launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+            # edit /etc/hostconfig and remove the line MYSQLCOM=-YES-
+            rm -rf ~/Library/PreferencePanes/My*
+            sudo rm -rf /Library/Receipts/mysql*
+            sudo rm -rf /Library/Receipts/MySQL*
+            sudo rm -rf /private/var/db/receipts/*mysql*
+            # restart your computer just to ensure any MySQL processes are killed
+            # try to run mysql, it shouldn't work
+            ```
+        * The default password for the `root` user is `null`. To change it to `password`. ***THIS STEP IS NOT NEEDED IF YOU RAN `mysql_secure_installation` ABOVE***
+            ```
+            mysql -uroot -p
+            # press enter when prompted to enter the password
+            ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+            exit;
+            ```
+        * The default directory where database files are stored is: `/usr/local/var/mysql/`
+    * Install PhpMyAdmin using Homebrew
+        ```
+        brew install phpmyadmin
+        ```
+        When this is done, notate the version it installed and navigate to the install directory and add the directory to `valet` links so `PhpMyAdmin` will be available in the browser at `phpmyadmin.test`
+        ```
+        cd /usr/local/Cellar/phpmyadmin/4.8.5/share/phpmyadmin
+        valet link
+        ```
+        If you run into an issue where you get the following error `mysqli_real_connect(): The server requested authentication method unknown to the client [caching_sha2_password]`. Try this work around
+        ```
+        mysql -uroot -p
+        ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+        exit;
+        ```
     * [Composer](https://getcomposer.org/)
         * Once you’ve installed composer you need to move the `composer.phar` file to your bin directory
             * `mv /Users/scott/composer.phar /usr/local/bin/composer`
@@ -100,10 +171,17 @@
             * Key Packages:
                 * `php-cs-fixer` A tool to automatically fix PHP code styles
                     * `composer global require friendsofphp/php-cs-fixer`
+    * Install phpunit globally
+        ```
+        composer global require phpunit/phpunit
+        ```
     * Laravel Valet
-        * `composer global require laravel/valet`
-        * `valet install`
-        * Run `valet park` in the root of the code directory
+        ```
+        composer global require laravel/valet
+        valet install
+        valet start
+        ```
+        Run `valet park` in the root of the code directory
     * Laravel Installer
         * `composer global require "laravel/installer"`
         * Now you can create a new Laravel project by typing `laravel new {project name}` within the code directory
