@@ -2,61 +2,63 @@
 
 
 ## Notes on shortcuts for Microsoft Visual Studio Code:
-### Naming Conventions
-* ### `cmd+alt+n` - uses `Advanced New File` extension. Allows you to add a new file at a specified location
-* ### `shift+cmd+F` - find in all files
-* ### `cmd+R` - go to a symbol in a file ``CUSTOM BINDING``
-* ### `shift+cmd+R` - go to a symbol in the workspace and shows all symbols in the current file `CUSTOM BINDING`
-* ### `cmd+;` - clears the terminal `CUSTOM BINDING`
-* ### `ctrl+s` - triggers suggestions for a class. Used to help import classes. `CUSTOM BINDING`
-* ### `cmd+/` - comment out selection
-* ### `shift+alt+D` - Creates a doc block for a method or property when then are selected. Requires `Php DocBlock Generator` `CUSTOM BINDING`
-* ### `shift+alt+F` - Runs `php-cs-fixer` on the current file. Requires `php cs fixer` `CUSTOM BINDING`
-* ### U/I:
-    * `cmd+shift+P` - `Control Palette` - search for things that have to do with VSC like shortcuts, snippets, other installed extensions
-    * `cmd+P` - search for things within a site. Uses fuzzy logic so `r/we` will show results in `routes/web.php`
-    * `fn+shift+f10` - Opens context menu instead of having to right-click on something to bring it up.
-    * `shift+cmd+E` - toggles file tree side bar
-    * `ctrl+shift+G` - toggles source control panel
-    * `ctrl+\`` - show/hide terminal
-    * `cmd+B` - show/hide sidebar
-    * `shift+cmd+X` - show/hide extensions
-    * `cmd+.` - brings up Quick Fix context menu when diagnosing an error in a file.
-* ### Testing:
-    * `cmd+T` - runs a selected test if you have clicked within a test or test class and have ``Better PHPUnit`` installed `CUSTOM BINDING`
-    * `shift+cmd+T` - runs a previously run test. Requires `Better PHPUnit` installed `CUSTOM BINDING`
-    * `alt+T` - runs the entire PHPUnit suite. Requires `Better PHPUnit` `CUSTOM BINDING`
-* ### Cursor & Selections:
-    * `ctrl+-` - goes back to where the cursor previously was in the current file or previous edit point
-    * `shift+alt+down` duplicates the current line down.
-    * `alt+down` - moves a selection down
-    * `alt+up` - moves a selection up
-    * `ctrl+cmd+g` - selects current word or variable name `CUSTOM BINDING`
-    * `cmd+ctrl+shift+->` - Smart Select Grow `smartSelect.grow` This will select an entire variable, hit it again and it will grow the selection to include different results depending on what is on the line. It may just select a line or what is between brackets or quotes.
-    * `cmd+ctrl+shift+<-` - Smart Select Shrink `smartSelect.shrink` This will shrink the selection. The inverse to Smart Select Grow
-    * `ctrl+m` - select the enclosing bracket or parenthesis `CUSTOM BINDING`
-* ### Quick and Simple Text Selection Extension:
-    * `cmd+k+"` - selects between "
-    * `cmd+k+’` - selects between '
-    * `cmd+k+;` - smart selects between " or '
-    * `cmd+k+:` - toggles word quotes. e.g. "word" to 'word’
-    * `cmd+k+`` - selects between `
-    * `cmd+k+(` - inner selects between ()
-    * `cmd+k+)` - outer selects between ()
-    * `cmd+k+[` - inner selects between []
-    * `cmd+k+]` - outer selects between []
-    * `cmd+k+{` - inner selects between {}
-    * `cmd+k+}` - outer selects between {}
-    * `cmd+k+<` - selects matching tag
-    * `cmd+k+>` - selects tag value
-* ### Deleting:
-    * `cmd+shift+k` - deletes the entire line of code
-    * `ctrl+k` - deletes everything right of the cursor.
-    * `ctrl+shift+k` - deletes everything left of the cursor.
-    * `alt+backspace` - deletes the entire word left of the cursor.
-    * `ctrl+alt+backspace` - deletes the partial word left of the cursor. If the word is camel case then it will delete each hump separately
-    * `alt+\` - deletes the entire word right of the cursor. `CUSTOM BINDING`
-    * `ctrl+alt+\` - deletes the partial word right of the cursor. If the word is camel case then it will delete each hump separately `CUSTOM BINDING`
+
+* ### Useful Keyboard Shortcuts
+    * #### File Related
+        * `cmd+alt+n` - uses `Advanced New File` extension. Allows you to add a new file at a specified location
+        * `shift+cmd+F` - find in all files
+        * `cmd+R` - go to a symbol in a file ``CUSTOM BINDING``
+        * `shift+cmd+R` - go to a symbol in the workspace and shows all symbols in the current file `CUSTOM BINDING`
+        * `cmd+;` - clears the terminal `CUSTOM BINDING`
+        * `ctrl+s` - triggers suggestions for a class. Used to help import classes. `CUSTOM BINDING`
+        * `cmd+/` - comment out selection
+        * `shift+alt+D` - Creates a doc block for a method or property when then are selected. Requires `Php DocBlock Generator` `CUSTOM BINDING`
+        * `shift+alt+F` - Runs `php-cs-fixer` on the current file. Requires `php cs fixer` `CUSTOM BINDING`
+    * #### U/I:
+        * `cmd+shift+P` - `Control Palette` - search for things that have to do with VSC like shortcuts, snippets, other installed extensions
+        * `cmd+P` - search for things within a site. Uses fuzzy logic so `r/we` will show results in `routes/web.php`
+        * `fn+shift+f10` - Opens context menu instead of having to right-click on something to bring it up.
+        * `shift+cmd+E` - toggles file tree side bar
+        * `ctrl+shift+G` - toggles source control panel
+        * `ctrl+\`` - show/hide terminal
+        * `cmd+B` - show/hide sidebar
+        * `shift+cmd+X` - show/hide extensions
+        * `cmd+.` - brings up Quick Fix context menu when diagnosing an error in a file.
+    * #### Testing:
+        * `cmd+T` - runs a selected test if you have clicked within a test or test class and have ``Better PHPUnit`` installed `CUSTOM BINDING`
+        * `shift+cmd+T` - runs a previously run test. Requires `Better PHPUnit` installed `CUSTOM BINDING`
+        * `alt+T` - runs the entire PHPUnit suite. Requires `Better PHPUnit` `CUSTOM BINDING`
+    * #### Cursor & Selections:
+        * `ctrl+-` - goes back to where the cursor previously was in the current file or previous edit point
+        * `shift+alt+down` duplicates the current line down.
+        * `alt+down` - moves a selection down
+        * `alt+up` - moves a selection up
+        * `ctrl+cmd+g` - selects current word or variable name `CUSTOM BINDING`
+        * `cmd+ctrl+shift+->` - Smart Select Grow `smartSelect.grow` This will select an entire variable, hit it again and it will grow the selection to include different results depending on what is on the line. It may just select a line or what is between brackets or quotes.
+        * `cmd+ctrl+shift+<-` - Smart Select Shrink `smartSelect.shrink` This will shrink the selection. The inverse to Smart Select Grow
+        * `ctrl+m` - select the enclosing bracket or parenthesis `CUSTOM BINDING`
+    * #### Quick and Simple Text Selection Extension:
+        * `cmd+k+"` - selects between "
+        * `cmd+k+’` - selects between '
+        * `cmd+k+;` - smart selects between " or '
+        * `cmd+k+:` - toggles word quotes. e.g. "word" to 'word’
+        * `cmd+k+`` - selects between `
+        * `cmd+k+(` - inner selects between ()
+        * `cmd+k+)` - outer selects between ()
+        * `cmd+k+[` - inner selects between []
+        * `cmd+k+]` - outer selects between []
+        * `cmd+k+{` - inner selects between {}
+        * `cmd+k+}` - outer selects between {}
+        * `cmd+k+<` - selects matching tag
+        * `cmd+k+>` - selects tag value
+    * #### Deleting:
+        * `cmd+shift+k` - deletes the entire line of code
+        * `ctrl+k` - deletes everything right of the cursor.
+        * `ctrl+shift+k` - deletes everything left of the cursor.
+        * `alt+backspace` - deletes the entire word left of the cursor.
+        * `ctrl+alt+backspace` - deletes the partial word left of the cursor. If the word is camel case then it will delete each hump separately
+        * `alt+\` - deletes the entire word right of the cursor. `CUSTOM BINDING`
+        * `ctrl+alt+\` - deletes the partial word right of the cursor. If the word is camel case then it will delete each hump separately `CUSTOM BINDING`
 * ### Cosmetic Alterations:
     * Hide the status bar: `cmd+,` then find `workbench.statusBar.visible` and set to `false`
     * Hide the Open Editors on the left side bar: `cmd+,` then find `explorer.openEditors.visible` and set to `0`
@@ -77,7 +79,7 @@
 * ### Useful Extensions:
     * `advanced-new-file` - patbenatar
     * `File Utils` - Leistner Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
-    * `PHP `Intelephense`` - Ben Mewburn
+    * `PHP Intelephense` - Ben Mewburn
     * `Vim` - vscodevim
     * `snippet-creator` - nikitaKunevich
     * `Laravel Artisan` - Ryan Naddy
@@ -101,6 +103,17 @@
     * `Slime Theme` - smlombardi
     * `vscode-icons` - VSCode Icons Team
 * ### Useful Tips:
+    * To allow files to be opened in Code via the terminal: This will add Code to your Path
+        * Open the Command Palette (`shift+cmd+p`) then type `shell command`
+        * Restart the terminal to make the changes take effect
+        * Now you can open files by using the `code` command
+            ```
+            # opens the zshrc file in VSCode
+            code ~/.zshrc
+
+            # opens the current directory in VSCode
+            code .
+            ```
     * Hitting `cmd+P` will display all the recently opened files. Keep hitting `p` while holding `cmd` to cycle through the files
     * Check out <https://code.visualstudio.com/docs/editor/userdefinedsnippets> for useful ideas on snippets
     * `Right-click` on a method will give the option to view all references of that method if `Intelephense` extension is installed
@@ -115,6 +128,13 @@
     * Set up `XDebug`. See <https://tighten.co/blog/configure-vscode-to-debug-phpunit-tests-with-xdebug>
     * To have `Import Cost` extension see `.vue` files directly, you need to add `"importCost.typescriptExtensions": [ "\\.vue?$" ]` to the `User Settings` file
     * When using Laravel Blade Snippets, you can type '`b:`’, followed by the command (i.e. `extend`, `yield`, `content`, etc), to bring up a contextual window with blade snippets to use.
+* ### Code Specific User File Locations
+    * In the event that you need to install VSCode from scratch, below is where some of the common setup files are located.
+        * `settings.json` - `Users/scott/Library/Application Support/Code/User/`
+        * `keybinding.json` - `Users/scott/Library/Application Support/Code/User/`
+        * `php.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
+        * `html.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
+        * `vue.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
 * ### Multiple Cursors
     * Using the mouse you can click some where and then hold `alt` while click elsewhere to create multiple cursors
     * `cmd+D` will select the next occurrence of what is selected.

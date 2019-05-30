@@ -27,7 +27,7 @@
         * Verify that zsh is being used:
             * `echo $SHELL` should show something like `/bin/zsh`
             * `$SHELL --version` should display the same result as `zsh --version` above
-        * Download using `curl: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
+        * Download using curl: `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
         * Edit the `.zshrc` file by using `nano ~/.zshrc` in the terminal
             * You can edit the default theme and which plugins to use from here.
             * Towards to the bottom of the doc there is a line that is commented out `# alias zshconfig="mate ~/.zshrc"`
@@ -58,15 +58,43 @@
     * [Homebrew](https://brew.sh)
         * `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
         * You can use `brew search {package name}` to search for a specific package that can be installed via home-brew
+    * To install PHP 7.2 using Homebrew
+        ```
+        brew update
+        brew upgrade
+        brew install php@7.2
+        brew link --force php@7.2
+        ```
+        If you have `Composer` and `Oh My Zsh` installed, replace the `export PATH` line of of the `.zshrc` file with the following:
+        ```
+        # export PATH=$HOME/bin:/usr/local/bin:$PATH
+        export PATH="$(brew --prefix homebrew/core/php@7.2)/bin:$HOME/.composer/vendor/bin:$PATH"
+        ```
+        You may need to resource the `.zshrc` file to have it reload the config
+        ```
+        source ~/.zshrc
+        ```
+        To actually have the service started and stay started after restarts, run the following
+        ```
+        brew services start php@7.2
+        ```
     * [Node](https://nodejs.org/en/) Also will install `npm` at the same time
     * `Yarn` is sometimes faster than `npm` <https://yarnpkg.com/en/>
         * `brew install yarn`
         * or s`udo npm install -g yarn`
     * `MySQL` or `MariaDB` (drop in replacement for MySQL)
         * Both can be installed via Homebrew
+            ```
+            brew install mysql@5.7
+            brew link --force mysql@5.7
+            ```
+            To actually have the service started and stay started after restarts, run the following
+            ```
+            brew services start mysql@5.7
+            ```
     * [Composer](https://getcomposer.org/)
         * Once you’ve installed composer you need to move the `composer.phar` file to your bin directory
-            * `mv /Users/Scott/composer.phar /usr/local/bin/composer`
+            * `mv /Users/scott/composer.phar /usr/local/bin/composer`
             * Now you can access composer with `composer` instead of `php composer.phar`
         * [Packagist.org](https://packagist.org/) is the place to go to find packages to install with composer
             * Key Packages:
