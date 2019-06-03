@@ -214,7 +214,137 @@
             </body>
             </html>
             ```
+    * **Show an Element When Another is Hidden** - [Episode #3](https://laracasts.com/series/practical-vue-components/episodes/3)
+        * This example shows how to display a block of html only when another element has been hidden or scrolled past on the screen. This can be used to have a "Add Discussion" button when a user scrolls past the normal button to add a discussion.
+            * Important to note that anytime a "scroll" listener is added to the window or document, this check needs to be throttled or there will be an insane amount of calls to the callback function processing the event. Below are options on how to avoid this.
+                * Lodash debounce or some sort of throttling technique should be used
+                * If you are not going to be messing with the actual scroll position then you can use the `passive` option on the listener
+                    ```
+                    window.addEventListener('scroll' () => {
+                        console.log('hello there');
+                    }, { passive: true });
+                    ```
+        * This example is using a third party npm package called [in-viewport](https://github.com/vvo/in-viewport), to check for whether or not the requested element is in the viewport or not. Due to all the different browser constraints, it's better to have a external package handle this logic.
+            ```
+            npm install in-viewport
+            ```
+            To open the documentation for this package, you can open it by using the following command. It will open in your default browser
+            ```
+            npm repo in-viewport
+            ```
+            In the document that is using the logic, you need to import `in-viewport` and then pass an element to the `InViewport` function.
+            ```
+            import inViewport from 'in-viewport';
+            let elem = document.getElementById('myFancyDiv');
+            let isInViewport = inViewport(elem); //returns bool or you can pass a second param as a callback
+            ```
+        * A transition is being used to display the button that has the visibility toggled on. View the full [Vue transition documentation](https://vuejs.org/v2/guide/transitions.html)
+            * Wrap the template content in a transition component. The name attribute is being used to hook into the transitions' events. There are many events or phases that a transition uses which will add various classes to the transition component.
+                * `enter-active`, `leave-active`, `enter`, `leave-to`. See [documentation](https://vuejs.org/v2/guide/transitions.html#Transition-Classes) for more details.
+                * Whatever is assign to the `name` attribute can be added to the beginning of the class names above. In this case, `fade` is assigned to the `name` attribute so `fade-` will be added to the class names. e.g. `fade-enter-active` or `fade-leave-to`, etc
 
+                ***Template section***
+                ```
+                <template>
+                    <transition name="fade">
+                        <div v-show="shouldDisplay">
+                            <slot></slot>
+                        </div>
+                    </transition>
+                </template>
+                ```
+                ***Style section***
+                ```
+                <style>
+                    .fade-enter-active, .fade-leave-active {
+                        transition: opacity .3s;
+                    }
+                    .fade-enter, .fade-leave-to {
+                        opacity: 0;
+                    }
+                </style>
+                ```
+            Add the following to *`resources/js/app.js`*    
+            ```
+            import Visible from './components/Visible';
+
+            Vue.component('visible', Visible);
+            ```
+            *`resources/js/components/Visible.vue`*
+            ```
+            <template>
+                <transition name="fade">
+                    <div v-show="shouldDisplay">
+                        <slot></slot>
+                    </div>
+                </transition>
+            </template>
+
+            <script>
+                import inViewport from 'in-viewport';
+                export default {
+                    props: ['whenHidden'],
+                    data() {
+                        return {
+                            shouldDisplay: false
+                        }
+                    },
+                    mounted() {
+                        window.addEventListener('scroll', () => {
+                            this.shouldDisplay = ! inViewport(
+                                document.querySelector(this.whenHidden)
+                            );
+                        }, { passive: true });
+                    }
+                }
+            </script>
+
+            <style>
+                .fade-enter-active, .fade-leave-active {
+                    transition: opacity .3s;
+                }
+                .fade-enter, .fade-leave-to {
+                    opacity: 0;
+                }
+            </style>
+            ```
+            *`resources/views/conditional-visibility.php`*
+            ```
+            <!doctype html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+                <title>Conditional Visibility</title>
+            </head>
+
+            <body>
+                <div id="app" class="relative flex flex-col items-center p-8">
+                    <h1 class="text-2xl font-bold mb-8">Conditional Visibility</h1>
+
+                    <div class="container w-3/4 bg-gray-200 p-4" style="height: 2000px">
+                        <a
+                            id="new-post-link"
+                            href="#"
+                            class="text-blue-500"
+                        >New Post</a>
+
+                        <visible when-hidden="#new-post-link">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-600 rounded-full w-24 h-24 text-white text-4xl fixed z-10 right-0 bottom-0 mr-4 mb-4"
+                            >+</button>
+                        </visible>
+                    </div>
+                </div>
+
+                <script src="/js/app.js"></script>
+            </body>
+            </html>
+            ```
 * ### Custom Input Example:
     * Say you want to be able to reuse an input that has validation logic, sanitizing, etc attached to it. i.e. `<coupon></coupon>` instead of `<input type="text" v-model="coupon">`
         * On your page you can still use `v-model` on the component `<coupon v-model="coupon"></coupon>`
