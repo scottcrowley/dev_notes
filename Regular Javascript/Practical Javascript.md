@@ -4,7 +4,7 @@
 
 * ### Empty objects are not equal since they have different memory addresses. `{} === {} //false`
 * ### When you set an object to equal another object they become linked.
-    ```
+    ```js
     var h1 = { color: ‘blue’ };
     var h2 = h1;
     h2.color = ‘red’; 
@@ -28,7 +28,7 @@
     * `arr.forEach(function(val) { console.log(val); });` - Iterates over the given array and performs the given function.
         * If you pass a second argument to the callback function, this will be in the `index` of the array that the pointer is currently at. `function(val, index)`
         * If you need access to the current object (`this`) that exists outside of the `forEach` callback, then it can be passed as an argument along with the callback function. i.e. 
-            ```
+            ```js
             arr.forEach(function(val) { 
                 console.log(val);
             }, this);
@@ -50,7 +50,7 @@
         * In strict mode, `this` would be undefined.
     * When `this` is used in a method within an object, then `this` is equal to the `object`
     * When `this` is used within a function that is called as a constructor, then `this` is the `new object` that is created.
-        ```
+        ```js
         function Person(name) { 
             this.name = name; 
         }
@@ -58,7 +58,7 @@
         ```
         When a function is called like the example above, `this` is returned by the constructor. `myName` will now be equal to the object returned from the constructor. `{ name: ‘Scott’ }` 
     * You can explicitly declare the value of `this` by using `bind`, `apply` or `call`.
-        ```
+        ```js
         function logThis() { 
             console.log(this); 
         }
@@ -67,7 +67,7 @@
         ```
         You can execute the function directly instead of assigning it to a variable by adding the function call `()` at the end of the statement.
         
-            ```
+            ```js
             logThis.bind({ name: 'scott' })(); // object { name: 'scott' }
 
             explicitlySetLogThis(); //this is now an object { name: 'scott' }

@@ -20,7 +20,7 @@
         * `function sum(foo, …fncParams) {  }`
 * ### SPREAD PARAMETERS
     * used when you want to send an array of values to a function call that is expecting a certain amount of parameters to be passed
-        ```
+        ```js
         function sum(x, y) { 
             return x + y; 
         } 
@@ -37,7 +37,7 @@
     * **Method Shorthand:** when referencing a method with an object you can do this
         * instead of using `let var = {getName: function () { blah } }` you can now use `let var = {getName() { blah }}`
     * **Object Destructuring:** 
-        ```
+        ```js
         let data = {
             name: 'karen', 
             age: 32, 
@@ -47,7 +47,7 @@
         let {results, count} = data;
         ```
         This will now assign the values from the `data` object to new variables called `results` & `count`.
-        ```
+        ```js
         let data = { name: 'luke', age: 24 }; 
         
         function greet({ name, age }) {
@@ -56,12 +56,12 @@
         
         greet(data);
         ```
-        ```
+        ```js
         axios.get('status')
             ->then(({data}) => this.status = data ); 
         ```
         instead of
-        ```
+        ```js
         axios.get('status')
             ->then(response => this.status = response.data);
         ```
@@ -87,7 +87,7 @@
         * **entries**
 
 		Above methods work recursively as well:
-        ```
+        ```js
 		class User {
 			constructor(name, isAdmin) {
 				this.name = name;
@@ -111,7 +111,7 @@
         * generator functions must contain an `*` before the name. i.e. `function *range() {  }`, `function* range() { }`, `function * range() { }`
         * `yield` is used within the function and allows the function to be paused but also returns the value specified
         * `next()` method is used outside the function on an object assigned to the function, which will make the generator proceed to the next yield
-        ```
+        ```js
 		function *range(start, end) {
 			while (start <= end) {
 				yield start;
@@ -136,7 +136,7 @@
         ```
 * ### SETS
     * `Sets` are collections of values where each one must be unique. Duplicate values will be ignored
-		```
+		```js
 		let items = new Set([ 'one', 'two', 'three' ]);
 		console.log(items); //returns a Set object {'one', 'two', 'three')
 		

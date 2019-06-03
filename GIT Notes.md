@@ -98,7 +98,7 @@
             * If the effected files have a related test, then update that as well and `commit` and `push` your changes to your `GitHub Repo`
             * If you want to make sure your bug fix works and have another copy already checked out, you can use your modified version instead on the version of the package from packagist. <https://getcomposer.org/doc/05-repositories.md#vcs>
                 * update the `composer.json` file and add or update the `repositories` key on the root of the doc.
-                    ```
+                    ```json
                     "repositories" : [
                     {
                     "type": "vcs",

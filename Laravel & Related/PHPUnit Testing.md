@@ -66,7 +66,7 @@
         * This assertion goes before the actual action that will throw the exception.
     * `->actingAs($user)` This requires the `TestCase` class. This tells the test that they are currently acting as a specific user. Can be used when you want to check that a logged in user wants to create a post.
     * `->seeInDatabase()` Checks to see if the array of values (2nd param) is in the provided database table (1st param)
-		```
+		```php
         $this->seeInDatabase('likes', [
 			'user_id' => $user->id,
 			'likeable_id' => $post->id //polymorphic relationship where many different things can be liked in the app and is based off of the likeable_type
@@ -83,7 +83,7 @@
     * `->assertStatus()` Looks for a specific response code that is passed to the function
 * ### Using Mock & Spy Example
     * We have a `Newsletter.php` class that has a `subscribeTo` method that makes an API call and is accessed by hitting the following route in the `routes/web.php` file
-        ```
+        ```php
         Route::get('/subscribe', function(Newsletter $newsletter) { 
             $newsletter->subscribeTo('members', auth()->user()); 
             return 'done'; 
@@ -92,7 +92,7 @@
 
         Notice that Laravel will automatically resolve the `Newsletter` class out of the `Service Container` when this route is hit
     * You can now write a test to check all the functionality of Newsletter without making the API call
-        ```
+        ```php
         function it_subscribes_a_user_to_a_mailing_list() {
             $user = factory(User::class)->create();
             $mock = Mockery::mock(Newsletter::class, function($mock) use ($user) {
@@ -116,7 +116,7 @@
         ```
 
         As of Laravel 5.8 there is now a new `mock` method, so the above test can be simplified. The `mock` method handles declaring the `mock` as well as replacing the real class with the newly mocked class automatically
-        ```
+        ```php
         function it_subscribes_a_user_to_a_mailing_list() {
             $user = factory(User::class)->create();
             $this->mock(Newsletter::class, function($mock) use ($user) {
@@ -127,7 +127,7 @@
         ```
 
         Also as of Laravel 5.8 you can write the above test using a Spy instead. A spy will evaluate after everything has run.
-        ```
+        ```php
         function it_subscribes_a_user_to_a_mailing_list() {
             $user = factory(User::class)->create();
             $spy = $this->spy(Newsletter::class);
@@ -150,7 +150,7 @@
         * import the `RefreshDatabase` class at the top of your document. `use Illuminate\Foundation\Testing\RefreshDatabase;`
         * use the `RefreshDatabase` class within your test class. `use RefreshDatabase;`
     * The format of a factory:
-        ```
+        ```php
         $factory->define(App\Model::class, function(Faker $faker) {
             return [
                 'field_name' => $faker->sentence, //or any other faker method. 
@@ -163,7 +163,7 @@
         See <https://github.com/fzaninotto/Faker> for a full list of faker methods
 
         Instead of passing a closure for the '`user_id`' you can pass an instance of the factory class.
-        ```
+        ```php
         'user_id' => factory(App\User::class) //The id will be taken automatically from the created model.
         ```
 * ### Set up a testing database for use with all of your tests
@@ -171,7 +171,7 @@
         * In the root level, open the `phpunit.xml` file
             * Find the `<php>` section that overrides various env variable values. (`<env name="">`)
             * Add a new env value to override the database connection to use the testing database connection instead.
-                ```
+                ```xml
                 <env name="DB_CONNECTION" value="sqlite"/>
                 <env name="DB_DATABASE" value=":memory:"/>
                 ```
@@ -180,7 +180,7 @@
         * *IMPORTANT!* Sqlite doesn't support foreign key restraints by default. So if your migrations contain foreign key restraints any test referencing that table may fail. To solve the issue, put the following statement at the start of your test method.
             * `DB::statement('PRAGMA foreign_keys=on');` Make sure to input the DB facade. `use Illuminate\Support\Facades\DB;`
             * or Put the statement in the `\Tests\TestCase.php` file. It needs to go in the `setUp` method. If `setUp` doesn't exists it should look like this:
-                ```
+                ```php
                 protected function setUp() { 
                     parent::setUp(); 
                     DB::statement('PRAGMA foreign_keys=on'); 
@@ -209,7 +209,7 @@
         * Add the file to the `autoloader` in the `composer.json` file
             * `"autoload-dev": { "files": [ "tests/utilities/functions.php" ] }`
         * `functions.php`
-            ```
+            ```php
             function create($class, $attributes = [], $times = null)
             {
                 return factory($class, $times)->create($attributes);
@@ -234,7 +234,7 @@
             You may need to run `composer dump-autoload` to re-register everything
     * Another handy utility function to use
         * In the tests/TestCase.php file
-            ```
+            ```php
             protected function signIn($user = null)
             {
                 $user = $user ?: factory('App\User')->create();
@@ -246,7 +246,7 @@
             ```
             This can be used to log in a new user or can be passed an existing user instance to log in.
     * When running `PHPUnit` tests, you may encounter an apostrophy is created while using `$faker->name`, `$fake->sentence`, etc. Since blade templates escape strings, the apostrophy will be converted to `&#039;`. Use the special e() helper function to escape the string in your tests as well.
-        ```
+        ```php
         $this->get(route('clients.index'))
             ->assertSee(
                 e($client->name)
@@ -259,7 +259,7 @@
             * You can either add the following to the '`providers`' array in '`config/app.php`'
                 * `Barryvdh\Debugbar\ServiceProvider::class,`
             * Or since it is only used during local development, you can add the following to '`app/Providers/appServiceProvider.php`' within the '`register`' method
-                ```
+                ```php
                 if ($this->app->isLocal()) { 
                     $this->app->register(Barryvdh\Debugbar\ServiceProvider::class);
                 }

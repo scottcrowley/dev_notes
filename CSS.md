@@ -44,7 +44,7 @@
     * There is a `Tailwind Laravel Preset` available at <https://github.com/laravel-frontend-presets/tailwindcss> that will automatically install `Tailwind` and change the default views to use `Tailwind` classes.
     * Can be pulled in via a CDN or imported into a project using NPM. <https://tailwind.css>
     * Install
-        ```
+        ```zsh
         npm install tailwindcss --save-dev
         npm install laravel-mix-tailwind --save-dev
         node_modules/.bin/tailwind init tailwind.js //Creates the tailwind.js config file in the root of the project
@@ -66,7 +66,7 @@
         * How to create a modal without using any javascript at all and using `Blade Components` to make it reuseable. This works by using anchor tags and the `:target` psuedo class to toggle visibility.
 
             **`modal.blade.php`**
-            ```
+            ```html
             <div id="{{ $name }}" class="overlay">
                 <a href="#" class="cancel"></a>
 
@@ -78,7 +78,7 @@
             </div>
             ```
             **`modal.css`**
-            ```
+            ```css
             .overlay {
                 visibility: hidden;
                 position: absolute;
@@ -120,7 +120,7 @@
             }
             ```
             **`usage.blade.php`**
-            ```
+            ```html
             <a href="#join-modal">Join</a>
 
             @component('modal', ['name' => 'join-modal'])

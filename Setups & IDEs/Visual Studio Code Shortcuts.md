@@ -69,7 +69,7 @@
     * If you are going to use a `PostCSS` framework like `Tailwind CSS`,
         * Install the `sylelint` extension by `Shinnosuke Watanabe`
         * Add to `user settings`
-            ```
+            ```json
             "css.validate": false,
             "less.validate": false,
             "scss.validate": false
@@ -91,6 +91,7 @@
     * `Laravel Blade Snippets` - Winnie Lin
     * `Php DocBlock Generator` - vincentkos ***FOUND ON MY OWN***
     * `Quick and Simple Text Selection` - David Bankier ***FOUND ON MY OWN***. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
+    * `Markdown Preview Enhanced` - Yiyi Wang ***FOUND ON MY OWN***  Useful for adding addition features to markdown files
     * `stylelint` - Shinnosuke Watanabe ***FOUND ON MY OWN***. Use this if using tailwind.css. See note in the Miscellaneous Settings
     * `Tailwind CSS IntelliSense` - Brad Cornes ***FOUND ON MY OWN***. Use this if using tailwind.css. Autocomplete for tailwind classes
     * `Tailwind sass syntax` - Maciej Ładoś ***FOUND ON MY OWN***. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
@@ -112,7 +113,7 @@
         * Open the Command Palette (`shift+cmd+p`) then type `shell command`
         * Restart the terminal to make the changes take effect
         * Now you can open files by using the `code` command
-            ```
+            ```zsh
             # opens the zshrc file in VSCode
             code ~/.zshrc
 
@@ -169,7 +170,7 @@
         * `'not_operator_with_successor_space’ => true`
         * `'ordered_imports' => array('sort_algorithm' => 'length')`
 * ### Example `ESLint` config file (`.eslintrc.json`):
-    ```
+    ```json
     {
         "env": {
             "browser": true,

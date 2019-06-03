@@ -5,7 +5,7 @@
         * This is an example of how to make a link scroll to a link on a page smoothly. This example is using a CDN version of `tailwind.js` 1.0 official release.
 
             *`resources/js/app.js`*
-            ```
+            ```js
             import Vue from 'vue';
             import ScrollLink from './components/ScrollLink';
 
@@ -19,7 +19,7 @@
             ```
 
             *`resources/js/components/ScrollLink.vue`*
-            ```
+            ```vue
             <template>
                 <a :href="href" @click.prevent="scroll">
                     <slot></slot>
@@ -44,7 +44,7 @@
             ```
 
             *`resources/views/smooth-scroll.php`*
-            ```
+            ```html
             <!doctype html>
             <html lang="en">
             <head>
@@ -85,7 +85,7 @@
         * This is an example of how to make a contextual menu dropdown menu with mild animations. This example is using a CDN version of `tailwind.js` 1.0 official release.
             
             *`resources/js/app.js`*
-            ```
+            ```js
             import Vue from 'vue';
             import Dropdown from './components/Dropdown';
 
@@ -99,7 +99,7 @@
             ```
 
             *`resources/js/components/Dropdown.vue`*
-            ```
+            ```vue
             <template>
                 <div class="dropdown relative">
                     <div class="dropdown-trigger"
@@ -164,7 +164,7 @@
             ```
             
             *`resources/views/context-menu.php`* - example page to show off the menu
-            ```
+            ```html
             <!doctype html>
             <html lang="en">
             <head>
@@ -219,7 +219,7 @@
             * Important to note that anytime a "scroll" listener is added to the window or document, this check needs to be throttled or there will be an insane amount of calls to the callback function processing the event. Below are options on how to avoid this.
                 * Lodash debounce or some sort of throttling technique should be used
                 * If you are not going to be messing with the actual scroll position then you can use the `passive` option on the listener
-                    ```
+                    ```js
                     window.addEventListener('scroll' () => {
                         console.log('hello there');
                     }, { passive: true });
@@ -233,7 +233,7 @@
             npm repo in-viewport
             ```
             In the document that is using the logic, you need to import `in-viewport` and then pass an element to the `InViewport` function.
-            ```
+            ```js
             import inViewport from 'in-viewport';
             let elem = document.getElementById('myFancyDiv');
             let isInViewport = inViewport(elem); //returns bool or you can pass a second param as a callback
@@ -244,7 +244,7 @@
                 * Whatever is assign to the `name` attribute can be added to the beginning of the class names above. In this case, `fade` is assigned to the `name` attribute so `fade-` will be added to the class names. e.g. `fade-enter-active` or `fade-leave-to`, etc
 
                 ***Template section***
-                ```
+                ```vue
                 <template>
                     <transition name="fade">
                         <div v-show="shouldDisplay">
@@ -253,8 +253,9 @@
                     </transition>
                 </template>
                 ```
+
                 ***Style section***
-                ```
+                ```vue
                 <style>
                     .fade-enter-active, .fade-leave-active {
                         transition: opacity .3s;
@@ -265,13 +266,13 @@
                 </style>
                 ```
             Add the following to *`resources/js/app.js`*    
-            ```
+            ```js
             import Visible from './components/Visible';
-
             Vue.component('visible', Visible);
             ```
+
             *`resources/js/components/Visible.vue`*
-            ```
+            ```vue
             <template>
                 <transition name="fade">
                     <div v-show="shouldDisplay">
@@ -308,8 +309,9 @@
                 }
             </style>
             ```
+
             *`resources/views/conditional-visibility.php`*
-            ```
+            ```html
             <!doctype html>
             <html lang="en">
             <head>
@@ -349,7 +351,7 @@
     * Say you want to be able to reuse an input that has validation logic, sanitizing, etc attached to it. i.e. `<coupon></coupon>` instead of `<input type="text" v-model="coupon">`
         * On your page you can still use `v-model` on the component `<coupon v-model="coupon"></coupon>`
             * In you js file:
-                ```
+                ```js
                 Vue.component('coupon', {
                     props: ['code'],
                     template: `<input type="text" :value="code" @input="updateCode($event.target.value)" ref="input">`,
@@ -373,7 +375,7 @@
 * ### Creating a Collection Vue Subclass
     * This is handy when you are dealing with adding or removing items from data collections frequently. Using the Forum Series as an example, the `Replies.vue` uses collections to add and remove data from it.
         * create a `Collections.js` file within `resources/assets/js`.
-            ```
+            ```js
             export default Vue.extend({
                 props: [ 'data' ],
                 data() {
@@ -404,7 +406,7 @@
     * If you are going to have many forms you can create a separate class that handles all the basic form functionality so the code doesn't need to be repeated in other components that are using forms. Taken from Laracasts [Build a Laravel App with TDD:Object-Oriented Javascript](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/42)
         
         Create a new FormHandler class in a new file called FormHandler.js
-        ```
+        ```js
         class FormHandler {
             constructor(data) {
                 //originalData contains all the attributes and their default values
@@ -452,10 +454,11 @@
         
         export default FormHandler;
         ```
+
         The throw error; in the onFail method is needed so the errors stops propagation and the then promise, in the component isn't called. Without it, `.then(response => location = response.data.message);` in the component example below, is being executed even though an error occurred. This will stop the `promise` from executing the `then`. You could also add a `.catch` to this as well to handle the error differently on the front end.
 
         In the component where the form is being used:
-        ```
+        ```js
         import FormHandler from './FormHandler';
         export default {
             data() {
@@ -483,14 +486,14 @@
 * ### How to create a "*Pin to the Top*" component that will pin or fix an element to the top of the screen once the user has scrolled past it on the page:
     * Usage: `<pinned><div>CONTENTS TO PIN</div></pinned>`
     * Have a css class called `is-fixed-to-top` that contains the following styles:
-        ```
+        ```css
         position: fixed;
         top: 0;
         width: 100%;
         z-index: 10;
         ```
     * Create a `pinned.vue` component file
-        ```
+        ```vue
         <template>
             <div><slot></slot></div>
         </template>
@@ -521,7 +524,7 @@
         * Within the root Vue instance in `app.js` file you can add an query selector to find all `data-tooltip` attributes and grab the tooltip from there
 
             Add a mounted event:
-            ```
+            ```js
             mounted() {
                 document.querySelectorAll('[data-tooltip]').forEach(elem => {
                     new PopperTooltip(elem, {
@@ -535,7 +538,7 @@
             * `<p data-tooltip="This is a tooltip" data-tooltip-placement="right">Hover over me</p>`
     * **Dedicated Vue Directive**
         * Register a new directive. Can be in its own file or within the `app.js`
-            ```
+            ```js
             Vue.directive('tooltip' , {
                 bind(elem, bindings) {
                     new PopperTooltip(elem, {
@@ -553,7 +556,7 @@
             * `import Tooltip from './components/Tooltip.js';`
             * `Vue.component('tooltip', Tooltip);`
         * Create a `Tooltip.vue` file within `resources/assets/js/components/`
-            ```
+            ```vue
             <template>
                 <div v-show="false">
                     <slot></slot>
@@ -581,7 +584,7 @@
             </script>
             ```
         * On the page you need to specify the tooltip trigger as well as the formatting of the component itself
-            ```
+            ```html
             <p>Hi There, <span data-tooltip-name="our-products-tooltip">Hover over me</span></p>
             <tooltip name="our-products-tooltip" 
                 placement="bottom" 
@@ -594,7 +597,7 @@
 * ### *Lazy Loader* Example:
     * This will be a separate component that can be used to load more results into a given container when the user has scrolled to about 70% of the way through those results. JW used `Algolia` but it should work with an ajax call to load more results as well.
         * Create a `LoadMore.js` file within `resources/assets/js/components/`. Since we are not using a traditional template, then we are just using the `.js` instead of `.vue`.
-            ```
+            ```js
             import { throttle } from 'lodash';
             export default {
                 template: '<div></div>', //you could have a slot tag in-between the divs if you wanted to add a Loading More... message or spinner
@@ -627,7 +630,7 @@
         * Rename the `components` directory in `resources/assets/js/` to `view` since all of the route `.vue` views will be stored there. JW did say that he'd normally keep the components directory in real life.
         * Rename the `resources/assets/js/components/Example.vue` file to `Home.vue`
         * `resources/assets/js/bootstrap.js` has the following:
-            ```
+            ```js
             import Vue from 'vue';
             import VueRouter from 'vue-router';
             import Axios from 'axios';
@@ -636,7 +639,7 @@
             window.axios = Axios;
             ```
         * `resources/assets/js/app.js` has the following:
-            ```
+            ```js
             import './bootstrap.js';
             import router from './routes';
             new Vue( { el: '#app', router } );
@@ -651,7 +654,7 @@
         * create a `routes.js` file within `resources/assets/js/`
             * import Vue Router using `import VueRouter from 'vue-router';`
             * declare the `routes` array, which will contain all the route objects: 
-                ```
+                ```js
                 let routes = [
                     {path: '/', component: './views/Home.vue'}, 
                     {path: '/about', component: './views/About.vue'}
@@ -659,14 +662,14 @@
                 ```
                 The `.vue` in the component path is optional since laravel-mix will be able to use either.
 
-                ```
+                ```js
                 export defaults new VueRouter({routes});
                 ```
             * Other options to use in the `VueRouter` instance after the routes object
                 * `linkActiveClass: {string}` used to change the class name that is automatically applied to a link in the `router-link` component.
         * To use the vue router within the `master.blade.php` file: 
             * To create the nav links for the application you need to use the `router-link` component included with `vue-router`. 
-                ```
+                ```js
                 <router-link to="/" exact>
                     Home
                 </router-link>

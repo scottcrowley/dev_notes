@@ -37,7 +37,7 @@
     * Filters are a way to have functions that can alter specific data that is sent to them. Filters can be stacked so several methods can be applied at the same time.
     * Filters can be declared globally or in a component
         * Globaly:
-        ```
+        ```js
         Vue.filter('filtername', function(value) {
             //code to modify the value and return it
         });
@@ -52,7 +52,7 @@
             * `| ago` = the pipe symbol followed by the filter function name declared in the filters property of either the instance or the component.
             * Multiple filters can be applied by adding another `|` followed by the next filter function name.
         * The filters object in the instance or component may looks something like this:
-            ```
+            ```js
             filters: { 
                 ago(date) { 
                     return moment(date).fromNow();
@@ -62,7 +62,7 @@
             The ago filter will accept a date and then send it to `moment` and have it converted to a readable date, which is using the `fromNow` formatting from `moment.js`
 
         * Additional filters example:
-            ```
+            ```js
             filters: { 
                 ago(date) { 
                     return moment(date).fromNow(); 
@@ -77,7 +77,7 @@
     * A mixin is a file that can be imported into a component that contains code that is reusable in different components. The mixin file is a standard .js file and contains all the properties you want to reuse from the component.
     * For example: JW added a collection mixin that contained methods used to add a reply to the replies array collection.
         * `collection.js` (within `/js/mixins/`)
-            ```
+            ```js
             export default {
                 data() {
                     return {
@@ -104,18 +104,18 @@
         * Within the component where you want to use the mixin:
 
             the collection.js file needs to be imported
-            ```
+            ```js
             import collection from "../mixins/collection";
             ```
             the mixin needs to be added to the components mixin property
-            ```
+            ```js
             mixins: [collection],
             ```
         * Now, any of the methods in collection.js can be used within the component where it is imported.
 * ### Vue Directives
     * All directives begin with "`v-`"
     * `v-model` - Used to sync data with the root Vue instance and usually pertains to form inputs. Can be used to create custom inputs (see below). `v-model="some-data-value"` where `some-data-value` is a value declared within the Vue instance. `v-model` can only be used when the data has been declared in the data property of the instance. `v-model` is the same as doing something like this:
-        ```
+        ```html
         <input type="text" :value="someVar" @input="someVar=$event.target.value">
         ```
     * `v-for` - used to cycle through a collection of items, like a standard for loop. `v-for="name in names"` where `names` is an array declared within the Vue instance.
@@ -137,7 +137,7 @@
         * Example: Make an element have a random text color
 
             In the `main.js` file
-            ```
+            ```js
             Vue.directive('rainbow', {
                 bind(el, binding, vnode) {
                     el.style.color = '#' + Math.random.toString().splice(2,8);
@@ -147,13 +147,13 @@
             Where `el` is the element, `binding` is any passed in value or argument and `vnode` is the virtual node.
             
             To use this directive it doesn't require any parameter so simply use `v-raindow` on the element.
-            ```
+            ```html
             <h2 v-rainbow>Some Text Here!</h2>
             ```
         * Example: To allow for a theme value to be applied to a root element that changes the max width of the element. Options include "`wide`" or "`narrow`". A `column` argument can also be added, which creates some padding and applies a grey background.
 
             In the `main.js` file
-            ```
+            ```js
             Vue.directive('theme', {
                 bind(el, binding, vnode) {
                     if (binding.value == 'wide') {
@@ -169,7 +169,7 @@
             });
             ```
             To use the directive with either `wide` or `narrow`, you need to pass a string to it. NOTE: Since `objects` and `variables` can also be passed, if a `string` is being used, you need to provide single quotes around it.
-            ```
+            ```html
             //apply the wide theme to the div. max-width: 1200px;
             <div v-theme="'wide'"></div>
 
@@ -192,7 +192,7 @@
     * The Promise object represents the eventual completion (or failure) of an asynchronous operation, and its resulting value.
     * Using an example that there is a separate form class that is being used to submit form values using Axios
         * The form class could have a `submit` method that handles the ajax request along with return a new promise to any classes, using the form class, to further process the response.
-            ```
+            ```js
             submit(requestType, url) { 
                 return new Promise((resolve, reject) => {
                     axios[requestType](url, this.data())
@@ -208,7 +208,7 @@
             ```
 
             * A Vue instance can have a method called `onSubmit` that listens for the form to be submitted then calls the `submit` method on the form class. Then Vue can further process the results of the submitted form by using the returned promise object.
-                ```
+                ```js
                 onSubmit() { 
                     this.form.submit(
                         'post', 
@@ -239,7 +239,7 @@
             * The `slot` tag, within the component, can be given a `name` attribute. i.e. `<slot name="header"></slot>`
             * To use the named slot within the component tag, you can do 1 of the following:
                 * You can just use the `slot` attribute and provide the `name` of the `slot` you want. i.e. 
-                ```
+                ```vue
                 <component-name>
                     <div slot="header">Content Here</div>
                 </component-name>
@@ -253,7 +253,7 @@
         * **Scoped slots:**
             * These can be used when you want to override the default formatting between the component tags. Its a good way to provide default formatting then allow for overrides if needed.
                 * The front end file where you want the component rendered
-                    ```
+                    ```html
                     <menu-list :items="['one','two','three']">
                         <template scope="props"> or you can use ES6 destructuring <template scope="{ item }">
                             <h2 v-text="props.item"></h2> or you can use ES6 if used above <h2 v-text="item"></h2>
@@ -262,7 +262,7 @@
                     ```
 
                 * The MenuList.vue file
-                    ```
+                    ```vue
                     <template>
                         <ul>
                             <li v-for="item in items">
@@ -291,7 +291,7 @@
         * A file can be created that contains all the template details as well as the script and style tags for the component
             * File needs a `.vue` extension. i.e. `componentName.vue`
             * The file needs to contain at least the `template` & `script` tags
-                ```
+                ```vue
                 <template></template>
                 <script> 
                 export default {  
@@ -312,7 +312,7 @@
 * ### Removing Reactivity from a property
     * When you want to clone a property in a component but want to disconnect the reactivity
         * Doesn't remove reactivity
-            ```
+            ```js
             data() {
                 return {
                     myData: { somedata: somevalue, somemoredata: somemorevalue }
@@ -327,7 +327,7 @@
             ```
             The new `myNewData` property will still be linked to the `myData` property and any changes made to `myNewData` will be reflected in `myData`. `myNewData.someData == myData.someData`
         * One way to handle this issue
-            ```
+            ```js
             data() {
                 return {
                     myData: { somedata: somevalue, somemoredata: somemorevalue }
@@ -366,7 +366,7 @@
     * Below is an [example](https://laracasts.com/lessons/await-please) where JW had a method in a view component that allowed a user to report spam. It is using a SweetAlert dialog box that waits for the user to click yes before an axios call is used to process the report for spam.
         
         Vue component before using `async`/`await`
-        ```
+        ```js
         methods: {
             notifyAdminstrator() {
                 swal({
@@ -385,7 +385,7 @@
         }
         ```
         Same Vue component with using `async`/`await`. Using the `await` keyword within a `async` function, the execution is stopped until a promise is received. SweetAlert returns a promise as well as axios, so the `.then` can be removed entirely.
-        ```
+        ```js
         methods: {
             async notifyAdminstrator() {
                 let confirmed = await swal({
@@ -443,17 +443,17 @@
         * `<style type="text/css" scoped></style>`
     * Turbolinks is a package that intercepts a page click via an a tag and injects the linked page into the current page without doing a redirect. [Turbolinks on Github](https://github.com/turbolinks/turbolinks)
         * Install the package
-            ```
+            ```zsh
             npm install --save turbolinks
             ```
         * Add the following to your bootstrap.js file to have Turbolinks start up
-            ```
+            ```js
             import Turbolinks from 'turbolinks';
 
             Turbolinks.start();
             ```
         * If you import all your scripts at the bottom of the `body` tag then the script tag should be moved to the `head` tag instead.
-            ```
+            ```html
             // remove from the end of the body tag and place before the end of the head tag
             <script src="{{ asset('js/app.js') }}"></script>
             ```
@@ -461,11 +461,11 @@
             * Install [vue-turbolinks](https://github.com/jeffreyguenther/vue-turbolinks), which is a Turbolinks adapter for Vue components.
 
                 In your app.js file after the import for bootstrap.js, import the package
-                ```
+                ```js
                 import TurbolinksAdapter from 'vue-turbolinks';
                 ```
                 Now where the new Vue instance is assigned to the app constant, you need to wrap the entire block in an event listener. Below is the before and after
-                ```
+                ```js
                 // before
                 const app = new Vue({
                     el: '#app'
@@ -501,7 +501,7 @@
         * If you have a kabob cased attribute you can reference it with camelcase.
             * `$el.dataset.tooltipPlacement` will return the value for `data-tooltip-placement`
     * Say there is a time when you want to call a method within a component or class but you want the method to refer to the current instance instead of the passed in object when using `this`.
-        ```
+        ```js
         submit(endpoint) {
             return axios.post(endpoint, this.data())
                 .catch(this.onFail.bind(this));
@@ -522,7 +522,7 @@
         * Since this test example is using a node module and not a browser we need `browser-env` to mimic a browser
             * `npm install browser-env --save-dev`
         * Set up `setup-browser-env.js` file.
-            ```
+            ```js
             import browser-env from 'browser-env';
             browserEnv();
             ```
@@ -531,7 +531,7 @@
         * File located in `/src` contains module called `Notification.js`
             * `export default { data() { return { message: 'Hello World" } } }`
         * Test file located in `/test` contains `notification.js`
-            ```
+            ```js
             import Vue from 'vue'; 
             //This version is for the runtime only version. 
             //It may be more preferred to use 'vue/dist/vue.js'.
@@ -545,12 +545,12 @@
             ```
         * To test if a prop is sent to the module correctly.
             * in `Notification.js`, get rid of the `data` method all together and add:
-                ```
+                ```js
                 template: '<div><h1>{{ message }}</h1><div>',
                 props: [ 'message' ]
                 ```
             * inside the `t` object of the `notification.js` test file, you should have the following:
-                ```
+                ```js
                 let N = Vue.extend(Notification);
 
                 let vm = new N({ propsData: {
@@ -561,7 +561,7 @@
                 t.is(vm.$el.textContent, 'Foobar');
                 ```
             * If you were to want to reuse the extend code in multiple different tests you could use the `beforeEach` method to have this code run before each test. The following would be before any test are defined.
-                ```
+                ```js
                 let vm;
                 test.beforeEach(t => {
                     let N = Vue.extend(Notification);

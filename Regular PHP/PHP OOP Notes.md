@@ -15,7 +15,7 @@
         * `class ClassName { protected $objectName; public __construct(ObjectName $objectName) { $this->objectName = $objectName; } }` Expects to receive an object class called `ObjectName` as the passed argument for `$objectName`.
     * `Statics` and `Constants`
         * A `static` method or property within a class can be referenced directly without creating an instance of the object class. i.e.
-            ```
+            ```php
 			class Math {
                 public static function add(…$nums) {
                     return array_sum($nums);
@@ -37,7 +37,7 @@
         * a `composer.json` file should exist in the root of the site. You can manually create it with an empty object `{  }`, or you can run `composer init` in the console. This is where the list of dependencies is given to Composer
         * After the `composer.json` file is created, you `run composer install` in the console and that will install any dependencies and set up the vendor directory in your project.
         * Now, within the `composer.json` file, you must specify how you want certain files to be auto loaded
-			```
+			```php
             {
 				"autoload": {
 					"psr-4": {

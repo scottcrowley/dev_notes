@@ -59,7 +59,7 @@
         * `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
         * You can use `brew search {package name}` to search for a specific package that can be installed via home-brew
     * To install PHP 7.2 using Homebrew
-        ```
+        ```zsh
         brew update
         brew upgrade
         brew install php@7.2
@@ -67,17 +67,17 @@
         # --force is needed since we are installing v7.2 which is not the most current.
         ```
         If you have `Composer` and `Oh My Zsh` installed, replace the `export PATH` line of of the `.zshrc` file with the following:
-        ```
+        ```zsh
         # export PATH=$HOME/bin:/usr/local/bin:$PATH
         export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH
         export PATH="$(brew --prefix homebrew/core/php@7.2)/bin:$HOME/.composer/vendor/bin:$PATH"
         ```
         You may need to resource the `.zshrc` file to have it reload the config
-        ```
+        ```zsh
         source ~/.zshrc
         ```
         To actually have the service started and stay started after restarts, run the following
-        ```
+        ```zsh
         brew services start php@7.2
         ```
     * [Node](https://nodejs.org/en/) Also will install `npm` at the same time
@@ -86,16 +86,16 @@
         * or s`udo npm install -g yarn`
     * `MySQL` or `MariaDB` (drop in replacement for MySQL)
         * Both can be installed via Homebrew. Below is how to install mysql 5.7. Current version is 8
-            ```
+            ```zsh
             brew install mysql@5.7
             brew link --force mysql@5.7
             ```
             To actually have the service started and stay started after restarts, run the following
-            ```
+            ```zsh
             brew services start mysql@5.7
             ```
         * To install mysql version 8 or the current version
-            ```
+            ```zsh
             brew install mysql
             brew services start mysql
             mysql_secure_installation
@@ -109,7 +109,7 @@
             # you should then get a message that says All Done!
             ```
             or use the following from <https://coderwall.com/p/os6woq/uninstall-all-those-broken-versions-of-mysql-and-re-install-it-with-brew-on-mac-mavericks>
-            ```
+            ```zsh
             brew doctor
             # fix any issues found
             brew update
@@ -120,7 +120,7 @@
             # run the commands Brew suggests, add MySQL to launchctl so it automatically launches at startup
             ```
         * To uninstall all versions of mysql. Taken from <https://coderwall.com/p/os6woq/uninstall-all-those-broken-versions-of-mysql-and-re-install-it-with-brew-on-mac-mavericks>
-            ```
+            ```zsh
             ps -ax | grep mysql
             # stop and kill any MySQL processes
             brew remove mysql
@@ -141,7 +141,7 @@
             # try to run mysql, it shouldn't work
             ```
         * The default password for the `root` user is `null`. To change it to `password`. ***THIS STEP IS NOT NEEDED IF YOU RAN `mysql_secure_installation` ABOVE***
-            ```
+            ```zsh
             mysql -uroot -p
             # press enter when prompted to enter the password
             ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
@@ -149,16 +149,16 @@
             ```
         * The default directory where database files are stored is: `/usr/local/var/mysql/`
     * Install PhpMyAdmin using Homebrew
-        ```
+        ```zsh
         brew install phpmyadmin
         ```
         When this is done, notate the version it installed and navigate to the install directory and add the directory to `valet` links so `PhpMyAdmin` will be available in the browser at `phpmyadmin.test`
-        ```
+        ```zsh
         cd /usr/local/Cellar/phpmyadmin/4.8.5/share/phpmyadmin
         valet link
         ```
         If you run into an issue where you get the following error `mysqli_real_connect(): The server requested authentication method unknown to the client [caching_sha2_password]`. Try this work around
-        ```
+        ```zsh
         mysql -uroot -p
         ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
         exit;
@@ -172,11 +172,11 @@
                 * `php-cs-fixer` A tool to automatically fix PHP code styles
                     * `composer global require friendsofphp/php-cs-fixer`
     * Install phpunit globally
-        ```
+        ```zsh
         composer global require phpunit/phpunit
         ```
     * Laravel Valet
-        ```
+        ```zsh
         composer global require laravel/valet
         valet install
         valet start

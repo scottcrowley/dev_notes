@@ -7,7 +7,7 @@
     * Examples:
 
         Assign variables names to each element of an array. Similar to the PHP `list` function
-        ```
+        ```php
         $people = [
             ['John', 'Doe'],
             ['Jane', 'Doe']
@@ -19,7 +19,7 @@
         }
         ```
         Another way to do the above example
-        ```
+        ```php
         $people = [
             ['John', 'Doe'],
             ['Jane', 'Doe']
@@ -30,7 +30,7 @@
         }
         ```
         If you are only interested in a certain position of the array you can leave the other positions blank
-        ```
+        ```php
         [, $last] = ['John', 'Doe']; 
         var_dump($last); //Doe
 
@@ -41,13 +41,13 @@
         var_dump($lastFour); // 5555
          ```
         If you have an object that implements the [IteratorAggregate](https://www.php.net/manual/en/class.iteratoraggregate.php) interface then you can destructure that by
-        ```
+        ```php
         // Laravel uses this on the factory class
         [$user1, $user2, $user3] = factory('App\User', 3)->create();
         ```
 * ### Invokable Classes
     * A magic method (`__invoke`) within a class that is executed any time the class is interacted with as function.
-        ```
+        ```php
         class Example
         {
             public function __invoke()
@@ -62,7 +62,7 @@
         echo $example(); // Hello World
         ```
         Sometimes you only need a single action for something or a single use contorller. In this case you can add a controller with an `__invoke` method to accomplish this. This can also be an example of where you don't want to pass a closure to the `Route::get` method and instead use a invokable class to perform the logic.
-        ```
+        ```php
         // routes\web.php file
         Route::get('/', 'HomeController');
 
@@ -80,7 +80,7 @@
         // the controller will automatically return "You've reached the Home Controller"
         ```
         Another use case is when you have a complex db query and you really don't want it in the controller, then you could use a `query object`.
-        ```
+        ```php
         // App\Queries\FeaturedCollectionsQuery.php
         namespace App\Queries;
 
@@ -106,7 +106,7 @@
         ```
 * ### Refactor repeated suffixes and prefixes
     * If you find your class containing several of the same suffixes or prefixes then it may be a sign that you need to take those methods an promote them to a first class citizen role.
-        ```
+        ```php
         // A User class before refactor
         class User
         {
@@ -121,7 +121,7 @@
         }
         ```
         All these methods pertain to a Users stats and should be refactored to their own `Stats` class. Then you want to be able to access these stats like this: `$user->stats()->favorites();`
-        ```
+        ```php
         class Stats()
         {
             private $user;
@@ -152,14 +152,14 @@
     * Some type hints: `array`, `string`, `callable`, `bool`, `int`, `float`
     * Examples:
         type hinting arguments in a method
-        ```
+        ```php
         public function foo(string $name, callable $handler)
         {
 
         }
         ```
         using return types
-        ```
+        ```php
         public function foo(string $name, callable $handler) : void
         {
         }

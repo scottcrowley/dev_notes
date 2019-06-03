@@ -15,12 +15,12 @@
 
         `Routes File (routes/web.php)`
 
-        ```
+        ```php
         Route::get('/tasks/{task}', 'TasksController@show'); //This will pass the {task} slug to the show method within the TasksController
         ```
         `TaskController File (app\Http\Controllers\TaskController.php)`
 
-        ```
+        ```php
         namespace App\Http\Controllers;
 
         use App\Task;
@@ -46,7 +46,7 @@
             * To place content within a yielded section you use `@section ('content')` followed by a `@endsection`, after all the content for that section.
     * `@section` can also receive a second argument if you want to pass something small like a title. In this case you don't need the closing `@endsection`. i.e. `@section('title', 'Contact Page')`
     * Variables are referenced using `{{  }}` around the variable name.
-		```
+		```php
         Routes File
 		Routes::get('/', function () {
 			$hello = 'Hello World';
@@ -58,7 +58,7 @@
 		…html
         ```
     * Regular php functions can be used in blade format without having to have code wrapped in php tags. A `@` just needs to be appended and a `@end{phpfunctionname}` needs to be at the end of the code. Below is an example of a foreach.
-		```
+		```php
         Routes::get('/', function () {
 			$tasks = ['Go to the store', 'Make lunch', 'Take a nap'];
 			return view('tasks', compact('tasks')); //This will send the tasks variable to the tasks view
@@ -84,7 +84,7 @@
     * #### Validation
         * In the processing method of your controller you can call the `validate()` method before you call your create method.
             `This example is using a store method within a Posts controller (blog example).`
-            ```
+            ```php
             public function store() {
                 $this->validate(request(), [
                     'title' => 'required|min:10' //a pipe separated list that pertains to a field name in the submitted values (required and a min of 10 characters)
@@ -99,22 +99,22 @@
             }
             ```
         * Validation rules can either be a string separated by a `|` or an array
-            ```
+            ```php
             request()->validate([ 'field_name' => 'required|min:2' ]);
             request()->validate([ 'field_name' => ['required', 'min:2'] ]);
             ```
         * When you call `validate()` on the request, all the validated attributes are returned. You can then assign that to a var and pass it to the `create` method instead of getting the values from the `request` object
         * There may be a time when you only want to validate a field if there is data present. To do this you add the "sometimes" validation rule.
-            ```
+            ```php
             'email' => 'sometimes|required|email'
             ```
         * There may be sometimes where you want to allow a field to be empty. You need to add the nullable validation rule to allow this.
-            ```
+            ```php
             'published_at' => 'nullable|date'
             ``` 
         * **Comparing dates:**
             * If you are trying to compare to dates (start & end), the validation rules could look like this:
-                ```
+                ```php
                 'start' => 'required|date',
                 'end' => 'required|date|after:start',
                 ```
@@ -123,7 +123,7 @@
             * `php artisan make:request UpdateProjectRequest`
             * `UpdateProjectRequest` class
                 * rules method contains all the validation rules exactly the same way as it used to appear in the controller: `return request()->validate(['title'=>'sometimes|required', 'description'=>'sometimes|required', 'notes'=>'nullable']);`
-                    ```
+                    ```php
                     public function rules() {
                         return [
                             'title'=>'sometimes|required', 
@@ -133,7 +133,7 @@
                     }
                     ```
                 * `authorize` method contains all the authorization logic just like how it appeared in the controller `update` method: `$this->authorize('update', $project);`
-                    ```
+                    ```php
                     public function authorize() {
                         return Gate::allows('update', $this->route('project')); 
                         //need to import Illuminate\Support\Facades\Gate
@@ -145,7 +145,7 @@
                         * `Route::patch('/projects/{project}', 'ProjectsController@update');`
             * In the `ProjectsController:update` method, you need to type hint the form request along with the project.
                 * All validation will now occur before the update method is hit when the form request is type hinted.
-                    ```
+                    ```php
                     public function update(UpdateProjectRequest $request, Project $project) { 
                         //both UpdateProjectRequest and Project need to be imported at the top of the class
                         $project->update($request->validated()); 
@@ -156,7 +156,7 @@
                     }
                     ```
             * If you want to change the validation error messages, you can add a `messages` method to the form request class.
-                ```
+                ```php
                 public function messages() {
                     return [
                         'title.required'=>'A title is required', 
@@ -167,39 +167,39 @@
         * **Using multiple error bags:** when there are more than one form on the page and you want to isolate the errors for a specific form
             * Within your form request class, add the following protected property `protected $errorBag = 'formIdentifierName';`
             * To display the errors, just add `formIdentifierName` before any method call on the error bag.
-                ```
+                ```php
                 @if ($errors->formIdentifierName->any()) //checks to see if any errors exist for the error bag formIdentifierName
                 @foreach ($errors->formIdentifierName->all() as $error)
                 ```
             * If you are using a partial to display errors and it can be used for multiple forms, you can make it dynamic by doing:
-                ```
+                ```php
                 @if ($errors->{ $bag ?? 'default' }->any()) //default is the default name of the error bag.
                 @foreach ($errors->{ $bag ?? 'default' }->all() as $error)
                 ```
                 * Then when you are calling the partial in your blade template, add the `$bag` variable if you want to specify something other than default
-                    ```
+                    ```php
                     @include('errors', ['bag' => 'formIdentifierName'])
                     ```
             * If you use named error bags and are performing a test that check if the `sessionHasErrors`, you need to add a third argument to the method, which is the name of the error bag. The second argument of this method is for formatting and is null by default.
-                ```
+                ```php
                 ->assertSessionHasErrors('name of field', null, 'formIdentifierName');
                 ```
                 * The same formatting must be used for the `assertSessionDoesntHaveErrors` method as well.
             * There is another method you can use when dealing with named error bags and `assertSessionHasErrors`. It's called `assertSessionHasErrorsIn` and receives the name of the error bag as the first argument, the keys as the second and formatting as the third.
-                ```
+                ```php
                 ->assertSessionHasErrorsIn('formIdentifierName', 'name of field');
                 ```
     * #### User Registration Form Password Validation
         * It is important that the form field name and id for the password confirmation field be called `password_confirmation` and the regular password field have the name and id of `password`
         * In the `store` method of the `RegistrationController`, the validation rules must specify that you want to use password confirmation. 
-            ```
+            ```php
             $this->validate([ 'password' => 'required|confirmed' ]);
             ```
             Now when the form is validated it will make sure that password and password_confirmation both match
     * #### Mass Assignment
         * This is when you are not explicitly assigning allowed form fields.
         * When the `create()` method is called in a model, it is important to send only the fields you are wanting and not all submitted form fields using `request()->all()`
-            ```
+            ```php
             Post::create([
                 'title' => request('title'),
                 'body' => request('body')
@@ -212,7 +212,7 @@
             * If this is being used it may be more efficient to create your own Model class that extends the Eloquent model class and add this property to that. Then all other model classes will extend the new model class instead of the Eloquent model class and all form fields will be allowed in all models.
 
                 Create a new model
-                ```
+                ```php
                 namespace App;
                 use Illuminate\Database\Eloquent\Model as Eloquent;
 
@@ -221,7 +221,7 @@
                 }
                 ```
                 All other model classes would now extend this model instead of `Illuminate\Database\Eloquent\Model`
-                ```
+                ```php
                 namespace App;
 
                 class Post extends Model {
@@ -233,7 +233,7 @@
         * If you are using `Recaptcha` or need any other `AJAX` functionality within your php scripts, you can use a tool called [Zttp](https://github.com/kitetail/zttp) which is a wrapper for `Guzzle`.
             * Install using `composer require kitetail/zttp`
             * `Zttp` sends `AJAX` requests as `JSON`, so if you need to send as standard form params then you can use the `asFormParams()` method. This is needed when using `Recaptcha`
-                ```
+                ```php
                 $response = Zttp::asFormParams()
                     ->post(
                         'https://www.google.com/recaptcha/api/siteverify', 
@@ -252,7 +252,7 @@
     * `auth()->logout()` logs a user out that is already logged in
     * `auth()->user()->publish(new Post(request(['title','body'])));` would add a new post using the user id and the form fields being passed. Doing this would be in leu of doing a `Post::create( [ 'title' => request('title'), 'body' => request('body'), 'user_id' => auth()->id ] );`
         * There would need to be an added `publish` method in the `User` model class that would receive an instance of `Post`.
-            ```
+            ```php
             public function publish(Post $post) { 
                 $this->posts()->save($post);
             }
@@ -265,7 +265,7 @@
         * If you want a controller to have only guest methods, then a constructor function must be added to the controller responsible for the page in question. `public function __construct() { $this->middleware('guest', [ 'except' => 'destroy' ]); }`. Doing this, will make it only allow access to people that are not logged in. i.e. a login page. However you do not want to remove authentication from the destroy method since this logs a user out.
     * A `SessionsController` can be used to handle logging a user in and out.
         * The controller should have a `store` method that will receive the form request data from a login form. This method can be responsible for redirecting the user back to a login page if the credentials do not match or redirecting to a different page once they've logged in successfully.
-            ```
+            ```php
 			public function store() {
 				if (! auth()->attempt(request(['email', 'password']))) { 
                     return back(); //login page
@@ -275,14 +275,14 @@
             ```
     * If you create your own middleware file `php artisan make:middleware MiddlewareName`, then you need to register it in the `app/http/Kernal.php` file.
         * add the following to the `protected $routeMiddleware` property array
-            ```
+            ```php
             'middle-ware-key-name' => MiddlewareName::class
             ```
             * This is then referenced by using `->middleware('middle-ware-key-name');`
         * Parameters can be passed as well by using a colon after the key name and each param separated by a comma. `->middleware('middle-ware-key-name:param1,param2');`
     * **NEW IN 5.7** There is now a email verification contract that can be used when a user registers
         * In the User.php model, you can add email verification to the process by adding implements MustVerifyEmail to the class declaration.
-            ```
+            ```php
             class User extends Authenticable implements MustVerifyEmail
             ```
         * In the `routes/web.php` there should be an `Auth::routes();` that is created when you run `php artisan make:auth`
@@ -313,7 +313,7 @@
         * You can modify the header of the response
             * `return response('Hello', 200)->header('Content-Type', 'text/plain');`
             * If you are changing several headers then you can either use multiple calls to the `->header` method or do this:
-                ```
+                ```php
                 return response($content)
                     ->withHeaders([
                         'Content-Type' => $type, 
@@ -322,7 +322,7 @@
                     ]);
                 ```
         * You can attach cookies to the response as well:
-            ```
+            ```php
             return response($content)->header('Content-Type', $type)->cookie('name', 'value', $minutes);
             ```
             The above `->cookie` method has a few more available parameters and is basically the same as PHP's `setcookie` method.
@@ -360,7 +360,7 @@
             * `return response()->download($pathToFile)->deleteFileAfterSend();`
     * **File Streaming Responses**
         * The `streamDownload` method can be used to turn a string response into a download response without having to write the contents of the operation to the users disk. The method accepts a callback as the first parameter, the file name as the second and an optional array of headers
-            ```
+            ```php
             return response()->streamDownload(function () { 
                 echo GitHub::api('repo')
                     ->contents()
@@ -381,7 +381,7 @@
 * ### The Global Errors Variable
     * This variable is available to all views and can be populated with different alerts
     * You can set up a simple partial to include in a page view that will display errors if they are present. The below example is using Twitter Bootstrap css for the classes.
-	    ```
+	    ```php
         @if (count($errors)) // OR @if ($errors->any())
 		    <div class=“form-group”>
                 <div class=“alert alert-danger”>
@@ -424,14 +424,14 @@
     * Using the `Archives Sidebar` example from the series, we need to pass, to any view that is using the side bar, the `archives` variable that contains an array of months w/ years that there are archived posts for
         * This view composer is going to be attached to the boot method of the `AppServiceProvider` Service Provider file.
             * inside the `boot` method, the view is passed to the `composer` method when `layouts.sidebar` is loaded. Then the view is loaded with the `archives` variable populated with the results of an `archives` method within the `post` model: 
-                ```
+                ```php
                 \View::composer('layouts.sidebar', function($view) {
                     $view->with('archives', \App\Post::archives());
                 });
                 ```
             * If you want the `archives` variable on multiple pages, you can pass an array of view files in place of `layouts.sidebar`. i.e. `['layouts.sidebar', 'someotherview']`
                 * If you want to share the variable on all views you can:
-                    ```
+                    ```php
                     \View::share('archives', \App\Post::archives()); 
                     ```
                     instead of using the entire statement above. Using this will make the variable available even before the view is loaded, which may cause some problems with tests that run before the view.
@@ -443,7 +443,7 @@
         * This is helpful if you need to reference a class and pass something to it when ever the class is called. i.e
 
             In the `register` method of the `AppServiceProvider.php` file `app\Providers` 
-            ```
+            ```php
             \App:bind('App\Billing\Stripe', function() { 
                 return new \App\Billing\Stripe(config('services.stripe.secret));
             });
@@ -462,7 +462,7 @@
 * ### Eventing
     * Eventing is used to trigger an event on something that is being listened for.
     * Events and their listeners are registered in the `app\Providers\EventServiceProvider.php` file within the `$listen` property. **See further down in this section for automatic event listener discovery if you are using Laravel 5.8.9**
-    ```
+    ```php
     protected $listen = [
         'App\Events\SomeEvent'  => [ 'App\Listeners\SendNotification']
     ];
@@ -474,13 +474,13 @@
     * **Automatic Event Listener Discovery in Laravel 5.8.9**
         * To make this feature work, it needs to be turned on by adding the following to `App\Providers\EventServiceProvider.php`
 
-            ```
+            ```php
             public function shouldDiscoverEvents() {
                 return true;
             }
             ```
         * The following command should be run before deploying to production
-            ```
+            ```php
             php artisan event:cache
             ```
 * ### Model Events
@@ -494,7 +494,7 @@
     * **IMPORTANT TO NOTE:** If a mass update is done via Eloquent, the `saved` and `updated` events are not fired since the models are not actually retrieved.
     * To catch events on a model. 
         * Use the `$dispathedEvents` protected property in the model.
-            ```
+            ```php
             /**
              * The event map for the model.
              *
@@ -509,7 +509,7 @@
     * **Observers**
         * These can be used to listen for fired events on a model. All the events are group together in an `Observer` class. `php artisan make:observer UserObserver --model=User`
         * The observer needs to be registered in the `AppServiceProvider@boot` (JW says to use the EventServiceProvider. Not sure if it is now better to use AppServiceProvider because the [video](https://laracasts.com/series/code-reflections/episodes/1) is from 3/2018) using the `observe` method. `User::observe(UserObserver::class);`
-            ```
+            ```php
             public function boot()
             {
                 parent::boot();
@@ -518,7 +518,7 @@
             }
             ```
             or if you have a lot of observers you can use the `$observers` property to register all observers for a certain model and then loop through them in the `boot` method. Note: all observer class have been imported in the example below
-            ```
+            ```php
             protected $observers = [
                 \App\Thread::class => [
                     ThreadObserver::class,
@@ -616,13 +616,13 @@
         * For example:
 
             You have a route...
-            ```
+            ```php
             Route::get('/{client}/projects/create', 'ProjectsController@create')->name('projects.create');
             ```
             ... and you are using a Policy for Projects and need to access the {client} param in the policy. You'd use `request()->route('client');` within the policy to access the `Client` model.
             
             ProjectPolicy.php
-            ```
+            ```php
             public function create(User $user)
             {
                 $client = request()->route('client');
@@ -668,11 +668,11 @@
             * `$table->primary([ 'post_id', 'tag_id' ])` This makes it so there can never be a duplicate entry where the post id and tag id exist in the same record more than once.
         * The relationship between tags and post is a belongsToMany. This relationship type almost always should be associated with a pivot table
             * In the `Post` model, you would add a `tags` method that references the `Tag` model: 
-                ```
+                ```php
                 public function tags() { return $this->belongsToMany(Tag::class); }
                 ```
             * In the `Tag` model, you would add a `posts` method that references the `Post` model: 
-                ```
+                ```php
                 public function posts() { return $this->belongsToMany(post::class); }
                 ```
             * As stated above, Laravel will normally expect a pivot table to be named the singular name of each table in alphabetical order. If the name of the pivot table differs from this naming convention, then you need to provide the name of the table in the relationship method.
@@ -715,20 +715,20 @@
         * If you don't want to use the default naming convention for the type (i.e. `App\Series` or `App\Collection`). Using the video example above. Instead of having `App\Series` stored in the database, you wanted just `series`. And instead of having `App\Collection` stored in the database, you wanted just `collection`.
             * In `app\providers\AppServiceProvider.php`, with in the `boot` method.
                 * add `use Illuminate\Database\Eloquent\Relations\Relation;` to the top of the document.
-                ```
+                ```php
                 public function boot() { Relation::morphMap( [ 'series' => 'App\Series', 'collection' => 'App\Collection' ] ); }
                 ```
     * **Mutators** - A way to retrieve and modify attributes within a given model. This is used when you'd like to either retrieve a column value and modify it or modify a specific column to have a newly formatted value.
         * You can add a getter for an existing attribute or a new attribute by wording the models method name the following way `getColumnNameAttribute()`, where the `ColumnName` is the `“studly”` case version of the attribute you want. (i.e. `column_name`). If a param is included with the method `getColumnNameAttribute($value)`, then a value will first be passed to the it then it can be returned.
             
             Within the model:
-            ```
+            ```php
             public function getFirstNameAttribute($value) {
                 return ucfirst($value);
             }
             ```
             You can then access the attribute:
-            ```
+            ```php
             $user = App\User::find(1);
             $firstName = $user->first_name; //should return a Capitalized version of the first_name column from the model.
             ```
@@ -737,7 +737,7 @@
         * It is also possible to hook into a model event and then apply a mutator then:
 
             Within the model:
-            ```
+            ```php
             protected static function boot() {
                 parent::boot();
                 static::created(function ($thread) {
@@ -766,13 +766,13 @@
                     * For example: someone is adding a comment to a post.
                         * Set up a route to accept the data from the form being submitted. This would call a `store` method in the `CommentsController`, which would accept an instance of the `Post` model
                         
-                            ```
+                            ```php
                             public function store(Post $post) { 
                                 $post->addComment(request('body')); 
                             }
                             ```
                         * Now the `Post` model will actually handle adding the comment to the database. The `store` method, in the `CommentsController` will call an `addComment` method in the `Post` model and pass it any of the request data needed. In this case it would be just the `body` field from the form. The `addComment` method now just needs to call it's own `comments` method followed by the `create` method with the body being passed as a parameter. All the relationship info is handled by Laravel.
-                            ```
+                            ```php
                             public function addComment($body) {
                                 $this->comments()->create([
                                     'body' => $body
@@ -830,7 +830,7 @@
         * Within a model you can use the `protected $casts` property to tell laravel how certain fields should be handled. i.e. `'confirmed' => 'boolean'`
             * Allowed cast types: `integer, real, float, double, string, boolean, object, array,  collection, date, datetime, and timestamp`
         * By default, pivot tables do not record timestamps when the record is created through a relationship. If you want timestamps you need to use the `withTimestamps()` method on the relationship.
-            ```
+            ```php
             public function tags() { return $this->belongsToMany(Tag::class)->withTimestamps(); }
             ```
 * ### Queues & Job Dispatching
@@ -840,18 +840,18 @@
     * The `config/queue.php` file contains all the queue drivers. Redis is a good option to use for queuing.
         * To use `redis`, change the `QUEUE_CONNECTION` key, in the `env` file, to `redis`.
         * An additional package is required if using redis called `predis`.
-            ```
+            ```php
             composer require predis/predis
             ```
     * **Adding a job to a queue**
         * Use the `dispatch` helper function. This accepts either a closure or a dedicated class
-            ```
+            ```php
             dispatch(function() {
                 logger('Hello There!');
             });
             ```
         * A job can also be delayed by using `->delay`
-            ```
+            ```php
             dispatch(function() {
                 logger('Hello There!');
             })->delay(now()->addMinutes(2));
@@ -859,18 +859,18 @@
             ```
     * **Starting a worker to handle executing the jobs in the queue**
         * There is a artisan command that starts a worker as a daemon (loads it into memory) that needs to continue running to process any dispatched jobs
-            ```
+            ```php
             php artisan queue:work
             ```
         * You can also use the `listen` command but that only listens to jobs being added to a given queue. Use `php artisan help queue:listen` for more detail.
         * See the section below on Failed Jobs, to see how to limit the worker to a certain number of tries or to use a timeout. If you don't and an exception is thrown when dispatching the job, it will keep retrying to run the job, which can fill up log files or overload the daemon running.
     * **Job Classes & Daemons**
         * `Artisan` command to create a job class
-            ```
+            ```php
             php artisan make:job JobClassName
             ```
             * If you want the job to run syncronously then you need to use the `--sync` switch
-                ```
+                ```php
                 php artisan make:job JobClassName --sync
                 ```
                 * By default the created class will implement the `ShouldQueue` contract that tells Laravel that the job should not be syncronous unless you use the `--sync` switch. In this case the contract isn't implemented.
@@ -879,18 +879,18 @@
             * Using the above example of the logger.
 
                 The created job class
-                ```
+                ```php
                 public function handle() 
                 {
                     logger('Hello There!');
                 }
                 ```
         * To dispatch a job class you can still use the dispatch helper but instead of using a closer you would new up the created job class
-            ```
+            ```php
             dispatch(new JobClassName);
             ```
             * Since the JobClassName class uses a trait called `Dispatchable`, you can also use the following to add the job to a queue, instead of using the `dispatch` helper method. JW said this may be a more clean & readable approach.
-                ```
+                ```php
                 JobClassName::dispatch($user);
                 // does the same as dispatch(new JobClassName($user));
                 ```
@@ -898,12 +898,12 @@
         * The job class also imports a trait called `SerializeModels`, which is important when using models within the job class that are being passed in via the `contructor`. Laravel uses this trait to only adds the id of the model to the queued job when it is added but will pull in a fresh copy of the corresponding model from the database based on that id, when the job is dispatched. This allows you to use the model in normal ways as seen in the `handle` method below.
 
             Where ever the job is being dispatched
-            ```
+            ```php
             $user = App\User::first();
             dispatch(new JobClassName($user));
             ```
             Within the JobClassName file
-            ```
+            ```php
             protected $user;
 
             public function __construct(User $user) // import App\User at the top of the class
@@ -918,23 +918,23 @@
             }
             ```
         * It is important to note that if you make large changes to a job class (type hinting a class into the `handle` method for example) and you already have a worker running, the worker needs to be restarted since it is already loaded into memory and won't reflect any of the changes made.
-            ```
+            ```php
             php artisan queue:restart
             ```
     * **Failed Jobs**
         * It's important to set limits on any running worker or listener
 
             Only try to run the job 3 times. The default is no limit or 0
-            ```
+            ```php
             php artisan queue:work --tries=3
             ```
             Only retry to run the job for 20 seconds. The default is 60.
-            ```
+            ```php
             php artisan queue:work --timeout=20
             ```
         * Where do failed jobs go
             * A failed job is stored in the database within a failed jobs table. Run the following artisan command to add a migration to this table up.
-                ```
+                ```php
                 php artisan queue:failed-table
 
                 php artisan migrate
@@ -943,15 +943,15 @@
             * After you have found the problem, you can try to have it retry the job again by using this artisan command. You can have the command retry all failed jobs or just one. If you want just one, then you need the id of the job from the failed jobs table.
 
                 Retry all failed jobs
-                ```
+                ```zsh
                 php artisan queue:retry all
                 ```
                 Retry the first failed job in the database with an id of 1
-                ```
+                ```zsh
                 php artisan queue:retry 1
                 ```
                 * The above command only removes the job from the failed_jobs table and adds it back to the queue. You need to make sure that you start up the worker again if it isn't running.
-                    ```
+                    ```zsh
                     php artisan queue:work
                     ```
     * **Laravel Horizon**
@@ -960,26 +960,26 @@
             * Installation:
                 
                 You need to make sure that `redis` is assigned to the `QUEUE_CONNECTION` key in your `env` file as noted above.
-                ```
+                ```zsh
                 composer require laravel/horizon
                 php artisan horizon:install
                 ```
                 Create the failed jobs migration
-                ```
+                ```zsh
                 php artisan queue:failed-table
                 php artisan migrate
                 ```
             * Updating:
                 * Make sure to read the [upgrade guide](https://github.com/laravel/horizon/blob/master/UPGRADE.md)
                 * Republish all the assets
-                    ```
+                    ```zsh
                     php artisan horizon:assets
                     ```
         * Once Horizon is installed, you can check out the `config/horizon.php` file or the `HorizonServiceProvider.php` file in the `app/Providers` directory.
             * The service provider has a `boot` method that contains all the notifications you'd like to set up
             * There is also a `gate` method that allowd you to add all of your authorization logic.
                 * By default, anyone can access the dashboard when the environment is local. However, if it is in production, you should add the email address of authorized users to the gate method. This way, you will be required to login if the site is in production.
-                    ```
+                    ```php
                     protected function gate()
                     {
                         Gate::define('viewHorizon', function ($user) {
@@ -991,25 +991,25 @@
                     ```
         * To access your dashboard, simply go to the domain followed by `/horizon`. i.e. `http://mydomain.test/horizon`
         * To actually start horizon you need to run the following artisan command. Think of this command as a variant to `queue:work` among other horizon specific operations.
-            ```
+            ```zsh
             php artisan horizon
             ```
             This command needs to be rerun any time a code change is made to the jobs class.
             
             To pause or continue horizon, use:
-            ```
+            ```zsh
             php artisan horizon:pause
             php artisan horizon:continue
             ```
             You can gracefully terminate the horizon process, which will execute any jobs that are currently being processed then exit
-            ```
+            ```zsh
             php artisan horizon:terminate
             ```
         * **Tags**
             * Tags can be used to help track down certain running jobs. You can check for currently tracked tags by clicking the Monitoring link on the side of you Horizon dashboard. Here you can add a new tag to monitor.
             * By default horizon will tag a job with the id of a model (if one is being used). Using the example above where we were passing in a User model to the job class constructor, the tag would be App\User:{id}
             * You can manually add tags to a job class by adding a tags method to the class
-                ```
+                ```php
                 public function tags()
                 {
                     return ['tag1', 'tag2'];
@@ -1018,23 +1018,23 @@
     * **Multiple Queues**
         * You can set the default queue name by updating the `queue` key in the `config/queue.php` file. It is set to `default` by default. To change the default queue name for `redis`, use the `REDIS_QUEUE` key in your `env` file.
         * You can also set a queue name when you are adding a job to a queue by using the `onQueue` method. This works because the job class uses the `Queueable` trait.
-            ```
+            ```php
             JobClassName::dispatch($user)->onQueue('high'); // adds the job to a queue named "high"
             ```
         * The queue name for a job is shown in the Horizon dashboard
         * If you are not using horizon and you want the queue worker to only execute a certain queue name, use the following artisan command. It is possible to run multiple workers that are handling different queues.
-            ```
+            ```zsh
             php artisan queue:work --queue="default"
             ```
             You may also specify and order in which you want the queues executed. Below, the high queue is executed before the default. This will also pertain to future jobs while the worker is running
-            ```
+            ```zsh
             php artisan queue:work --queue="high,default"
             ```
         * If you are using Horizon, and you want it to handle multiple queues, you need to update the queue array under the local & production sections of the config/horizon.php file.
     * **Using the Database Driver instead of the Redis driver**
         * The `QUEUE_CONNECTION` key needs to be updated to use the `database` driver. `QUEUE_CONNECTION=database`
         * The queue database table migration needs to be created.
-            ```
+            ```zsh
             php artisan queue:table
             php artisan migrate
             ```
@@ -1045,7 +1045,7 @@
     * In `app/Http/Kernel.php` there is the `$middleware` property. Consider this a list of pipes that Laravel will send the request through. Each middleware class has a `handle` method, which is required to be used as a pipe. A string, object, class or array can be sent through a pipe. Below is a basic example of how the Pipeline system can be used to modify some sort of input. In the example, we are using closures but a class can be used as long as it has a `handle` method.
         
         `routes/web.php`
-        ```
+        ```php
         Route::get('/', function() {
             $pipeline = app(Pipeline::class);
 
@@ -1073,14 +1073,14 @@
 * ### Scheduling
     * Queued jobs or commands can be executed on a schedule.
     * The only thing that needs to be added to the server to have Laravel execute a schedule is the following cron
-        ```
+        ```zsh
         * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
         ```
     * Schedules are defined in the `App\Console\Kernal.php` file.
         * All scheduled tasks are all defined in the `schedule` method
             
             A scheduled task using a closure with the `call` method. The `->daily()` method is executed every day at midnight.
-            ```
+            ```php
             protected function schedule(Schedule $schedule)
             {
                 $schedule->call(function () {
@@ -1089,29 +1089,29 @@
             }
             ```
             An invokable object can also be used. (Invokable objects contain the magic method `__invoke`, which is called when a script tries to call an object as a function. See [Php.net](https://secure.php.net/manual/en/language.oop5.magic.php#object.invoke) for more info.)
-            ```
+            ```php
             $schedule->call(new DeleteRecentUsers)->daily();
             ```
             Artisan commands can also be scheduled by using the `command` method. These commands can be called with either the command name or the class
-            ```
+            ```php
             $schedule->command('emails:send Taylor --force')->daily();
 
             $schedule->command(EmailsCommand::class, ['Taylor', '--force'])->daily();
             ```
             Scheduling Queued Jobs using the `jobs` method.
-            ```
+            ```php
             $schedule->job(new Heartbeat)->everyFiveMinutes();
 
             // Dispatch the job to the "heartbeats" queue...
             $schedule->job(new Heartbeat, 'heartbeats')->everyFiveMinutes();
             ```
             Scheduling Shell Commands using the `exec` method.
-            ```
+            ```php
             $schedule->exec('node /home/forge/script.js')->daily();
             ```
         * Schedule frequency options. See [docs](https://laravel.com/docs/master/scheduling#schedule-frequency-options) for list
             * These options allow for more fine tuned scheduling
-                ```
+                ```php
                 // Run once per week on Monday at 1 PM...
                 $schedule->call(function () {
                     //
@@ -1125,37 +1125,37 @@
                         ->between('8:00', '17:00');
                 ```
                 Note the `between` method above. This can be used to specify a time range. The inverse of `between` is `unlessBetween`.
-                ```
+                ```php
                 $schedule->command('reminders:send')
                     ->hourly()
                     ->unlessBetween('23:00', '4:00');
                 ```
                 The `when` method can be used to execute a task based on a given truth.
-                ```
+                ```php
                 $schedule->command('emails:send')->daily()->when(function () {
                     return true;
                 });
                 ```
                 The inverse of `when` is `skip`.
-                ```
+                ```php
                 $schedule->command('emails:send')->daily()->skip(function () {
                     return true;
                 });
                 ```
                 Environment constraints can also be used, by using the `environments` method.
-                ```
+                ```php
                 $schedule->command('emails:send')
                     ->daily()
                     ->environments(['staging', 'production']);
                 ```
                 The `timezone` method can be used to specify how times are evaluated. It is important to note that since some timezone utilize Daylight Savings, certain tasks may be executed twice or not at all on change over days. This method should be used with caution.
-                ```
+                ```php
                 $schedule->command('report:generate')
                     ->timezone('America/New_York')
                     ->at('02:00');
                 ```
                 If all task should be executed based on the same timezone then you can use `scheduleTimezone` method to set the timezone to be used for all scheduled tasks.
-                ```
+                ```php
                 /**
                 * Get the timezone that should be used by default for scheduled events.
                 *
@@ -1167,44 +1167,44 @@
                 }
                 ```
             * To prevent tasks from overlapping (executing a new task while another is still running), use the `withoutOverlapping` method. This method prevents a new task starting until the previously running task has been completed (unlocked). By default tasks are locked for 24 hours, which can be overridden by passing the number of minutes to the `withoutOverlapping` method.
-                ```
+                ```php
                 $schedule->command('emails:send')->withoutOverlapping();
 
                 $schedule->command('emails:send')->withoutOverlapping(10);
                 ```
             * Tasks are run sequentially, so if you have multiple tasks running at the same time and some may take longer than others, later tasks may be executed much later than desired. To avoid this and run the task in the background asynchronous, then use the `runInBackground` method.
-                ```
+                ```php
                 $schedule->command('analytics:report')
                     ->daily()
                     ->runInBackground();
                 ```
             * By default, tasks are not executed in maintenance mode. If you need to have task run even when the project is in maintenance mode, then you need to use the `evenInMaintenanceMode` method.
-                ```
+                ```php
                 $schedule->command('emails:send')->evenInMaintenanceMode();
                 ```
         * Task Output
             * If you are using the `command` or `exec` methods then you can have the output of the task sent via different methods.
 
                 `sendOutputTo` method sends the task output to a file.
-                ```
+                ```php
                 $schedule->command('emails:send')
                     ->daily()
                     ->sendOutputTo($filePath);
                 ```
                 `appendOutputTo` method appends the task output to a file.
-                ```
+                ```php
                 $schedule->command('emails:send')
                     ->daily()
                     ->appendOutputTo($filePath);
                 ```
                 `emailOutputTo` method outputs the task to a given email address. Make sure the Laravel email services are configured.
-                ```
+                ```php
                 $schedule->command('emails:send')
                     ->daily()
                     ->emailOutputTo('foo@example.com');
                 ```
                 To send an email only if the task fails, use `emailOnFailure` method.
-                ```
+                ```php
                 $schedule->command('emails:send')
                     ->daily()
                     ->emailOnFailure('foo@example.com');
@@ -1215,7 +1215,7 @@
             * Task can ping a server to announce the task is coming or that it has completed.
                 * Ping hooks: `pingBefore`, `thenPing`, `pingBeforeIf`, `thenPingIf`, `pingOnSuccess`, `pingOnFailure`
                 * All ping hooks require the Guzzle HTTP library.
-                    ```
+                    ```zsh
                     composer require guzzlehttp/guzzle
                     ```
 * ### Sessions
@@ -1262,7 +1262,8 @@
         * Create `Laracast/src/stubs` directory
             * Create `Laracasts/src/stubs/webpack.mix.js`
 
-                ```let mix = require('laravel-mix');
+                ```js
+                let mix = require('laravel-mix');
                 require('laravel-mix-tailwind');
                 mix
                     .js('resources/assets/js/app.js', 'js')
@@ -1273,7 +1274,8 @@
                     * `require('./bootstrap');`
                 * Create `Laracasts/src/stubs/bootstrap.js`
                     
-                    ```window.axios = require('axios');
+                    ```js
+                    window.axios = require('axios');
                     window.axios.defaults.header.common['X-Requested-With'] = 'XMLHttpRequest';
                     let token = document.head.querySelector('meta[name=“csrf-token”]');
                     if (token) { 
@@ -1295,7 +1297,7 @@
             * The new command for the preset can be added to the `boot` method.
                 
                 add 
-                ```
+                ```php
                 PresetCommand::macro('Laracasts', function($command) { 
                     Preset::install(); 
                     $command->info('Laracast Preset applied successfully! Please recompile your assets.'); 
@@ -1306,7 +1308,8 @@
             * Now you should be able to use the command `php artisan preset Laracasts`
         * Create a `Laracasts/src/Presets.php` file
             
-            ```namespace Laracasts;
+            ```php
+            namespace Laracasts;
             use Illuminate\Support\Arr;
             use Illuminate\Foundation\Console\Presets\Preset as LaravelPreset;
             use Illuminate\Support\Facades\File;
@@ -1353,25 +1356,25 @@
 * ### Debugging with Laravel Telescope (Requires Laravel 5.7.7+)
     * <https://github.com/laravel/telescope>
     * **Install & Setup**
-        ```
+        ```zsh
         composer require laravel/telescope --dev
         php artisan telescope:install
         php artisan migrate
         ```
     * **Updating Telescope**
         * Need to republish the Telescope vendor assets
-            ```
+            ```zsh
             php artisan vendor:publish --tag=telescope-assets --force
             ```
     * **Usage**
         * Access the Telescope dashboard at `{project-url}/telescope` in a browser. By default this is only available in the local dev environment. See documentation for details on adding access in a production environment.
     * **Miscellaneous**
         * The telescope_entries table in the database can accumulate data very quickly.
-            ```
+            ```zsh
             php artisan telescope:prune
             ```
         * It is recommended to prune the database tables and schedule this action. Not sure how to implement this
-            ```
+            ```php
             $schedule->command('telescope:prune')->daily();
             ```
 * ### General notes
@@ -1393,7 +1396,7 @@
     * If you are using model events and you are performing an sql action in a method, then the event may not fire unless you create a collection first.
         * For example: You have an `unfavorite()` method that performs a sql query to delete all the records for an action. `$this->favorites()->where( [ 'user_id' => auth()->id() ])->delete().` This won't fire any events since a model collection is not being made first.
         * Instead use 
-            ```
+            ```php
             $this->favorites()
                 ->where(['user_id' => auth()->id()])
                 ->get()->each(function ($favorite) { 
@@ -1403,7 +1406,7 @@
             This will fire a deleting event for every favorite in the collection because `get()` was used to create the model collection.
             
             You can also use a `higher order collection` (or higher order messaging <https://laravel.com/docs/master/collections#higher-order-messages>) by calling each as a property and not a method. 
-            ```
+            ```php
             $this->favorites()
                 ->where([ 'user_id' => auth()->id()])
                 ->get()
@@ -1414,7 +1417,7 @@
         * <https://github.com/stevebauman/purify>
     * It can be useful to have certain Laravel attributes available to javascript. For example: the csrf token value, or the authenticated user model or if the user is signed in or not, etc....
         * Add the following to a script tag within the head of `resources/views/layouts/app.blade.php`
-            ```
+            ```js
             window.App = {
                 !! json_encode([
                     'csrfToken' => csrf_token(), 
@@ -1437,7 +1440,7 @@
             * use the user & password that is setup with mysql
         * Once you've connected type `create database {dbname};` Make sure to include the `;`
             * The dbname should be in snake case
-                ```
+                ```zsh
                 create database my_new_database;
                 ```
         * If you need to use the db right now you can type `use {dbname};`
@@ -1481,7 +1484,7 @@
                     * `use Facades\Tests\Setup\ProjectFactory;`
                     * If you include `Facades\` before a class then Laravel will automatically import it as if it were a static class or normal facade.
     * When running `PHPUnit` tests, you may encounter an apostrophy is created while using `$faker->name`, `$fake->sentence`, etc. Since blade templates escape strings, the apostrophy will be converted to `&#039;`. Use the special e() helper function to escape the string in your tests as well.
-        ```
+        ```php
         $this->get(route('clients.index'))
             ->assertSee(
                 e($client->name)
@@ -1491,20 +1494,20 @@
     * Use the `extract` method to make webpack create a separate js file for all your vendor js and keep your js separate.
         * `mix.js('resources/js/app.js', 'public/js').extract();`
         * In your template file, make sure to include all three created js files.
-            ```
+            ```html
             <script src="/js/manifest.js"></script>
             <script src="/js/vendor.js"></script>
             <script src="/js/app.js"></script>
             ```
     * You can also `version` the assets so the cache can be force updated when needed.
-        ```
+        ```js
         mix.js('resources/js/app.js', 'public/js')
             .sass('resources/sass/app.scss', 'public/css')
             .extract()
             .version();
         ```
         * You now need to reference the version files using the `mix` helper function. Both the css and js files need to use the helper function.
-            ```
+            ```html
             <script src="{{ mix('js/app.js') }}"></script>
             <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css') }}">
             ```
@@ -1524,7 +1527,7 @@
         * @import "custom";
         * @import "node_modules/bootstrap/scss/bootstrap";
         * Amend resources/assets/js/bootstrap.js:
-            ```
+            ```js
             try {
                 window.$ = window.jQuery = require('jquery');
                 window.Tether = require('tether');
