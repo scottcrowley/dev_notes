@@ -77,37 +77,40 @@
     * To change how many lines are shown in the terminal scroll history, set the following in the `settings.json` file: `"terminal.integrated.scrollback": 5000,` The `5000` is a suggestion only.
     * To make it so VSC ignore the native full screen mode used in Mac OS, use: `"window.nativeFullScreen": false,`
 * ### Useful Extensions:
-    * `advanced-new-file` - patbenatar
-    * `File Utils` - Leistner Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
-    * `PHP Intelephense` - Ben Mewburn
-    * `Vim` - vscodevim
-    * `snippet-creator` - nikitaKunevich
-    * `Laravel Artisan` - Ryan Naddy
-    * `Better PHPUnit` - calebporzio
-    * `php cs fixer` - junstyle
-    * `Vetur` - Pine Wu
-    * `Import Cost` - Wix
-    * `ESLint` - Dirk Baeumer
-    * `Laravel Blade Snippets` - Winnie Lin
-    * `Php DocBlock Generator` - vincentkos ***FOUND ON MY OWN***
-    * `Quick and Simple Text Selection` - David Bankier ***FOUND ON MY OWN***. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
-    * `Markdown Preview Enhanced` - Yiyi Wang ***FOUND ON MY OWN***  Useful for adding addition features to markdown files
-    * `stylelint` - Shinnosuke Watanabe ***FOUND ON MY OWN***. Use this if using tailwind.css. See note in the Miscellaneous Settings
-    * `Tailwind CSS IntelliSense` - Brad Cornes ***FOUND ON MY OWN***. Use this if using tailwind.css. Autocomplete for tailwind classes
-    * `Tailwind sass syntax` - Maciej Ładoś ***FOUND ON MY OWN***. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
-    * `Vue VSCode Snippets` - sarah.drasner ***FOUND ON MY OWN***. Helpful snippets when using vue.
+    * `advanced-new-file` - *patbenatar*
+    * `File Utils` - *Leistner* Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
+    * `PHP Intelephense` - *Ben Mewburn*
+    * `Vim` - *vscodevim*
+    * `snippet-creator` - *nikitaKunevich*
+    * `Laravel Artisan` - *Ryan Naddy*
+    * `Better PHPUnit` - *calebporzio*
+    * `php cs fixer` - *junstyle*
+    * `Vetur` - *Pine Wu*
+    * `Import Cost` - *Wix*
+    * `ESLint` - *Dirk Baeumer*
+    * `Laravel Blade Snippets` - *Winnie Lin*
+    * `Php DocBlock Generator` - *vincentkos* ***FOUND ON MY OWN***
+    * `Quick and Simple Text Selection` - *David Bankier* ***FOUND ON MY OWN***. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
+    * `stylelint` - *Shinnosuke Watanabe* ***FOUND ON MY OWN***. Use this if using tailwind.css. See note in the Miscellaneous Settings
+    * `Tailwind CSS IntelliSense` - *Brad Cornes* ***FOUND ON MY OWN***. Use this if using tailwind.css. Autocomplete for tailwind classes
+    * `Tailwind sass syntax` - *Maciej Ładoś* ***FOUND ON MY OWN***. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
+    * `Vue VSCode Snippets` - *sarah.drasner* ***FOUND ON MY OWN***. Helpful snippets when using vue.
         * `vmethod` - sets up the methods object within the vue instance
         * `vbase` - sets up the document from scratch
         * `vcreated` - sets up the created method
         * many more available
-    * `PHP Extension Pack` - Felix Becker Must have PHP extension pack
-    * `Auto Rename Tag` - Jun Han ***FOUND ON MY OWN*** Renames paired HTML tags
-    * `Auto-Open Markdown Preview` - hnw ***FOUND ON MY OWN*** Automatically opens side panel with Markdown preview
-    * `IntelliSense for CSS class names in HTML` - Zignd ***FOUND ON MY OWN*** CSS classname completion
-    * `Sass` - Robin Bentley ***FOUND ON MY OWN*** Indented Sass syntax highlighting, autocomplete & snippets
+    * `PHP Extension Pack` - *Felix Becker* Must have PHP extension pack
+    * `Auto Rename Tag` - *Jun Han* ***FOUND ON MY OWN*** Renames paired HTML tags
+    * `Auto-Open Markdown Preview` - *hnw* ***FOUND ON MY OWN*** Automatically opens side panel with Markdown preview
+    * `IntelliSense for CSS class names in HTML` - *Zignd* ***FOUND ON MY OWN*** CSS classname completion
+    * `Sass` - *Robin Bentley* ***FOUND ON MY OWN*** Indented Sass syntax highlighting, autocomplete & snippets
+    * `Markdown Preview Enhanced` - *Yiyi Wang* ***FOUND ON MY OWN*** Added markdown functionality
+    * `Markdown Preview Github Styling` - *Matt Bierner* ***FOUND ON MY OWN*** Makes markdown previews look like Github
+    * `Markdown Vue` - *donaldshen* ***FOUND ON MY OWN*** Formats vue code blocks in markdown files. Does not style the preview though
+    * `GitLens` - *Eric Amodio* Adds additional Github functionality
 * ### UI Extensions:
-    * `Slime Theme` - smlombardi
-    * `vscode-icons` - VSCode Icons Team
+    * `Slime Theme` - *smlombardi*
+    * `vscode-icons` - *VSCode Icons Team*
 * ### Useful Tips:
     * To allow files to be opened in Code via the terminal: This will add Code to your Path
         * Open the Command Palette (`shift+cmd+p`) then type `shell command`
