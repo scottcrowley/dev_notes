@@ -201,7 +201,7 @@
                     <!-- Example 2 -->
                     <dropdown classes="w-full">
                         <template v-slot:trigger>
-                            <button class="text-blue-500">Example With Full Width Menu<button>
+                            <a class="text-blue-500">Example With Full Width Menu<button>
                         </template>
 
                         <li><a href="#" class="pl-2 pr-8 leading-loose text-xs block hover:bg-gray-900">Edit</a></li>
@@ -346,6 +346,142 @@
                 <script src="/js/app.js"></script>
             </body>
             </html>
+            ```
+    * **Modals and Custom Vue Plugins** - [Episode #4](https://laracasts.com/series/practical-vue-components/episodes/4)
+        * This example expands on the [Modern CSS for Backend Developers:Modals with Zero JavaScript](https://laracasts.com/series/modern-css-for-backend-developers/episodes/17) CSS example of making a modal with no javascript. Now JW shows how to add the concept to have it reside in a Vue component.
+            
+            ***`resources/js/components`***
+            ```vue
+            <template>
+                <div :id="name" class="overlay text-left">
+                    <a href="#" class="cancel"></a>
+
+                    <div class="modal">
+                        <slot></slot>
+
+                        <footer class="flex mt-8">
+                            <slot name="footer"></slot>
+                        </footer>
+
+                        <a href="#" class="close">&times;</a>
+                    </div>
+                </div>
+            </template>
+
+            <script>
+                export default {
+                    props: ['name']
+                }
+            </script>
+
+            <style>
+                .overlay {
+                    visibility: hidden;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(0, 0, 0, .4);
+                    transition: opacity .3s;
+                    opacity: 0;
+                }
+
+                .overlay:target {
+                    visibility: visible;
+                    opacity: 1;
+                }
+
+                .modal {
+                    position: relative;
+                    width: 500px;
+                    max-width: 80%;
+                    background: white;
+                    border-radius: 4px;
+                    padding: 2.5em;
+                    box-shadow: 0 5px 11px rgba(36, 37, 38, 0.08);
+                }
+
+                .modal .close {
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    color: grey;
+                    text-decoration: none;
+                }
+
+                .overlay .cancel {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                }
+            </style>
+            ```
+            ***`resources/views/modal.php`***
+            ```html
+            <!doctype html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+                <title>Modal</title>
+
+                <style> body { font-family: sans-serif; } </style>
+            </head>
+
+            <body class="p-10">
+                <div id="app" class="text-center">
+                    <h1 class="text-2xl font-bold mb-8">Modal</h1>
+
+                    <p>
+                        <a href="#cancel-modal" class="text-blue-500 underline">Open Modal</a>
+                    </p>
+
+                    <modal name="cancel-modal">
+                        <h1 class="font-bold text-xl mb-2">Leaving So Soon?</h1>
+
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore.
+                        </p>
+
+                        <template v-slot:footer>
+                            <a href="#" class="bg-gray-500 py-2 px-4 rounded-lg text-white hover:bg-gray-600 mr-2">Cancel</a>
+                            <a href="#confirm-cancel-modal" class="bg-blue-500 py-2 px-4 rounded-lg text-white hover:bg-blue-600" >Confirm Cancellation</a>
+                        </template>
+                    </modal>
+
+                    <modal name="confirm-cancel-modal">
+                        <h1 class="font-bold text-xl mb-2">You're 100% Sure?</h1>
+
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore.
+                        </p>
+
+                        <template v-slot:footer>
+                            <a href="#" class="bg-gray-500 py-2 px-4 rounded-lg text-white hover:bg-gray-600 mr-2">Cancel</a>
+                            <a href="#" class="bg-blue-500 py-2 px-4 rounded-lg text-white hover:bg-blue-600">Yes</a>
+                        </template>
+                    </modal>
+                </div>
+
+                <script src="/js/app.js"></script>
+            </body>
+            </html>
+            ```
+            ***`resources/js/app.js`***
+            ```js
+            import Modal from './components/Modal';
+
+            Vue.component('modal', Modal);
             ```
 * ### Custom Input Example:
     * Say you want to be able to reuse an input that has validation logic, sanitizing, etc attached to it. i.e. `<coupon></coupon>` instead of `<input type="text" v-model="coupon">`

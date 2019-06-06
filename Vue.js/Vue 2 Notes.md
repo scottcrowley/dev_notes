@@ -237,9 +237,9 @@
         * **Named slots:**
             * `Named slots` and regular `slots` (without a name), can be used together in a template.
             * The `slot` tag, within the component, can be given a `name` attribute. i.e. `<slot name="header"></slot>`
-            * To use the named slot within the component tag, you can do 1 of the following:
+            * To use the named slot within the component tag, you can do 1 of the following if using **`Vue.js < 2.6`**:
                 * You can just use the `slot` attribute and provide the `name` of the `slot` you want. i.e. 
-                ```vue
+                ```html
                 <component-name>
                     <div slot="header">Content Here</div>
                 </component-name>
@@ -247,6 +247,20 @@
                 This will inject the `div` tag within the component template where the `slot` tag is located within the template. This may not be what you want. For example: you have the slot tag located within a `p` tag in your template. You wouldn't want to inject the entire div tag into the `p` tag. You would want to just inject the the content by itself. See next option below.
                 
                 * You can use a `template` tag with the `slot` attribute to just insert the content into the `slot` without using the enclosing tag itself. i.e. `<template slot="header">Content here</template>`
+            * If you are using **`Vue.js >= 2.6`** then there is a new syntax to use. The `v-slot` directive followed by `:slot-name`, which now needs to be within a `<template>` tag instead of a regular tag like a `div`.
+                ```html
+                <component-name>
+                    <template v-slot:header>Content Here</template>
+                </component-name>
+                ```
+                Using this method also allows for props to be sent to the slot by adding ="" to the v-slot directive. To pass a `foo` variable to the `slot` from a `blade` template you use `{ }`
+                ```html
+                <template v-slot:header="{ foo }">Content Here</template>
+                ```
+                Then on the slot itself you need to accept the variable being passed in
+                ```html
+                <slot name="header" foo=""></slot>
+                ```
         * **Default values in slots.**
             * If you put something within the `slot` tag in your template and then don't provide any content for the `slot`, when calling the component, then the content in the `slot` tag will be used when rendering the component
                 * This also works for named `slots` as well.
@@ -414,9 +428,49 @@
     * To access the `key` value in a `v-for` loop (`v-for="(item, index) in items" :key="index"`) you need to use `$node`. i.e. `this.$node.key`.
     * If you are simply creating a Vue project and not using Laravel, you can use `cue-loader` to help create the project and do all the `ecmascript` conversions. It also allows you to use the `.vue` component files.
         * <https://vue-loader.vuejs.org/>
-    * To register a Vue plugin, you need to add the following to you `app.js` file or the `bootstrap.js` file. (Using `Portal Vue` for this example. See below for details on the plugin.
-        * `import PortalVue from 'portal-vue';`
-        * `Vue.use(PortalVue);`
+    * To register a Vue plugin, you need to add the following to you `app.js` file or the `bootstrap.js` file. 
+        * (Using `Portal Vue` for this example. See below for details on the plugin.
+            * `import PortalVue from 'portal-vue';`
+            * `Vue.use(PortalVue);`
+        * Another example would be to use the modal example from [Practical Vue Components:Modals and Custom Vue Plugins](https://laracasts.com/series/practical-vue-components/episodes/4) ~14:00 min into video is where he talks about the plugin. In this example JW is converting a Vue component for a modal to a plugin. See the Vue 2 Examples.md file for more details on the Vue component being used.
+            * *`resources/js/app.js`*
+                ```js
+                import Modal from './plugins/modal/ModalPlugin';
+                Vue.use(Modal);
+                ```
+            * Create a `resources/js/plugins` directory and then add a `modal` directory.
+                * Within the modal directory add
+                    * `Component.vue` - contains all the content from the previously made modal component
+                    * `ModalPlugin.js` - Vue will call an `install` method on the file added via the `Vue.use(Modal);`. So this file must `export` an object with an `install` method in it. The `install` method will receive a Vue instance along with any passed in options.
+                        ```js
+                        import Component from './Component';
+
+                        let Plugin = {
+                            install: function(Vue, options = {}) {
+                                Vue.component('modal', Component); //registers the global component
+
+                                Vue.prototype.$modal = {
+                                    show(name) {
+                                        location.hash = name;
+                                    }
+
+                                    hide(name) {
+                                        location.hash = '#';
+                                    }
+                                }
+                            }
+                        };
+
+                        export default Plugin;
+                        ```
+                        Using `Vue.prototype` allows us to use `$modal` when accessing the plugin. For example: You want to use a `buttom` tag instead of an `a` tag, but `button` tags don't allow for `href`'s. So instead of using 
+                        ```html
+                        <a href="#">Cancel</a>
+                        ```
+                        You could use the following. This will send the name of the modal you want to close or hide to the $modal prototype.
+                        ```html
+                        <button @click="$modal.hide('cancel-modal')">Cancel</button>
+                        ```
     * There is a plugin called [Portal Vue](https://github.com/LinusBorg/portal-vue) that allows you to render a template anywhere in the dom
         * This is handy to if you want to keep all parts of component in the same `.vue` file but need part of the component to render somewhere else on the page.
         * The example from the series has a mega menu being rendered later after a nav section but the section template is stored with the template that displays the link to activate the menu.

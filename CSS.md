@@ -62,6 +62,13 @@
 * ### Miscellaneous CSS add-ons & plugins
     * `Custom Margin & Padding` helper utilities. James Furey <https://github.com/furey>
 * ### How-to's
+    * #### Having an element be hidden if there is not content within it.
+        * This can be useful in a Vue component slot that may or may not have content in it. e.g. the component has a slot named footer within a footer tag. You can assign the :empty psuedo class to the footer element, which will be hidden if there is no content within it.
+            ```css
+            footer:empty {
+                display: none;
+            }
+            ```
     * #### Modal with zero Javascript
         * How to create a modal without using any javascript at all and using `Blade Components` to make it reuseable. This works by using anchor tags and the `:target` psuedo class to toggle visibility.
 
