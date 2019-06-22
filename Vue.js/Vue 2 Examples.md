@@ -4,7 +4,7 @@
     * **Smooth Scrolling** - [Episode #1](https://laracasts.com/series/practical-vue-components/episodes/1)
         * This is an example of how to make a link scroll to a link on a page smoothly. This example is using a CDN version of `tailwind.js` 1.0 official release.
 
-            *`resources/js/app.js`*
+            ***`resources/js/app.js`***
             ```js
             import Vue from 'vue';
             import ScrollLink from './components/ScrollLink';
@@ -43,7 +43,7 @@
             </script>
             ```
 
-            *`resources/views/smooth-scroll.php`*
+            ***`resources/views/smooth-scroll.php`***
             ```html
             <!doctype html>
             <html lang="en">
@@ -84,7 +84,7 @@
     * **Context Menus** - [Episode #2](https://laracasts.com/series/practical-vue-components/episodes/2)
         * This is an example of how to make a contextual menu dropdown menu with mild animations. This example is using a CDN version of `tailwind.js` 1.0 official release.
             
-            *`resources/js/app.js`*
+            ***`resources/js/app.js`***
             ```js
             import Vue from 'vue';
             import Dropdown from './components/Dropdown';
@@ -98,7 +98,7 @@
             });
             ```
 
-            *`resources/js/components/Dropdown.vue`*
+            ***`resources/js/components/Dropdown.vue`***
             ```vue
             <template>
                 <div class="dropdown relative">
@@ -163,7 +163,7 @@
             </style>
             ```
             
-            *`resources/views/context-menu.php`* - example page to show off the menu
+            ***`resources/views/context-menu.php`*** - example page to show off the menu
             ```html
             <!doctype html>
             <html lang="en">
@@ -271,7 +271,7 @@
             Vue.component('visible', Visible);
             ```
 
-            *`resources/js/components/Visible.vue`*
+            ***`resources/js/components/Visible.vue`***
             ```vue
             <template>
                 <transition name="fade">
@@ -310,7 +310,7 @@
             </style>
             ```
 
-            *`resources/views/conditional-visibility.php`*
+            ***`resources/views/conditional-visibility.php`***
             ```html
             <!doctype html>
             <html lang="en">
@@ -347,10 +347,10 @@
             </body>
             </html>
             ```
-    * **Modals and Custom Vue Plugins** - [Episode #4](https://laracasts.com/series/practical-vue-components/episodes/4)
+    * <a id="ep4">**Modals and Custom Vue Plugins**</a> - [Episode #4](https://laracasts.com/series/practical-vue-components/episodes/4)
         * This example expands on the [Modern CSS for Backend Developers:Modals with Zero JavaScript](https://laracasts.com/series/modern-css-for-backend-developers/episodes/17) CSS example of making a modal with no javascript. Now JW shows how to add the concept to have it reside in a Vue component.
             
-            ***`resources/js/components`***
+            ***`resources/js/plugins/modal/Component.vue`***
             ```vue
             <template>
                 <div :id="name" class="overlay text-left">
@@ -420,6 +420,7 @@
                 }
             </style>
             ```
+
             ***`resources/views/modal.php`***
             ```html
             <!doctype html>
@@ -477,11 +478,280 @@
             </body>
             </html>
             ```
+
+            ***`resources/js/plugins/modal/ModalPlugin.js`***
+            ```js
+            import Component from './Component';
+
+            let Plugin = {
+                install: function (Vue, options = {}) {
+                    Vue.component('modal', Component);
+
+                    Vue.prototype.$modal = {
+                        show(name) {
+                            location.hash = name;
+                        },
+
+                        hide(name) {
+                            location.hash = '#';
+                        }
+                    }
+                }
+            };
+
+            export default Plugin;
+            ```
+
             ***`resources/js/app.js`***
             ```js
             import Modal from './components/Modal';
 
             Vue.component('modal', Modal);
+            ```
+    * **Confirmation Dialogs and Buttons** - [Episode #5](https://laracasts.com/series/practical-vue-components/episodes/5)
+        * This example works with confirmation dialog boxes and buttons. This is using the modal that was created in [Episode 4 - "Modals and Custom Vue Plugins"](#ep4)
+
+            ***`resources/js/app.js`***
+            ```js
+            import Vue from 'vue';
+
+            import Modal from './plugins/modal/ModalPlugin';
+
+            import ScrollLink from './components/ScrollLink';
+            import Dropdown from './components/Dropdown';
+            import Visible from './components/Visible';
+            import ConfirmButton from './components/ConfirmButton';
+            import ConfirmDialog from './components/ConfirmDialog';
+
+            window.Vue = Vue;
+
+            Vue.use(Modal);
+
+            Vue.component('scroll-link', ScrollLink);
+            Vue.component('dropdown', Dropdown);
+            Vue.component('visible', Visible);
+            Vue.component('confirm-button', ConfirmButton);
+            Vue.component('confirm-dialog', ConfirmDialog);
+
+            new Vue({
+                el: '#app',
+
+                methods: {
+                    confirm(message) {
+                        this.$modal.dialog(message)
+                            .then(confirmed => {
+                                if (confirmed) {
+                                    // Proceed. Submit ajax request, etc.
+                                    alert('Proceed');
+                                } else {
+                                    // Optionally override the button visibility and labels.
+                                    this.$modal.dialog('Okay, canceled', {
+                                        cancelButton: 'Close',
+                                        confirmButton: false
+                                    });
+                                }
+                            });
+                    }
+                }
+            });
+            ```
+
+            ***`resources/js/components/ConfirmButton.vue`***
+            ```vue
+            <template>
+                <button @click="confirm">
+                    <slot></slot>
+                </button>
+            </template>
+
+            <script>
+                export default {
+                    props: {
+                        message: {},
+                        confirmButton: { default: 'Continue' },
+                        cancelButton: { default: 'Cancel' }
+                    },
+                    data() {
+                        return { confirmed: false };
+                    },
+                    methods: {
+                        confirm(e) {
+                            if (this.confirmed) {
+                                return;
+                            }
+                            e.preventDefault();
+                            this.$modal.dialog(this._props)
+                                .then(confirmed => {
+                                    this.confirmed = confirmed;
+                                    if (confirmed) {
+                                        this.$el.click();
+                                    }
+                                });
+                        }
+                    }
+                }
+            </script>
+            ```
+
+            ***`resources/js/components/ConfirmDialog.vue`***
+            ```vue
+            <template>
+                <modal name="dialog">
+                    {{ params.message }}
+
+                    <template v-slot:footer>
+                        <button
+                            class="bg-gray-500 hover:bg-gray-600 py-2 px-4 text-white rounded-lg mr-2"
+                            @click.prevent="handleClick(false)"
+                            v-if="params.cancelButton"
+                            v-text="params.cancelButton"
+                        >
+                        </button>
+
+                        <button
+                            class="bg-blue-500 hover:bg-blue-600 py-2 px-4 text-white rounded-lg"
+                            @click.prevent="handleClick(true)"
+                            v-if="params.confirmButton"
+                            v-text="params.confirmButton"
+                        >
+                        </button>
+                    </template>
+                </modal>
+            </template>
+
+            <script>
+                import Modal from '../plugins/modal/ModalPlugin';
+                export default {
+                    data() {
+                        return {
+                            params: {
+                                message: 'Are you sure?',
+                                confirmButton: 'Continue',
+                                cancelButton: 'Cancel'
+                            }
+                        };
+                    },
+                    beforeMount() {
+                        Modal.events.$on('show', params => {
+                            Object.assign(this.params, params);
+                        });
+                    },
+                    methods: {
+                        handleClick(confirmed) {
+                            Modal.events.$emit('clicked', confirmed);
+                            this.$modal.hide();
+                        }
+                    }
+                }
+            </script>
+            ```
+
+            ***`resources/js/plugins/modal/ModalPlugin.js`***
+            ```js
+            import Component from './Component';
+
+            let Plugin = {
+                install: function (Vue, options = {}) {
+                    Vue.component('modal', Component);
+
+                    Plugin.events = new Vue();
+
+                    Vue.prototype.$modal = {
+                        show(name, params = {}) {
+                            location.hash = name;
+
+                            Plugin.events.$emit('show', params);
+                        },
+
+                        hide(name) {
+                            location.hash = '#';
+                        },
+
+                        dialog(message, params = {}) {
+                            if (typeof message === 'string') {
+                                params.message = message;
+                            } else {
+                                params = message;
+                            }
+
+                            return new Promise((resolve, reject) => {
+                                this.show('dialog', params);
+
+                                Plugin.events.$on(
+                                    'clicked', confirmed => resolve(confirmed)
+                                );
+                            });
+                        }
+                    }
+                }
+            };
+
+            export default Plugin;
+            ```
+
+            ***`resources/views/confirmation-button.php`***
+            ```html
+            <!doctype html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+                <title>Confirmation Dialogs</title>
+            </head>
+
+            <body class="font-sans p-10">
+                <div id="app" class="text-center">
+                    <h1 class="text-2xl font-bold mb-8">Confirmation Dialogs</h1>
+
+                    <div class="mb-6">
+                        <form method="POST">
+                            <confirm-button
+                                message="Are you sure you want to cancel your account?"
+                                class="bg-blue-500 hover:bg-blue-600 py-2 px-4 text-white rounded-lg"
+                            >
+                                Option 1
+                            </confirm-button>
+                        </form>
+                    </div>
+
+                    <div class="mb-6">
+                        <form method="POST">
+                            <confirm-button
+                                message="Are you sure you want to cancel your account?"
+                                cancel-button="Go Back"
+                                confirm-button="Continue On"
+                                class="bg-blue-500 hover:bg-blue-600 py-2 px-4 text-white rounded-lg"
+                            >
+                                Option 2
+                            </confirm-button>
+                        </form>
+                    </div>
+
+                    <div class="mb-6">
+                        <form method="POST" @submit.prevent="confirm('Are you really sure about this?')">
+                            <button class="bg-blue-500 hover:bg-blue-600 py-2 px-4 text-white rounded-lg">
+                                Option 3
+                            </button>
+                        </form>
+                    </div>
+
+                    <confirm-dialog></confirm-dialog>
+                </div>
+
+                <script src="/js/app.js"></script>
+            </body>
+            </html>
+            ```
+
+            ***Add the following to the routes file `routes/web.php`***
+            ```php
+            Route::post('confirmation-button', function () {
+                return 'Form submitted';
+            });
             ```
 * ### Custom Input Example:
     * Say you want to be able to reuse an input that has validation logic, sanitizing, etc attached to it. i.e. `<coupon></coupon>` instead of `<input type="text" v-model="coupon">`
