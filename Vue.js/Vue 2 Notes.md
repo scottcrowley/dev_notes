@@ -418,6 +418,47 @@
         }
         ```
         The await keyword cannot be used without async. It will throw an error if you try. `await` is the same as saying, "wait here until a promise is received." Also, if you try to return a value (i.e. `return 'Hi There!';`) at the end of the function that is using `async`, `"Hi There!"` will not be returned but a promise that resolve the value will be.
+* ### Two Way Data Binding - [Episode 49](https://laracasts.com/series/learn-vue-2-step-by-step/episodes/49)
+    * The normal process of having parent components talk to child components is via `props`
+    * The normal process of having child components talk to a parent component is by having the child emit an event that the parent listens for.
+    * In the example JW uses, he has a `Join` parent component that has a `PlanCard` child component. Before the refactor, the parent sends down an initial category value to the child, which can either be individual plans or team plans. The child then declared a `prop` called `initialCategory` that received the prop from the parent. The child also had a `data` property called `category`, which had a default value of `initialCategory`. Then whenever the category was changed by the user clicking either individual or teams, the PlanCard child changed the data property for category to the new category selection and then emited an event to let the parent know it's been changed.
+        * This is not necessary. It is better to have the parent control the value of the category. So he changed the `prop` to just `category` from `initialCategory` and completely removed the `data` property for `category`. He also removed any other reference to the category data property from PlanCard. PlanCard still emits an event, to the parent, whenever the category is changed, but now it no longer controls how the value of category is set.
+        * The important thing to realize here is that the `prop` `category` will be updated any time that the parent updates it's `category` value since the parent passes the value back to the child whenever it changes, thus updating the `prop`.
+    * Now there is a different way to have Vue handle this interactivity.
+        * The `.sync` directive can be used to create a relationship with the component that is using it. Using the process means you no longer need to pass down a property and then listen to an event on the component.
+
+            Previous way the `PlanCard` component was used in the `Join` component. The initial value of `category` is passed to the component and a listener is added for `change-category`, which will update the category to the new category being passed through the event.
+            ```
+            <plan-card>
+                v-if="showPlans"
+                :category="category"
+                @change-category="category = $event"
+            >
+            ```
+
+            New way using the `.sync` directive on the bound `category` property. Notice that the listener is no longer being used. This is because the emit method is updated in the PlanCard component. See below.
+            ```
+            <plan-card>
+                v-if="showPlans"
+                :category.sync="category"
+            >
+            ```
+
+            In the `PlanCard` component, there is a `changeCategory` method that handles the button click to change the category.
+
+            Below is the previous way the method looked.
+            ```
+            changeCategory(category) {
+                this.$emit('change-category', category);
+            }
+            ```
+
+            New way using `update:`
+            ```
+            changeCategory(category) {
+                this.$emit('update:category', category);
+            }
+            ```
 * ### Miscellaneous:
     * **IMPORTANT UPDATE WITH VUE v2.5.21^ & WEBPACK/MIX 4**
         * When registering a component you need to add `.default` after the `require` method.
