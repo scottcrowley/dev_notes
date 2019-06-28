@@ -29,7 +29,7 @@
         * `shift+cmd+T` - runs a previously run test. Requires `Better PHPUnit` installed `CUSTOM BINDING`
         * `alt+T` - runs the entire PHPUnit suite. Requires `Better PHPUnit` `CUSTOM BINDING`
     * #### Cursor & Selections:
-        * `ctrl+-` - goes back to where the cursor previously was in the current file or previous edit point
+        * ***`ctrl+-`*** - goes back to where the cursor previously was in the current file or previous edit point
         * `shift+alt+down` duplicates the current line down.
         * `alt+down` - moves a selection down
         * `alt+up` - moves a selection up
@@ -65,6 +65,11 @@
     * Hide mini map: set `editor.minimap.enabled` to `false` in `User Settings`
     * `editor.tabCompletion` should be set to `true` if you want to be able to use the tab key to auto complete snippets and other things
 * ### Miscellaneous Settings:
+    * By default, whenever a new file is opened, within a project, Code will replace the file that is currently open, unless it has been previously edited. To have it open all files in a new window change the `Open Files in New Window` setting. 
+    
+        ```
+        "window.openFilesInNewWindow": "on",
+        ```
     * IMPORTANT! By default, Code will not search the `vendor` directory when using the `command palette` unless you set `search.useIgnoreFiles` to `false`
     * If you are going to use a `PostCSS` framework like `Tailwind CSS`,
         * Install the `sylelint` extension by `Shinnosuke Watanabe`
@@ -124,7 +129,9 @@
             code .
             ```
     * Hitting `cmd+P` will display all the recently opened files. Keep hitting `p` while holding `cmd` to cycle through the files
+    * `ctrl+-` takes you to your previous edit point
     * Check out <https://code.visualstudio.com/docs/editor/userdefinedsnippets> for useful ideas on snippets
+    * Select a type hinted class and type `ctrl+space` to bring up the import menu to change the current imported class path.
     * `Right-click` on a method will give the option to view all references of that method if `Intelephense` extension is installed
     * `Right-click` on a method/class/use level will give the option to `Peek` at a definition if `Intelephense` is installed. Allows to see the method/class/use file without opening the file containing that method
     * `Right-click` on a dependency being used in a method injection, select `Add Use Definition` will add the '`use`' declaration at the top of the file and condense the injection down to the class name. `Intelephense` is required
