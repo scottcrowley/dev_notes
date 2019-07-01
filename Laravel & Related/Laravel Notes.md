@@ -630,6 +630,59 @@
             }
             ```
             *be careful not to use a strict comparison (`===`) since the value for `user_id` may be returned as a string (even thought it was cast as an integer within the `Client` model) and `$user->id` is an integer, as in the case above.*
+* ### Models
+    * #### Miscellaneous
+        * Different ways to handle Policy authorization within a vue component when you want the authorization details is available in the model's json response. This example is based off of the video called [Whatcha Working On:Frontend Authorization Brainstorming](https://laracasts.com/series/whatcha-working-on/episodes/36). JW shows ways to pass authorization details about a user working with a post. He only wants to show the edit button, if the user is an admin or the user who created the post and show a delete button if the user is an admin.
+
+            *app/Policies/PostPolicy.php*
+            ```
+            ...
+            class PostPolicy
+            {
+                use handlesAuthorization;
+
+                public function before(User $user)
+                {
+                    if ($user->id == 1) { //hard coding the admin user id to 1 for the example
+                        return true;
+                    }
+                }
+
+                public function destroy(User $user, Post $post)
+                {
+                    return false; //all other users are denied since the before method handles checking if the user is an admin
+                }
+
+                public function update(User $user, Post $post)
+                {
+                    return $user->id == $post->user_id;
+                }
+            }
+            ```
+            *app/Post*
+            ```
+            ...
+
+            class Post extends Model
+            {
+                public function authorizations($abilities = [])
+                {
+                    return collect(array_flip($abilities))->map(function ($index, $ability)) {
+                        return \Gate::allows($ability,$this);
+                    });
+                }
+
+                //override the toArray method so the authorization details can be added to model
+                public function toArray()
+                {
+                    //make a call to the parent toArray method so you dont have to replicate all the fields here.
+                    //just append the new authorizations property
+                    return parent::toArray() + [
+                        'authorizations' => $this->authorizations(['update', 'destroy']);
+                    ];
+                }
+            }
+            ```
 * ### Eloquent
     * **Database Migrations:**
         * The `enum` field type can be used to specify that the only certain values are accepted. i.e. for a skill level field you only want the following values: `basic, intermediate, advanced`.
