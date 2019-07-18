@@ -20,7 +20,7 @@
         * `fn+shift+f10` - Opens context menu instead of having to right-click on something to bring it up.
         * `shift+cmd+E` - toggles file tree side bar
         * `ctrl+shift+G` - toggles source control panel
-        * `ctrl+\`` - show/hide terminal
+        * ctrl+` - show/hide terminal
         * `cmd+B` - show/hide sidebar
         * `shift+cmd+X` - show/hide extensions
         * `cmd+.` - brings up Quick Fix context menu when diagnosing an error in a file.
@@ -179,6 +179,256 @@
         * `'single_quote' => true`
         * `'not_operator_with_successor_space’ => true`
         * `'ordered_imports' => array('sort_algorithm' => 'length')`
+* ### Example `settings.json` file:
+    ~/Library/Application Support/Code/User/settings.json
+    ```json
+    {
+        "editor.tabCompletion": "on",
+        "editor.minimap.enabled": false,
+        "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+        "editor.fontSize": 13,
+        "editor.fontLigatures": true,
+        "editor.tokenColorCustomizations": {
+            "textMateRules": [
+                {
+                    "scope": "comment, comment.block.html",
+                    "settings": {
+                        "fontStyle": "italic"
+                    }
+                }
+            ]
+        },
+        "explorer.openEditors.visible": 0,
+        "explorer.confirmDelete": false,
+        "window.openFilesInNewWindow": "on",
+        "window.zoomLevel": 0,
+        "workbench.statusBar.visible": false,
+        "workbench.iconTheme": "vscode-icons",
+        "workbench.colorTheme": "Slime",
+        "terminal.integrated.scrollback": 5000,
+        "blade.format.enable": true,
+        "search.useIgnoreFiles": true,
+        "search.exclude": {
+            "**/public/[abcdefghjklmnopqrstuvwxyz]*": true,
+            "**/public/i[abcdefghijklmopqrstuvwxyz]*": true,
+            "storage/framework/views": true
+        },
+        "css.validate": false,
+        "less.validate": false,
+        "scss.validate": false,
+        "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+        "php-cs-fixer.formatHtml": true,
+        "php-cs-fixer.onsave": true,
+        "php-cs-fixer.config": "/Users/scott/.vscode/.php_cs",
+        "[php]": {
+            "editor.defaultFormatter": "junstyle.php-cs-fixer"
+        },
+        // File extensions to be parsed by the Typescript parser
+        "importCost.typescriptExtensions": [
+            "\\.vue?$"
+        ],
+        "eslint.validate": [
+            "javascript",
+            "javascriptreact",
+            "vue",
+            "vue-html"
+        ],
+        "vetur.validation.template": false,
+        "php-cs-fixer.lastDownload": 1563489562217,
+    }
+    ```
+* ### Example `keybindings.json` file:
+    ~/Library/Application Support/Code/User/keybindings.json
+    ```json
+    // Place your key bindings in this file to overwrite the defaults
+    [
+        {
+            "key": "cmd+r",
+            "command": "workbench.action.gotoSymbol"
+        },
+        {
+            "key": "shift+cmd+o",
+            "command": "-workbench.action.gotoSymbol"
+        },
+        {
+            "key": "cmd+t",
+            "command": "better-phpunit.run"
+        },
+        {
+            "key": "shift+cmd+t",
+            "command": "better-phpunit.run-previous"
+        },
+        {
+            "key": "alt+t",
+            "command": "better-phpunit.run-suite"
+        },
+        {
+            "key": "shift+alt+f",
+            "command": "php-cs-fixer.fix2"
+        },
+        {
+            "key": "shift+alt+d",
+            "command": "php-docblock-generator.createDocBlock"
+        },
+        {
+            "key": "ctrl+s",
+            "command": "editor.action.triggerSuggest",
+            "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "ctrl+shift+k",
+            "command": "deleteAllLeft",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "cmd+backspace",
+            "command": "-deleteAllLeft",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "alt+\\",
+            "command": "deleteWordRight",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "alt+delete",
+            "command": "-deleteWordRight",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "ctrl+alt+\\",
+            "command": "deleteWordPartRight",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "ctrl+alt+delete",
+            "command": "-deleteWordPartRight",
+            "when": "textInputFocus && !editorReadonly"
+        },
+        {
+            "key": "ctrl+cmd+g",
+            "command": "editor.action.selectHighlights",
+            "when": "editorFocus"
+        },
+        {
+            "key": "shift+cmd+l",
+            "command": "-editor.action.selectHighlights",
+            "when": "editorFocus"
+        },
+        {
+            "key": "ctrl+m",
+            "command": "editor.action.selectToBracket"
+        },
+        {
+            "key": "cmd+;",
+            "command": "workbench.action.terminal.clear",
+            "when": "terminalFocus"
+        },
+        {
+            "key": "cmd+k",
+            "command": "-workbench.action.terminal.clear",
+            "when": "terminalFocus"
+        },
+    ]
+    ```
+* ### Example Snippets:
+    ~/Library/Application Support/Code/User/snippets/php.json
+    ```json
+    {
+        "Public Method": {
+            "prefix": "met",
+            "body": [
+                "public function $1() ",
+                "{",
+                "\t$2",
+                "}"
+            ],
+            "description": "New Public method"
+        },
+        "Protected Method": {
+            "prefix": "pmet",
+            "body": [
+                "protected function $1() ",
+                "{",
+                "\t$2",
+                "}"
+            ],
+            "description": "New Protected method"
+        },
+        "Class": {
+            "prefix": "class",
+            "body": [
+                "namespace $1;",
+                "",
+                "class ${TM_FILENAME_BASE} ",
+                "{",
+                "\t$2",
+                "}"
+            ],
+            "description": "New Class"
+        },
+        "Test Method": {
+            "prefix": "tmet",
+            "body": [
+                "/** @test */",
+                "public function $1()",
+                "{",
+                "\t$2",
+                "}"
+            ],
+            "description": "Public Test Method"
+        },
+        "Class Constructor": {
+            "prefix": "constr",
+            "body": [
+                "/**",
+                "* ${TM_FILENAME_BASE} constructor",
+                "*/",
+                "public function __construct()",
+                "{",
+                "\t$1",
+                "}"
+            ],
+            "description": "Blank Class Constructor"
+        }
+    }
+    ```
+    ~/Library/Application Support/Code/User/snippets/vue.json
+    ```json
+    {
+        "Blank Component": {
+            "prefix": "vcomp",
+            "body": [
+                "<template>",
+                "    ",
+                "</template>",
+                "",
+                "<script>",
+                "    export default {",
+                "        props: [],",
+                "",
+                "        components: {},",
+                "",
+                "        data() {",
+                "            return {",
+                "",
+                "            }",
+                "        },",
+                "",
+                "        computed: {",
+                "",
+                "        },",
+                "",
+                "        methods: {",
+                "            ",
+                "        }",
+                "    }",
+                "</script>"
+            ],
+            "description": "New Vue Component Scafolding"
+        }
+    }
+    ```
 * ### Example `ESLint` config file (`.eslintrc.json`):
     ```json
     {
