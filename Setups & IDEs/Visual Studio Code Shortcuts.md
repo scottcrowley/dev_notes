@@ -86,7 +86,7 @@
     * `File Utils` - *Leistner* Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
     * `PHP Intelephense` - *Ben Mewburn*
     * `Vim` - *vscodevim*
-    * `snippet-creator` - *nikitaKunevich*
+    * `snippet-creator` - *nikitaKunevich* DEPRICATED - Creates snippets from a selection
     * `Laravel Artisan` - *Ryan Naddy*
     * `Better PHPUnit` - *calebporzio*
     * `php cs fixer` - *junstyle*
