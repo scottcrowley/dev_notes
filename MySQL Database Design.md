@@ -39,3 +39,86 @@
     * `left outer join` - same as `left join`
     * `right join` - returns all rows from the right table (address) and will provide details from the left table (store) if there is a match on the key provided
     * `right outer join` - same as `right join`
+* ## Aggregates and Group By
+    * An aggregate is when something is done to a particular column like returning the min, max, count, sum, etc.
+    * An aggregate requires a `group by` clause
+    * A `group by` clause requires an aggregate.
+    * To alias an aggregated column just type the alias after the aggregate function without using an `as`
+        ```mysql
+        count(rentals.rental_id) rentals_checked_out
+        ```
+    * Example from series using Sakila DB
+        ```mysql
+        select
+            customer.customer_id, 
+            customer.first_name, 
+            customer.last_name, 
+            count(rental.rental_id) rentals_checked_out
+        from customer
+        left join rental
+        on rental.customer_id = customer.customer_id
+        group by customer.customer_id
+        ```
+    * Multiple columns can be used in a `group by` clause.
+        ```mysql
+        group by customer.customer_id, rentals.rental_id
+        ```
+* ## Sub Queries and Multiple Joins
+    * Sub queries are more time intensive then performing multiple joins. Might be better to use multiple joins in some cases instead of a sub query
+    * You can use a sub query in place of any field or table reference. The following sql takes about 110 ms to run.
+        ```mysql
+        select
+            customer.customer_id, 
+            customer.first_name, 
+            customer.last_name, 
+            count(rental.rental_id) rentals_checked_out,
+            address.address store_address
+        from customer
+        left join rental
+        on rental.customer_id = customer.customer_id
+        left join address
+        on address.address_id = (
+            select address_id from store where store.store_id = customer.store_id
+        )
+        group by customer.customer_id, address.address
+        ```
+    * Same query as above except using multiple joins instead of a sub query. The following sql takes about 50 ms to run.
+        ```mysql
+        select
+            customer.customer_id, 
+            customer.first_name, 
+            customer.last_name, 
+            count(rental.rental_id) rentals_checked_out,
+            address.address store_address
+        from customer
+        left join rental
+        on rental.customer_id = customer.customer_id
+        left join store
+        on store.store_id = customer.store_id
+        left join address
+        on address.address_id = store.address_id
+        group by customer.customer_id, address.address
+        ```
+* ## Miscellaneous
+    * Column aliases can be assigned with or without the `as`
+        ```mysql
+        address.address store_address
+        address.address as store_address
+        ```
+    * To alias a table, make sure to update all occurenences of the full table name or an error will be thrown. Example: Change the `customer` table name to `c`.
+        ```mysql
+        select
+            c.customer_id, 
+            c.first_name, 
+            c.last_name, 
+            count(rental.rental_id) rentals_checked_out,
+            address.address store_address
+        from customer c
+        left join rental
+        on rental.customer_id = c.customer_id
+        left join address
+        on address.address_id = (
+            select address_id from store where store.store_id = c.store_id
+        )
+        group by c.customer_id, address.address
+        ```
