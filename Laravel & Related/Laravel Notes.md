@@ -687,6 +687,16 @@
     * **Database Migrations:**
         * The `enum` field type can be used to specify that the only certain values are accepted. i.e. for a skill level field you only want the following values: `basic, intermediate, advanced`.
             * `$table->enum('level', ['basic', 'intermediate', 'advanced'])->default('intermediate');`
+        * If for whatever reason you do not want a primary key given the unsigned attribute (which it does by default) do the following in the migration
+            
+            ***Before***
+            ```php
+            $table->bigIncrements('id');
+            ```
+            ***After***
+            ```php
+            $table->bigIncrements('id')->unsigned(false);
+            ```
     * **Using more complex queries:**
         * `Raw` - The word `raw` can be added to several different SQL actions (select, order by, group by, etc), so you are able to use more specific queries or SQL functions
             * Consider the following query: `select year(created_at) year, monthname(created_at), count(*) published from posts group by year, month order by min(created_at)`
@@ -722,14 +732,22 @@
         * The relationship between tags and post is a belongsToMany. This relationship type almost always should be associated with a pivot table
             * In the `Post` model, you would add a `tags` method that references the `Tag` model: 
                 ```php
-                public function tags() { return $this->belongsToMany(Tag::class); }
+                public function tags() { 
+                    return $this->belongsToMany(Tag::class); 
+                }
                 ```
             * In the `Tag` model, you would add a `posts` method that references the `Post` model: 
                 ```php
-                public function posts() { return $this->belongsToMany(post::class); }
+                public function posts() { 
+                    return $this->belongsToMany(Post::class); 
+                }
                 ```
             * As stated above, Laravel will normally expect a pivot table to be named the singular name of each table in alphabetical order. If the name of the pivot table differs from this naming convention, then you need to provide the name of the table in the relationship method.
-                * `public function tags() { return $this->belongsToMany(Tag::class, 'different_pivot_table'); }`
+                ```php
+                public function tags() { 
+                    return $this->belongsToMany(Tag::class, 'different_pivot_table');
+                }
+                ```
         * Laravel has the ability to load all the tags associated with a post without making the normal additional database query.
             * So instead of running through each post in the results of (`App\Post::all()` gets all posts) to then perform a database query to get the tags associated with the each post (`$post->tags;`) you can just use `$posts = App\Post::with('tags')->get();` This will execute the tags relationship when each post is retrieved using the tags method.
         * To add a new tag to a post you don't use the `create()` or `save()` methods, as before. Now you can retrieve the post (`$post = App\Post::first();`), then the tag (`$tag = App\Tag::where('name', 'personal')->first();`) then call the `tags` method from the `$post` object and attach the `$tag` object. `$post->tags()->attach($tag);`
@@ -748,9 +766,34 @@
     * Eloquent always assumes that when a record is retrieved, the query is based off of the primary key.
         * This behavior can be changed by adding a `getRouteKeyName()` method to the model in question
             * In the `Tag` model: `public function getRouteKeyName() { return 'name'; }` which tells Eloquent to use the `name` field when querying the table instead of the primary key.
-    * **`HasManyThrough` Relationships**
+    * **`hasManyThrough` Relationships**
         * Using an example where there is a users, posts and affiliations (contains either 'Liberal' or 'Conservative' and the id is stored on the users table) table. If you wanted to see all posts from Liberals then you could setup a `hasManyThrough` relationship on the affiliations model.
             * `public function posts() { return $this->hasManyThrough(Posts::class, Users::class); }` Think of it like: `affiliations` have many `posts` through `users` on the `users` table.
+    * **`hasManyThrough` Relationship when using a Pivot Intermediate Table**
+        * Lego DB Example: We want to grap all parts that are associated with a storage location. `StorageLocation`->belongsToMany->`PartCategory` & uses pivot part_category_storage_location to create a relationship. `PartCategory`->belongsTo->`Part`. If the pivot table wasn't being used and StorageLocation_id was stored in PartCategory, then you could use a simple `hasManyThrough` relationship. At the time this note is being made, this isn't possible using simple relationships.
+        * Found a package on GitHub to accomplish this. [eloquent-has-many-deep](https://github.com/staudenmeir/eloquent-has-many-deep)
+            * Install using
+                ```zsh
+                composer require staudenmeir/eloquent-has-many-deep:"^1.7"
+                ```
+            * Add the following use statement to the class where you want to use this functionality
+                ```php
+                class StorageLocation extends Model
+                {
+                    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+                }
+                ```
+            * Using example above, the following relation was created in the StorageLocation model
+                ```php
+                public function parts()
+                {
+                    return $this->hasManyDeep(
+                        Part::class, 
+                        ['part_category_storage_location', PartCategory::class]
+                    );
+                }
+                ```
+            * Check [documentation](https://github.com/staudenmeir/eloquent-has-many-deep) for examples on how to use in different scenarios.
     * **`Polymorphic` Relationships**
         * Using an example where there is a `users` table, a `posts` table, a `comments` table and a `likes` table. The `likes` table will be used for many different types of likes (`comments`, `posts`, etc) and consist of the following fields: `user_id` = user id of the user who liked the item, `likeable_id` = the id of the item being liked (a post, comment, etc) , `likeable_type`  = the class name for the item being liked (`App\Post`, `App\Comment`, etc). 
             * The `Post` and `Comment` model will have a `likes()` method, which will retrieve all the likes for that type.
