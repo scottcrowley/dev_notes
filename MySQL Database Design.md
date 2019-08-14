@@ -6,7 +6,7 @@
     * Throughout the serier, JW uses the [Sakila example database](https://dev.mysql.com/doc/sakila/en/) as a reference. Download the zip file from https://downloads.mysql.com/docs/sakila-db.zip
 * ## Foreign Keys
     * A foreign key constraint can be added after a table has already been created by using
-        ```mysql
+        ```sql
         alter table comments
         add foreign key (post_id) 
         references posts(id)
@@ -28,7 +28,7 @@
         ```
 * ## Joins
     * `join` - Joins an additional table based on a foreign key and returns results only when the key has a corresponding match in the joined table
-        ```mysql
+        ```sql
         select *
         from store
         join address
@@ -44,11 +44,11 @@
     * An aggregate requires a `group by` clause
     * A `group by` clause requires an aggregate.
     * To alias an aggregated column just type the alias after the aggregate function without using an `as`
-        ```mysql
+        ```sql
         count(rentals.rental_id) rentals_checked_out
         ```
     * Example from series using Sakila DB
-        ```mysql
+        ```sql
         select
             customer.customer_id, 
             customer.first_name, 
@@ -60,13 +60,13 @@
         group by customer.customer_id
         ```
     * Multiple columns can be used in a `group by` clause.
-        ```mysql
+        ```sql
         group by customer.customer_id, rentals.rental_id
         ```
 * ## Sub Queries and Multiple Joins
     * Sub queries are more time intensive then performing multiple joins. Might be better to use multiple joins in some cases instead of a sub query
     * You can use a sub query in place of any field or table reference. The following sql takes about 110 ms to run.
-        ```mysql
+        ```sql
         select
             customer.customer_id, 
             customer.first_name, 
@@ -83,7 +83,7 @@
         group by customer.customer_id, address.address
         ```
     * Same query as above except using multiple joins instead of a sub query. The following sql takes about 50 ms to run.
-        ```mysql
+        ```sql
         select
             customer.customer_id, 
             customer.first_name, 
@@ -101,12 +101,12 @@
         ```
 * ## Miscellaneous
     * Column aliases can be assigned with or without the `as`
-        ```mysql
+        ```sql
         address.address store_address
         address.address as store_address
         ```
     * To alias a table, make sure to update all occurenences of the full table name or an error will be thrown. Example: Change the `customer` table name to `c`.
-        ```mysql
+        ```sql
         select
             c.customer_id, 
             c.first_name, 
@@ -121,4 +121,17 @@
             select address_id from store where store.store_id = c.store_id
         )
         group by c.customer_id, address.address
+        ```
+    * The `HAVING` clause is the same as the `WHERE` clause but can be used on aggregated columns. In the example below, using the Sakila DB, they wanted to write a query to select all title that have $200 in sales or more. Since aliases are used on the aggregated colums, then the `WHERE` clause will not work. You must use the `HAVING` clause. Also, `count(*)` can be used since it counts all the rows from the `group by` clause. So if you need to filter rows down based on an aggregated column then you need to use the `HAVING` clause instead of the `WHERE` clause.
+        ```sql
+        select title, sum(amount) sales, count(*) rentals, from rental
+        join payment
+        on payment.rental_id = rental.rental_id
+        join inventory
+        on inventory.inventory_id = rental.inventory_id
+        join film
+        on film.film_id = inventory.film_id
+        group by title
+        having sales > 200
+        order by sales desc
         ```
