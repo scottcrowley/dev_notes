@@ -902,8 +902,10 @@
             * `public function project() { return $this->belongsTo(Project::class)->orderBy('updated_at', 'desc'); }`
             * `public function project() { return $this->belongsTo(Project::class)->orderByDesc('updated_at'); }`
     * **DB query logging:** Useful when using Tinker. **NOTE: SHOULD ONLY BE DONE FOR TESTING PURPOSES AND NOT IN PRODUCTION**
-        * `DB:enableQueryLog();` Enables logging
+        * `DB::enableQueryLog();` Enables logging
         * `DB::getQueryLog();` Shows the current query log
+        * `DB::listen(function ($sql) { var_dump($sql->sql, $sql->bindings); });` Will dump out the sql statement along with any bindings with each query.
+        * You can also use Laravel [Telescope](https://github.com/laravel/telescope). See section on Laravel Telescope.
     * **Other Creation Methods:**
         * `firstOrCreate` - Tries to find a record in the database matching the provided arguments and if not found then it will create it using the arguments passed. You can also pass a second argument that can be used for other attributes you would want used in the create but not in there where clause for the find. An instance of the model will be returned using this method.
             * `$flight = App\Flight::firstOrCreate(['name' => 'Flight 10']); // Retrieve flight by name, or create it if it doesn't exist...`
