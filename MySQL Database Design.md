@@ -99,6 +99,66 @@
         on address.address_id = store.address_id
         group by customer.customer_id, address.address
         ```
+* ## Recursive Query
+    * A recursive query is used when you have a foreign key that references its own table. This can give you the parent to child hierarchy. Using the Lego project as an example, the `themes` table contains the following columns: `id`, `name`, `parent_id`. `parent_id` has a constraint on the `id` column. This allows for a theme to have many child or parent themes associated with it. If the `parent_id` column is null then that is the top parent theme. 
+    * Below is a query I found on http://www.mysqltutorial.org/mysql-adjacency-list-tree/. I modified it to fit my needs. Not sure if it is too resource intensive to be useful.
+        
+        The `where` clause at the end contains the theme we want to query. In this case it is 175. It also concatenates a label that shows the hierarchy of all related themes, where 175 is at the bottom of it.
+        ```sql
+        WITH RECURSIVE theme_hierarchy (id, name, parent, lvl, parent_label) AS
+            (
+                SELECT id, name, parent_id parent, 1 lvl, name as parent_label
+                FROM themes
+                WHERE parent_id is NULL
+                    UNION ALL
+                    SELECT t.id, t.name, t.parent_id, lvl+1, CONCAT(th.parent_label, ' -> ', t.name)
+                    FROM themes t
+                    INNER JOIN theme_hierarchy th ON th.id = t.parent_id
+            )
+        SELECT parent_label
+        FROM theme_hierarchy th
+        WHERE th.id = 175
+        ORDER BY lvl DESC
+        ```
+
+        I executed this code in Laravel using the DB::raw facade. It was being used within a chunk function when all sets were being retrieved.
+        ```php
+        DB::table('sets')
+            ->select(
+                'sets.*',
+                'set_image_urls.image_url',
+                'themes.name as theme_name',
+                'themes.parent_id as theme_parent_id'
+            )
+            // ->where('year', 2019)
+            ->orderBy('set_num')
+            ->leftJoin('themes', 'sets.theme_id', '=', 'themes.id')
+            ->leftJoin('set_image_urls', 'sets.set_num', '=', 'set_image_urls.set_num')
+            ->chunk(1000, function ($chunk) use (&$sets) {
+                // $chunk = $this->getThemeHeirarchy($chunk);
+                $chunk->map(function ($item, $key) {
+                    $setTheme = DB::select(
+                        DB::raw('WITH RECURSIVE theme_hierarchy (id, name, parent, lvl, parents_label) AS 
+                            (
+                                SELECT id, name, parent_id parent, 1 lvl, name as parents_label 
+                                FROM themes 
+                                WHERE parent_id is NULL 
+                                UNION ALL 
+                                SELECT t.id, t.name, t.parent_id, lvl+1, CONCAT(th.parents_label, \' -> \', t.name) 
+                                FROM themes t 
+                                INNER JOIN theme_hierarchy th ON th.id = t.parent_id
+                            ) 
+                            SELECT id, name, parent, lvl, parents_label 
+                            FROM theme_hierarchy th 
+                            WHERE th.id = :theme_id 
+                            ORDER BY lvl DESC'),
+                        ['theme_id' => $item->theme_id]
+                    );
+                    $item->theme_label = $setTheme[0]->parents_label;
+                });
+                $sets = $sets->merge($chunk);
+            });
+        ```
 * ## Miscellaneous
     * Column aliases can be assigned with or without the `as`
         ```sql
