@@ -766,6 +766,55 @@
     * Eloquent always assumes that when a record is retrieved, the query is based off of the primary key.
         * This behavior can be changed by adding a `getRouteKeyName()` method to the model in question
             * In the `Tag` model: `public function getRouteKeyName() { return 'name'; }` which tells Eloquent to use the `name` field when querying the table instead of the primary key.
+    * **`hasOneThrough` Relationships**
+        * Using an example from the Lego project: An inventory (with fields `id`, `version`, `set_num`) has a `hasManyThrough` relationship with `themes` through the `sets` table. Below is an explanation of each parameter being used with the method:
+            ```php
+            hasOneThrough(
+                $related, //= the table or model you want to reach (Theme::class)
+                $through, //= the table or model you need to go through to reach $related (Set::class)
+                $firstKey, //= the field to use in the where clause and the select for the through table ('set_num')
+                $secondKey, //= the field in the $related table that is joined to the $through table ('id' on themes)
+                $localKey, //= the field in the current model to get the value for in the where clause ('set_num' on inventories)
+                $secondLocalKey //= the field in the $through table that is joined to the $related table ('theme_id' on sets)
+            ) {
+
+            }
+            ```
+            Laravel relationship in the `Inventory` model
+            ```php
+            public function theme()
+            {
+                return $this->hasOneThrough(
+                    Theme::class, 
+                    Set::class, 
+                    'set_num', 
+                    'id', 
+                    'set_num', 
+                    'theme_id', 
+                    'set_num'
+                );
+            }
+            ```
+            SQL being executed by the about relationship
+            ```sql
+            select 
+                `themes`.*, `sets`.`set_num` as `laravel_through_key` 
+            from `themes` 
+            inner join 
+                `sets` on `sets`.`theme_id` = `themes`.`id` 
+            where `sets`.`set_num` = '7922-1' 
+            limit 1
+            ```
+            SQL with placeholders
+            ```sql
+            select 
+                $related.*, $through.$firstKey as `laravel_through_key` 
+            from $related 
+            inner join 
+                $through on $through.$secondLocalKey = $related.$secondKey 
+            where $through.$firstKey = $localKey 
+            limit 1
+            ```
     * **`hasManyThrough` Relationships**
         * Using an example where there is a users, posts and affiliations (contains either 'Liberal' or 'Conservative' and the id is stored on the users table) table. If you wanted to see all posts from Liberals then you could setup a `hasManyThrough` relationship on the affiliations model.
             * `public function posts() { return $this->hasManyThrough(Posts::class, Users::class); }` Think of it like: `affiliations` have many `posts` through `users` on the `users` table.
