@@ -64,6 +64,16 @@
         group by customer.customer_id, rentals.rental_id
         ```
 * ## Sub Queries and Multiple Joins
+    * Anytime you reference a table in a from clause, you can substitute the table with a sub query. Important to note that the sub query requires an alias.
+        ```sql
+        select round(avg(total_rentals)) as average_rentals
+        from (
+            selecet date(rental_date) as day, count(*) as total_rentals
+            from rental
+            group by day
+            order by day desc
+        ) rentals
+        ```
     * Sub queries are more time intensive then performing multiple joins. Might be better to use multiple joins in some cases instead of a sub query
     * You can use a sub query in place of any field or table reference. The following sql takes about 110 ms to run.
         ```sql
@@ -99,6 +109,19 @@
         on address.address_id = store.address_id
         group by customer.customer_id, address.address
         ```
+    * Another example of using a sub query: You need to find the top 10 users that have the most read posts. There is a users table, post table and a post_reads table that is a pivot table for when a user reads a post. The post_reads table has a user_id and post_id column.
+        ```sql
+        select users.id, users.name, count(*) as posts_read
+        from users
+        left join post_reads
+        on post_reads.post_id in (
+            select id from posts where user_id = users.id
+        )
+        group by users.id
+        order by posts_read desc
+        limit 10
+        ```
+        The sub query is the section of the statement that begins with `in`. So the query states: first select all `posts` where the `user_id` of the `post` `=` the currently found `user` from the original `select` statement. Then `left join` the the `post_reads` table on the condition that the `post_id` `=` all the results from the sub query. Then `count` the results of that join and assign the value to `posts_read`.
 * ## Recursive Query
     * A recursive query is used when you have a foreign key that references its own table. This can give you the parent to child hierarchy. Using the Lego project as an example, the `themes` table contains the following columns: `id`, `name`, `parent_id`. `parent_id` has a constraint on the `id` column. This allows for a theme to have many child or parent themes associated with it. If the `parent_id` column is null then that is the top parent theme. 
     * Below is a query I found on http://www.mysqltutorial.org/mysql-adjacency-list-tree/. I modified it to fit my needs. Not sure if it is too resource intensive to be useful.
