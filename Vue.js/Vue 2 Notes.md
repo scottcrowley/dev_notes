@@ -130,6 +130,53 @@
     * `v-if` - conditional visibility for an element. Must test for a boolean. This directive will remove the element from the `dom` if it `false`.
     * `v-else` - conditional visibility for an element. Must test for a boolean. Needs to be next to the `v-if` directive element and must be the same kind of element. i.e. (`<p>` or `<div>`)
     * `v-show` - conditional visibility for an element. Must test for a boolean. Similar to `v-if` except if it is `false`, then `display: none` is used instead of removing the element from the dom.
+        * `v-show` works as intended until you use an array of booleans that contains the show state. Example from the Lego project, where I have a collection of Location Types, each of which contains a collection of Locations with that type. I use a nested `v-for` to display all the locations under each type. I use the type name for a clickable link to toggle the visibility of the div containing all the locations. You have to set up the array in the mounted section of the component, then use a function that calls the `$set` method that actually updates the boolean value for a given index. This has to be done this way since Vue does not have a way to know when an array value is updated. See the section called ***Adding and Deleting Properties on Arrays and Objects***
+            ```js
+            <template>
+                <div>
+                    <div class="mt-6" v-for="(typeLocations, typeName, index) in locations">
+                        <div class="">
+                            <p class="title mb-1 cursor-pointer" v-text="typeName" @click.prevent="toggleLocations(index)"></p>
+                            <!-- <button href="#" class="btn is-small is-narrow btn-text ml-auto" @click.prevent="toggleLocations(index)" v-text="(showLocation[index]) ? 'hide' : 'show'"></button> -->
+                        </div>
+                        <div class="ml-4" v-show="showLocation[index]">
+                            <div v-for="location in typeLocations" class="text-sm md:text-base py-2 px-1 border rounded mt-3 sm:flex text-secondary-darker">
+                                <div class="font-semibold sm:flex-1 sm:font-normal" v-text="location.name + ((location.nickname !== null) ? ' (' + location.nickname + ')' : '')"></div>
+                                <div class="flex justify-around sm:block sm:mt-0 mt-2">
+                                    <a :href="'/storage/locations/' + location.id + '/parts'" class="btn is-small sm:mr-2">parts</a>
+                                    <a :href="'/storage/locations/' + location.id + '/copy'" class="btn is-small sm:mr-2">copy</a>
+                                    <a :href="'/storage/locations/' + location.id + '/edit'" class="btn is-small">edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <script>
+                export default {
+                    props: [
+                        'locations'
+                    ],
+                    data() {
+                        return {
+                            showLocation: [],
+                        }
+                    },
+                    mounted() {
+                        for(let i=0; i< Object.keys(this.locations).length; i++) {
+                            this.showLocation[i] = false;
+                        };
+                    },
+                    methods: {
+                        toggleLocations(index) {
+
+                            this.$set(this.showLocation, index, !this.showLocation[index]);
+                        }
+                    },
+                }
+            </script>
+            ```
     * `:key` - This needs to be used if you need to track each node's identity and thus reuse or reorder existing elements. A unique Id needs to be used. If you are rendering several elements from the database in a list, you could use the primary key value and bind it to that elements key attribute. i.e. `:key="reply.id"`
 * ### Custom Vue Directives
     * Taken from [The Net Ninja](https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg) Youtube video called [Vue JS 2 Tutorial #34 - Custom Directives](https://www.youtube.com/watch?v=3-fLYMEKOU0&list=PL4cUxeGkcC9gQcYgjhBoeQH7wiAyZNrYa&index=36&t=0s)
@@ -185,6 +232,17 @@
             <div v-theme:column="'wide'"></div>
             ```
             Notice the single quotes around `'wide'` and `'narrow'`.
+* ### Adding and Deleting Properties on Arrays and Objects
+    * Vue does not have a way to know when array or object values are updated. You have to use special methods to accomplish any modifications to those entries, within a component. See more details at https://012.vuejs.org/guide/best-practices.html#Adding_and_Deleting_Properties
+        * Objects
+            * `this.$add(object, index, value)` is used to add a new value at the given index.
+            * `this.$set(object, index, value)` is used to update an existing value at the given index.
+            * `this.$delete(object, index, value)` is used to remove an item at the given index.
+        * Arrays
+            * `this.$get(array, index)` is used to get the value at the given index.
+            * `this.$add(array, index, value)` is used to add a new value at the given index.
+            * `this.$set(array, index, value)` is used to update an existing value at the given index.
+            * `this.$delete(array, index, value)` is used to remove an item at the given index.
 * ### Axios:
     * Axios uses javascript promises. See section on promise
     * Allows you to use the `then` and `catch` methods after making an Axios request to a given endpoint
@@ -460,6 +518,7 @@
             }
             ```
 * ### Miscellaneous:
+    * **IMPORTANT** - See section above about v-show, when using v-show to toggle the the visibility of a div when using an array of booleans for the show state.
     * **IMPORTANT UPDATE WITH VUE v2.5.21^ & WEBPACK/MIX 4**
         * When registering a component you need to add `.default` after the `require` method.
             * OLD: `Vue.component('flash', require('./components/Flash.vue'));`
