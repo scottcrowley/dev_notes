@@ -170,3 +170,99 @@
         {
         }
         ```
+* ### PHP Generators and dealing with memory intensive processes
+    * A PHP Generator is used when you need to iterate over a very large set of data and you don't want it to do all of it in memory. The Generator class implements the Iterator contract, so the generator can be used in a foreach loop.
+        * For example
+            ```php
+            Route::get('/', function() {
+                $items = range(1, 10000000);
+
+                return 'done';
+            });
+            ```
+            This will cause PHP to die with a `FatalErrorException` because it is trying to load 10 million things into the `$items` array. To solve this issue you could do something like:
+            ```php
+            function customRange($begin, $end) {
+                for ($i = $begin; $i <= $end, $i++) {
+                    yield $i;
+                }
+            }
+
+            Route::get('/', function() {
+                foreach (customRange(1, 10000000) as $i) {
+                    if ($i < 10000) {
+                        dump($i);
+                    }
+                }
+                return 'done';
+            });
+            ```
+            So, instead of returning something from the function or adding the items back to an array, which would load everything into memory, you will yield the value instead. 
+
+        * Another example showing that you can yield multiple times
+            ```php
+            function test() {
+                yield 1;
+                yield 2;
+                yield 3;
+            }
+
+            Route::get('/', function() {
+                foreach (test() as $item) {
+                    dump($item);
+                }
+            });
+            ```
+            This will display:
+            ```
+            1
+            2
+            3
+            ```
+        * Another example showing you can yield anything you want. Say you want to create 1 million Project models using the Factory class.
+            ```php
+            $projects = factory(App\Project::class, 1000000)->create();
+            ```
+            This will die with a memory exhausted error. Instead you could use a generator:
+            ```php
+            function make($times) {
+                for ($i=0; $i <= $times; $i++) {
+                    yield factory(App\Project::class)->create();
+                }
+            }
+
+            Route::get('/', function() {
+                foreach (make(100) as $result) {
+                    dump($result);
+                }
+            });
+            ```
+            Using the `foreach` will execute the `factory` method, within the `make` function, 100 times but won't load any of it into memory. Note that if the `foreach` wasn't used and the `make` method was still called then the `factory` method would not be called. Instead you would have a generator with 100 items in it. The actual code in the `yield` statement isn't executed until you either iterate over the generator or access an item directly.
+            ```
+            $projects = make(100);
+            $Projects->current();
+            $projects->next();
+            $projects->current();
+            ...etc
+            ```
+    * Generators can not be interacted with like an array. So you can't access a generator value by specifying a key
+        ```php
+            function test() {
+                yield 1;
+                yield 2;
+                yield 3;
+            }
+
+            Route::get('/', function() {
+                $generator = test();
+            });
+        ```
+        So you can't access the second value by using `$generator[1]`. This will give you a "`Cannot use object of type Generator as an array`" error. Instead, since the Generator implements the iterator class, you can use things like
+        ```php
+        $generator->current(); //displays the item at the current pointer
+        $generator->next(); //moves the pointer to the next item
+        ```
+    * You can cast the generator back to an array by using the following command. Becare, since this might create the same memory error as before using the generator.
+        ```php
+        interator_to_array($generator);
+        ```
