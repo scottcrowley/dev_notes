@@ -122,6 +122,70 @@
         limit 10
         ```
         The sub query is the section of the statement that begins with `in`. So the query states: first select all `posts` where the `user_id` of the `post` `=` the currently found `user` from the original `select` statement. Then `left join` the the `post_reads` table on the condition that the `post_id` `=` all the results from the sub query. Then `count` the results of that join and assign the value to `posts_read`.
+    * **Using Sub Queries with Laravel 6**
+        * You can now do sub queries on a model or the `DB` class by using the `addSelect()` method or by passing a closure to the `orderBy()` and `from()` methods of the query builder. 
+            * Examples from Laracast lesson [What's New in Laravel 6: Eloquent Subquery Additions](https://laracasts.com/series/whats-new-in-laravel-6/episodes/4). He is using a `users` table and a `watching` table, which contains the `user_id` along with the `lesson_id` (video), `created_at` & `updated_at`.
+
+                * We want to find the most recently watched lesson for user_id=41 & user_id=50. 
+                    ```php
+                    App\User::addSelect(
+                        [
+                            'last_watched_video' => function($query) {
+                                $query->select('lesson_id')
+                                    ->from('watching')
+                                    ->whereColumn('user_id', 'users.id')
+                                    ->limit(1)
+                                    ->latest();
+                            }
+                        ]
+                    )->find([41, 50]);
+                    ```
+                    `last_watched_video` is the alias to be used in the results. You need to use the `whereColumn` method when linking the watching table back to the `User` model. This is saying `where watching.user_id = users.id`. Note the second argument references the `users` table and not the `User` model.
+                    * The actual sql query being executed above looks like this:
+                        ```sql
+                        select `users`.*, 
+                            (select `lesson_id` 
+                                from `watching` 
+                                where `user_id` = `users`.`id` 
+                                order by `created_at` desc 
+                                limit 1
+                            ) as `last_watched_video` 
+                        from `users` 
+                        where `users`.`id` in (?,?)
+                        ```
+                    * Note: In place of the closure function above, you could use a model, if one is available, which it was not in this case.
+                        ```php
+                        App\User::addSelect(
+                            [
+                                'last_watched_video' => App\Watching::select(
+                                    //whatever the select statement should be
+                                )
+                            ]
+                        );
+                        ```
+                * Next example we want to grab his users but order them by most recently watched videos being displayed first. So, someone that hasn't watched a video in a very long time, will be at the bottom of the results and someone that just watched a video, will be at the top.
+                    ```php
+                    App\User::orderByDesc(function($query) {
+                        $query->select('created_at')
+                            ->from('watching')
+                            ->latest()
+                            ->whereColumn('user_id', 'users.id')
+                            ->limit(1);
+                    })->find([41, 50]);
+                    ```
+                    * The actual sql query being executed above looks like this:
+                        ```sql
+                        select *
+                        from `users`
+                        where `users`.`id` in (?,?)
+                        order by (
+                            select `created_at` 
+                                from `watching` 
+                                where `user_id` = `users`.`id` 
+                                order by `created_at` desc 
+                                limit 1
+                        ) desc
+                        ```
 * ## Recursive Query
     * A recursive query is used when you have a foreign key that references its own table. This can give you the parent to child hierarchy. Using the Lego project as an example, the `themes` table contains the following columns: `id`, `name`, `parent_id`. `parent_id` has a constraint on the `id` column. This allows for a theme to have many child or parent themes associated with it. If the `parent_id` column is null then that is the top parent theme. 
     * Below is a query I found on http://www.mysqltutorial.org/mysql-adjacency-list-tree/. I modified it to fit my needs. Not sure if it is too resource intensive to be useful.
