@@ -117,6 +117,12 @@
     * `Slime Theme` - *smlombardi*
     * `vscode-icons` - *VSCode Icons Team*
 * ### Useful Tips:
+    * #### Preview Mode:
+        * When you normally open a file by clicking on it in the sidebar or by selecting it in the command palatte, it is being opened in Preview Mode. This means that when you open a different file, the new file will close the current file in Preview Mode then display the new file in Preview Mode. You can tell a file is in Preview Mode by looking at the file name in the editors tab. It will be italic when its in Preview Mode. There are several ways to have a file stay open and not be in Preview Mode:
+            * Double click the file from the sidebar
+            * Double click the editors tab
+            * Right click the editors tab and select `Keep Open`
+            * Use `cmd+k enter` and the current editor in Preview Mode will be kept open
     * To allow files to be opened in Code via the terminal: This will add Code to your Path
         * Open the Command Palette (`shift+cmd+p`) then type `shell command`
         * Restart the terminal to make the changes take effect
