@@ -13,13 +13,11 @@
 * ### Route Model Binding
     * If a route is referencing a wildcard in the URI and a controller is being used, it is important that the wildcard slug is the same as the parameter being used in the function call within the controller file
 
-        `Routes File (routes/web.php)`
-
+        Routes File `(routes/web.php)`
         ```php
         Route::get('/tasks/{task}', 'TasksController@show'); //This will pass the {task} slug to the show method within the TasksController
         ```
-        `TaskController File (app\Http\Controllers\TaskController.php)`
-
+        TaskController File `(app\Http\Controllers\TaskController.php)`
         ```php
         namespace App\Http\Controllers;
 
@@ -33,7 +31,6 @@
             }
         } 
         ```
-
         The `show` method is using an instance of the `Task` model and is being passed the wildcard from the route called `task`. This variable name must be the same as the one being referenced as the wildcard slug in the `Routes` file. So now the `show` function is using the `Task` model to query the `Tasks` table in the database and look for the primary key with the value being passed in the `$task` variable. This is the default behavior.`
 * ### Layouts using Blade Template Engine
     * All blade  commands start with `@` and do not need to be wrapped in php tags
@@ -374,10 +371,12 @@
     * Response Macros are also an option. See the documentation for more info. <https://laravel.com/docs/master/responses#response-macros>
 * ### URL Helper Function
     * The `url` helper function is used to generate or retrieve a url for the application
-    * `echo url("/posts/{$post->id}"); //http://example.com/posts/1`
-    * `echo url()->current(); // Get the current URL without the query string...`
-    * `echo url()->full(); // Get the current URL including the query string...`
-    * `echo url()->previous(); // Get the full URL for the previous request...`
+        ```php
+        echo url("/posts/{$post->id}"); //http://example.com/posts/1
+        echo url()->current(); // Get the current URL without the query string...
+        echo url()->full(); // Get the current URL including the query string...
+        echo url()->previous(); // Get the full URL for the previous request...
+        ```
 * ### The Global Errors Variable
     * This variable is available to all views and can be populated with different alerts
     * You can set up a simple partial to include in a page view that will display errors if they are present. The below example is using Twitter Bootstrap css for the classes.
@@ -631,11 +630,57 @@
             ```
             *be careful not to use a strict comparison (`===`) since the value for `user_id` may be returned as a string (even thought it was cast as an integer within the `Client` model) and `$user->id` is an integer, as in the case above.*
 * ### Models
+    * #### Dealing with Default Data
+        * There may be times when you have a relationship declared in a model that may or may not always be there. Using the Lego Project as an example. There is a `UserSet` model that has a `inventory` relationship in it. Not all sets may have an inventory, so if you are trying to return any properties that are in the Inventory model and that set does not have an inventory, then you will get an error. This is because you are calling a property or method on `null`. To get around this, you can do a couple of different things.
+            * Add the `withDefault` method to the relationship. Here, you can specify the default values to return when the relationship is null. We use the `getInventoryIdAttribute` method to return the `id` from the `inventory` relationship.
+                ```php
+                /**
+                 * A UserSet has one inventory
+                 *
+                 * @return belongsTo
+                */
+                public function inventory()
+                {
+                    return $this->hasOne(Inventory::class, 'set_num', 'set_num')->withDefault(['id' => null]);
+                }
+
+                /**
+                 * Attribute getter for inventory->id
+                 *
+                 * @return string
+                */
+                public function getInventoryIdAttribute()
+                {
+                    return $this->inventory->id;
+                }
+                ```
+            * You can also use the optional helper method on the attribute getter instead of using the withDefault method on the relationship.
+                ```php
+                /**
+                 * A UserSet has one inventory
+                 *
+                 * @return belongsTo
+                */
+                public function inventory()
+                {
+                    return $this->hasOne(Inventory::class, 'set_num', 'set_num');
+                }
+
+                /**
+                 * Attribute getter for inventory->id
+                 *
+                 * @return string
+                */
+                public function getInventoryIdAttribute()
+                {
+                    return optional($this->inventory)->id;
+                }
+                ```
     * #### Miscellaneous
         * Different ways to handle Policy authorization within a vue component when you want the authorization details is available in the model's json response. This example is based off of the video called [Whatcha Working On:Frontend Authorization Brainstorming](https://laracasts.com/series/whatcha-working-on/episodes/36). JW shows ways to pass authorization details about a user working with a post. He only wants to show the edit button, if the user is an admin or the user who created the post and show a delete button if the user is an admin.
 
             *app/Policies/PostPolicy.php*
-            ```
+            ```php
             ...
             class PostPolicy
             {
@@ -660,7 +705,7 @@
             }
             ```
             *app/Post*
-            ```
+            ```php
             ...
 
             class Post extends Model
@@ -700,7 +745,12 @@
     * **Using more complex queries:**
         * `Raw` - The word `raw` can be added to several different SQL actions (select, order by, group by, etc), so you are able to use more specific queries or SQL functions
             * Consider the following query: `select year(created_at) year, monthname(created_at), count(*) published from posts group by year, month order by min(created_at)`
-                * `App\Post::selectRaw('year(created_at) year, monthname(created_at), count(*) published)->groupBy('year', 'month')->orderByRaw('min(created_at) desc')->get();`
+                ```php
+                App\Post::selectRaw('year(created_at) year, monthname(created_at), count(*) published')
+                    ->groupBy('year', 'month')
+                    ->orderByRaw('min(created_at) desc')
+                    ->get();
+                ```
     * **What is returned:**
         * `find` or `first` - Returns a single model if a result if found.
             * `App\Post::find(4); //returns the post with an id of 4`
@@ -898,7 +948,10 @@
     * `take()` will limit the record set to the number provided.
     * `chunk()` will allow you to pull sets of the given number from the database at a time. This saves on memory usage. Usage: `\App\Users::chunk(100, function() { //do something with the chunk of users here. });` will pull all users from the database in chunks of 100 and perform the callback function provided.
     * `is()` & `isNot()` can be used to check if 2 models are the same or not.
-        * `auth()->user()->is($project->owner); // checks to see if the current logged in user is the same as the owner of a project.`
+        ```php
+        // checks to see if the current logged in user is the same as the owner of a project.
+        auth()->user()->is($project->owner);
+        ```
     * **Eager Loading:** Defining relationships between different models or tables in the database
         * Using Blog Post/Comments example from series
             * Using the logic that a post `hasMany` comments and a comment `belongsTo` one post
@@ -947,9 +1000,17 @@
                         * `public function project() { return $this->belongsTo(Project::class); }`
                     * Now, whenever the `Task` is updated, the parent model (`Project`) will also have the `updated_at` timestamp updated.
         * You can add a sorting method to a relationship method. Useful if you always want a relationship gathered in a certain order.
-            * `public function project() { return $this->belongsTo(Project::class)->latest('updated_at'); }`
-            * `public function project() { return $this->belongsTo(Project::class)->orderBy('updated_at', 'desc'); }`
-            * `public function project() { return $this->belongsTo(Project::class)->orderByDesc('updated_at'); }`
+            ```php
+            public function project() { 
+                return $this->belongsTo(Project::class)->latest('updated_at'); 
+            }
+            public function project() { 
+                return $this->belongsTo(Project::class)->orderBy('updated_at', 'desc'); 
+            }
+            public function project() { 
+                return $this->belongsTo(Project::class)->orderByDesc('updated_at'); 
+            }
+            ```
     * **DB query logging:** Useful when using Tinker. **NOTE: SHOULD ONLY BE DONE FOR TESTING PURPOSES AND NOT IN PRODUCTION**
         * `DB::enableQueryLog();` Enables logging
         * `DB::getQueryLog();` Shows the current query log
@@ -957,21 +1018,38 @@
         * You can also use Laravel [Telescope](https://github.com/laravel/telescope). See section on Laravel Telescope.
     * **Other Creation Methods:**
         * `firstOrCreate` - Tries to find a record in the database matching the provided arguments and if not found then it will create it using the arguments passed. You can also pass a second argument that can be used for other attributes you would want used in the create but not in there where clause for the find. An instance of the model will be returned using this method.
-            * `$flight = App\Flight::firstOrCreate(['name' => 'Flight 10']); // Retrieve flight by name, or create it if it doesn't exist...`
-            * `$flight = App\Flight::firstOrCreate(['name' => 'Flight 10'], ['delayed' => 1]); // Retrieve flight by name, or create it with the name and delayed attributes...`
+            ```php
+            // Retrieve flight by name, or create it if it doesn't exist...
+            $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
+
+            // Retrieve flight by name, or create it with the name and delayed attributes...
+            $flight = App\Flight::firstOrCreate(['name' => 'Flight 10'], ['delayed' => 1]); 
+            ```
         * `firstOrNew` - The exact same as `firstOrCreate` except the model is not persisted to the database if a record isn't found.  An instance of the model will be returned using this method. You will still need to run `->save()` on the model to persist it to the database.
         * `updateOrCreate` - Can be used to update a record in the database or create a new record if the provided arguments returns no results. This method will persist the model to the database if it needs to create a new model.
-            * `$flight = App\Flight::updateOrCreate(['departure' => 'Oakland', 'destination' => 'San Diego'], ['price' => 99]); // If there's a flight from Oakland to San Diego, set the price to $99. If no matching model exists, create one.`
+            ```php
+            // If there's a flight from Oakland to San Diego, set the price to $99. 
+            // If no matching model exists, create one.
+            $flight = App\Flight::updateOrCreate(
+                ['departure' => 'Oakland', 'destination' => 'San Diego'], ['price' => 99]
+            ); 
+            ```
     * **Deleting Models:**
         * Delete the model directly on an instance of the model.
-            * `$flight = App\Flight::find(1); $flight->delete();`
+            ```php
+            $flight = App\Flight::find(1); $flight->delete();
+            ```
         * Delete an existing model using the primary key, a collection of keys or an array of keys.
-            * `App\Flight::destroy(1);`
-            * `App\Flight::destroy(1, 2, 3);`
-            * `App\Flight::destroy([1, 2, 3]);`
-            * `App\Flight::destroy(collect([1, 2, 3]));`
+            ```php
+            App\Flight::destroy(1);
+            App\Flight::destroy(1, 2, 3);
+            App\Flight::destroy([1, 2, 3]);
+            App\Flight::destroy(collect([1, 2, 3]));
+            ```
         * Delete a model by query
-            * `$deletedRows = App\Flight::where('active', 0)->delete();`
+            ```php
+            $deletedRows = App\Flight::where('active', 0)->delete();
+            ```
         * When issuing mass delete statements, it's important to note that the `deleting` and `deleted` events will not file since the model isn't created first.
     * **Miscellaneous Notes:**
         * Within a model you can use the `protected $casts` property to tell laravel how certain fields should be handled. i.e. `'confirmed' => 'boolean'`
@@ -1370,16 +1448,22 @@
         * `session()` can be used anywhere without importing anything.
         * setting a value is done by passing an array. `session(['name' => 'JohnDoe']);`
         * Getting a value is done by passing the name of the variable you want. It is also possible to pass a default value in case something isn't found in the session
-            * `session('name');`
-            * `session('name', 'default value');`
+            ```php
+            session('name');
+            session('name', 'default value');
+            ```
         * Other methods available
-            * `session()->forget('name');`
-            * `session()->push('user.teams', 'developers');` pushes to the `[user][teams]` array
-            * `session()->put('name', 'JohnDoe');` stores a value to the session
+            ```php
+            session()->forget('name');
+            session()->push('user.teams', 'developers'); //pushes to the [user][teams] array
+            session()->put('name', 'JohnDoe'); //stores a value to the session
+            ```
             * session getter
-                * `session()->get('name');`
-                * `session()->get('name', 'default');`
-                * `session()->get(function() { return 'calculated value'; });`
+                ```php
+                session()->get('name');
+                session()->get('name', 'default');
+                session()->get(function() { return 'calculated value'; });
+                ```
                 * `session()->get('errors')->getBag($errorBagName);` Can be used to get all the errors associtated with a certain error bag name. See the section, under the `Form Requests` section, called `Using multiple error bags`, for more info on multiple error bags
             * `session()->all();` Retrieve all session values.
             * `session()->has('name');` check if the session has a value. returns true if the item is present or null if not
@@ -1418,9 +1502,10 @@
                     .tailwind();
                 ```
                 * Create `Laracasts/src/stubs/app.js`
-                    * `require('./bootstrap');`
+                    ```js
+                    require('./bootstrap');
+                    ```
                 * Create `Laracasts/src/stubs/bootstrap.js`
-                    
                     ```js
                     window.axios = require('axios');
                     window.axios.defaults.header.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -1442,7 +1527,6 @@
                     * Now when you namespace a file with `Laracasts`, the app will know to look in `Laracasts/src` for the file.
         * Open the `LaracastsServiceProvider` service provider
             * The new command for the preset can be added to the `boot` method.
-                
                 add 
                 ```php
                 PresetCommand::macro('Laracasts', function($command) { 
@@ -1639,7 +1723,9 @@
         ```
 * ### Webpack & Mix
     * Use the `extract` method to make webpack create a separate js file for all your vendor js and keep your js separate.
-        * `mix.js('resources/js/app.js', 'public/js').extract();`
+        ```js
+        mix.js('resources/js/app.js', 'public/js').extract();
+        ```
         * In your template file, make sure to include all three created js files.
             ```html
             <script src="/js/manifest.js"></script>
