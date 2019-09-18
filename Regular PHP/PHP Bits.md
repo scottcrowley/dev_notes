@@ -266,3 +266,50 @@
         ```php
         interator_to_array($generator);
         ```
+* ### PHP Reflection Classes
+    * Reflection classes allow you to inspect things like a parameter list and determine what is being requested.
+    * In this example, JW is using a "`load`" method that will receive a closure that is sending through any number of `User` instances. The `ReflectionFunction` class can be used to inspect what is being sent to the load method. It will reflect into the anonymous function or closure being sent to the `load` method 
+        ```php
+        public function test() {
+
+            $this->load(function(User $user, User $user2, User $user3) {
+                dump($user);
+            });
+        }
+
+        protected function load($callable) {
+            $function = new .\ReflectionFunction($callable);
+
+            dd($function); //view what is available in the ReflectionFunction class.
+            //$function->parameters will contain to instances of ReflectionParameter. 
+            //One for each User instance in the closure.
+            //$function->getNumberOfParameters(); will return the number of parameters in the closure.
+
+            $users = [];
+
+            foreach (range(1, $function->getNumberOfParameters()) as $index) {
+                $users[] = new User();
+            }
+
+            //now trigger the callable anonymous closure function
+            //which in this case will dump each user instance created in the above foreach
+            //must destructure the array being sent to the callable.
+            //In this case the destructuring will look like $callable($users[0], $users[1], $users[2])
+            $callable(...$users); 
+        }
+        ```
+        
+        `load` method can be refactored to use a collection instead
+
+        ```php
+        protected function load($callable) {
+            $function = new .\ReflectionFunction($callable);
+
+            $users = collect(range(1, $function->getNumberOfParameters()))
+                -map(function() {
+                    return new User();
+                });
+
+            $callable(...$users); 
+        }
+        ```

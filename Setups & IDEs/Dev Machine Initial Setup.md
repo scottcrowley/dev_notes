@@ -3,6 +3,22 @@
 ## Notes from the Setup a Mac Dev Machine from Scratch
 
 * ### Suggested Tools
+    * #### Updating Paths
+        * There are several ways to update paths.
+            * `~/.bash_profile`
+            * `~/.bashrc`
+            * `~/.zshrc`
+            * `/etc/paths`
+        * Updating the `/etc/paths` file
+            * This file contains all the paths that are designated in any of the other path files (`.bash_profile`, `.bashrc`, etc). 
+            * Variables are not allowed in this file. i.e. $HOME
+                * You can check the values of these variables by typing `echo` followed by the variable name in a terminal.
+                    ```shell
+                    > echo $HOME
+                    /Users/Scott
+                    ```
+            * `nano /etc/paths`
+                * Add a new line for the new path and make sure not to use any variables. Then save the file.
     * [Alfred](https://www.alfredapp.com/) Used for searching, shortcuts and hotkeys
     * [iTerm 2](https://www.iterm2.com/) Terminal replacement
         * **In the Preferences**
