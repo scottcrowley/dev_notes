@@ -245,6 +245,91 @@
             $projects->current();
             ...etc
             ```
+    * #### The code flow of a generator:
+        * Taken from https://alanstorm.com/php-generators-from-scratch/
+            ```php
+            function myGeneratorFunction()
+            {
+                echo "One","\n";
+                yield 'first return value';
+
+                echo "Two","\n";
+                yield 'second return value';
+
+                echo "Three","\n";
+                yield 'third return value';
+            }
+
+            $iterator = myGeneratorFunction();
+
+            $value = $iterator->current();
+            ```
+            The generator is started after the above `current()` method is called, thus echoing out `One`, since it is not yielded yet. We have also assigned the value of the first `yield` statement to `$value` but won't be displayed until it is echoed out.
+            ```php
+            // One
+            echo $value, PHP_EOL;
+            //first return value
+            
+            $value = $iterator->next();
+            // Two
+            echo $value, PHP_EOL;
+            // 
+            ```
+            `$value` is null so nothing is echoed. The `next()` method does not return anything. To get the next `yield`, you need to call the `current()` method.
+            ```php
+            $value = $iterator->current();
+            echo $value, PHP_EOL;
+            // second return value
+
+            $value = $iterator->next();
+            // Three
+            $value = $iterator->current();
+            echo $value, PHP_EOL;
+            // third return value
+
+            var_dump($iterator->valid());
+            // bool(true) This is because the generator has paused at the third yield.
+
+            $value = $iterator->next();
+            var_dump($iterator->valid());
+            // bool(false) The generator has completed and closed. 
+            ```
+        * Once a generator has closed, it can not be accessed anymore.
+        * Another example of generator flow:
+            ```php
+            // 1. Define a Generator Function
+            function generator_range($min, $max)
+            {
+                //3b. Start executing once `current`'s been called
+                for ($i = $min;$i <= $max;$i++) {
+                    echo 'Starting Loop',"\n";
+                    yield $i;   //3c. Return execution to the main program
+                    //4b. Return execution to the main program again
+                    //4a. Resume exection when `next is called
+                    echo 'Ending Loop',"\n";
+                }
+            }
+
+            //2. Call the generator function
+            $generator = generator_range(1, 5);
+
+            //3a. Call the `current` method on the generator function
+            echo $generator->current(), "\n";
+
+            //4a. Resume execution and call `next` on the generator object
+            $generator->next();
+
+            //5 echo out value we yielded when calling `next` above
+            echo $generator->current(), "\n";
+            ```
+            In plain english, the above program
+            1. Defines a generator function
+            2. Calls that generator function to get a generator object
+            3. Starts executing the generator function when the program calls `current()`, which `yields` a value
+            4. Returns to the generator function when we call `$generator->next()` and makes another trip through the loop until `yield` is called again
+            5. echos out the value of the second `yield` when we call `current()` again
+            
+            The most important step is #4. When we call `next` and return execution to the generator function — the values of `$i`, `$min`, and `$max` are all the same as when we left the function in step #3. PHP held on to these values when it paused the function.
     * Generators can not be interacted with like an array. So you can't access a generator value by specifying a key
         ```php
             function test() {
@@ -262,10 +347,126 @@
         $generator->current(); //displays the item at the current pointer
         $generator->next(); //moves the pointer to the next item
         ```
-    * You can cast the generator back to an array by using the following command. Becare, since this might create the same memory error as before using the generator.
+    * You can also send data to a generator, when it is being iterated over, by using the `send()` method on the original generator object.
+        ```php 
+        function getRange ($max = 10) {
+            for ($i = 1; $i < $max; $i++) {
+                $injected = yield $i;
+
+                if ($injected === 'stop') return;
+            }
+        }
+
+        $generator = getRange(PHP_INT_MAX);
+
+        foreach ($generator as $range) {
+            if ($range === 10000) {
+                $generator->send('stop');
+            }
+
+            echo "Dataset {$range} <br>";
+        }
+        ```
+    * It is also possible to yield a `key-value` pair from the generator.
+        ```php
+        function getRange ($max = 10) {
+            for ($i = 1; $i < $max; $i++) {
+                $value = $i * mt_rand();
+
+                yield $i => $value;
+            }
+        }
+        ```
+    * *Generator Delegation* allows you to yield values from other generators, arrays or functions by using the `yield from` keyword.
+        ```php
+        function count_to_ten() {
+            yield 1;
+            yield 2;
+            yield from [3, 4];
+            yield from new ArrayIterator([5, 6]);
+            yield from seven_eight();
+            yield 9;
+            yield 10;
+        }
+
+        function seven_eight() {
+            yield 7;
+            yield from eight();
+        }
+
+        function eight() {
+            yield 8;
+        }
+
+        foreach (count_to_ten() as $num) {
+            echo "$num ";
+        }
+
+        // This yields 1 2 3 4 5 6 7 8 9 10
+        ```
+    * You can return a value from a generator without yielding it first. If something is returned from a generator, the only way to access it is using the `getReturn()` method. Note that if something is returned from a generator all further execution of the generator is stopped.
+        ```php
+        $gen = (function() {
+            yield 1;
+            yield 2;
+            // 3 is only returned after the generator has finished
+            return 3;
+
+        })();
+
+        foreach ($gen as $val) {
+            echo $val, PHP_EOL;
+        }
+
+        // Outputs 1 2
+
+        echo $gen->getReturn(), PHP_EOL;
+
+        // Outputs 3
+        ```
+        If you try to use `getReturn()` on a generator that has finished you will get an exception. You can use the `valid()` method to check to see if a generator has finished or not. The `valid()` method return false if the generator has closed. So the use of the `getReturn()` method could be updated with a check using the `valid()` method.
+        ```php
+        if ($gen->valid()) {
+            echo $gen->getReturn(), PHP_EOL;
+        }
+        ```
+    * Using an `ArrayIterator` object instead of yielding.
+        ```php
+        $values = [1,2,3,4,5];
+
+        $iterator = new ArrayIterator($values);
+        while($number = $iterator->current()) {
+            echo $number, "\n";
+            $iterator->next();
+        }
+        ```
+    * You can cast the generator back to an array by using the following command. Be careful, since this might create the same memory error as before using the generator.
         ```php
         interator_to_array($generator);
         ```
+    * #### Generator Methods
+        * `current()` - gets the current yielded value
+        * `return()` - gets the return value of a generator
+        * `key()` - gets the yielded key
+            * Used when a key-value pair is yielded in the generator
+                ```php
+                function Gen()
+                {
+                    yield 'key' => 'value';
+                }
+
+                $gen = Gen();
+
+                echo "{$gen->key()} => {$gen->current()}";
+                ```
+        * `next()` - resumes execution of the generator
+        * `rewind()` - rewind a generator
+            * If iteration has already begun, this will throw an exception
+        * `send()` - send a value to a generator
+        * `throw()` - throw an exception into a generator
+            * Throws an exception into the generator and resumes execution of the generator. The behavior will be the same as if the current `yield` expression was replaced with a throw `$exception` statement.
+            * If the generator is already closed when this method is invoked, the exception will be thrown in the caller's context instead.
+        * `valid()` - checks if the iterator has been closed
 * ### PHP Reflection Classes
     * Reflection classes allow you to inspect things like a parameter list and determine what is being requested.
     * In this example, JW is using a "`load`" method that will receive a closure that is sending through any number of `User` instances. The `ReflectionFunction` class can be used to inspect what is being sent to the load method. It will reflect into the anonymous function or closure being sent to the `load` method 
