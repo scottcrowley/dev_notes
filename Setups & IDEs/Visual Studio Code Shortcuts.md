@@ -7,13 +7,22 @@
     * #### File Related
         * `cmd+alt+n` - uses `Advanced New File` extension. Allows you to add a new file at a specified location
         * `shift+cmd+F` - find in all files
-        * `cmd+R` - go to a symbol in a file ``CUSTOM BINDING``
-        * `shift+cmd+R` - go to a symbol in the workspace and shows all symbols in the current file `CUSTOM BINDING`
-        * `cmd+;` - clears the terminal `CUSTOM BINDING`
-        * `ctrl+s` - triggers suggestions for a class. Used to help import classes. `CUSTOM BINDING`
-        * `cmd+/` - comment out selection
-        * `shift+alt+D` - Creates a doc block for a method or property when then are selected. Requires `Php DocBlock Generator` `CUSTOM BINDING`
-        * `shift+alt+F` - Runs `php-cs-fixer` on the current file. Requires `php cs fixer` `CUSTOM BINDING`
+        * `cmd+R` - go to a symbol in a file ***CUSTOM BINDING***
+        * `shift+cmd+R` - go to a symbol in the workspace ***CUSTOM BINDING***
+        * `ctrl+s` - triggers suggestions for a class. Used to help import classes. ***CUSTOM BINDING***
+        * `shift+alt+F` - Runs `php-cs-fixer` on the current file. Requires `php cs fixer` ***CUSTOM BINDING***
+    * #### Editor:
+        * `ctrl+tab` & `shift+ctrl+tab` - Move to next or previous open editor tab
+        * `shift+cmd+T` - reopen closed editor
+        * `cmd+/` - toggle line comment
+        * `shift+alt+A` - toggle block comment
+        * `cmd+;` - clears the terminal ***CUSTOM BINDING***
+        * `shift+alt+D` - Creates a doc block for a method or property when then are selected. Requires `Php DocBlock Generator` ***CUSTOM BINDING***
+        * `alt+z` - toggles word wrap
+        * `ctrl+space` - trigger suggestion
+        * `shift+cmd+space` - trigger parameter hints
+        * `F12` - go to definition
+        * `alt+F12` - peek definition
     * #### U/I:
         * `cmd+shift+P` - `Control Palette` - search for things that have to do with VSC like shortcuts, snippets, other installed extensions
         * `cmd+P` - search for things within a site. Uses fuzzy logic so `r/we` will show results in `routes/web.php`
@@ -21,22 +30,29 @@
         * `shift+cmd+E` - toggles file tree side bar
         * `ctrl+shift+G` - toggles source control panel
         * ctrl+` - show/hide terminal
+        * shift+ctrl+` - create new terminal ***CUSTOM BINDING***
+        * alt+` - focus terminal ***CUSTOM BINDING***
+        * cmd+ctrl+` - focus next terminal ***CUSTOM BINDING***
+        * alt+ctrl+` - focus previous terminal ***CUSTOM BINDING***
         * `cmd+B` - show/hide sidebar
         * `shift+cmd+X` - show/hide extensions
         * `cmd+.` - brings up Quick Fix context menu when diagnosing an error in a file.
     * #### Testing:
-        * `cmd+T` - runs a selected test if you have clicked within a test or test class and have ``Better PHPUnit`` installed `CUSTOM BINDING`
-        * `shift+cmd+T` - runs a previously run test. Requires `Better PHPUnit` installed `CUSTOM BINDING`
-        * `alt+T` - runs the entire PHPUnit suite. Requires `Better PHPUnit` `CUSTOM BINDING`
+        * `cmd+T` - runs a selected test if you have clicked within a test or test class and have ``Better PHPUnit`` installed ***CUSTOM BINDING***
+        * `shift+cmd+T` - runs a previously run test. Requires `Better PHPUnit` installed ***CUSTOM BINDING***
+        * `alt+T` - runs the entire PHPUnit suite. Requires `Better PHPUnit` ***CUSTOM BINDING***
     * #### Cursor & Selections:
         * ***`ctrl+-`*** - goes back to where the cursor previously was in the current file or previous edit point
         * `shift+alt+down` duplicates the current line down.
         * `alt+down` - moves a selection down
         * `alt+up` - moves a selection up
-        * `ctrl+cmd+g` - selects current word or variable name `CUSTOM BINDING`
+        * `ctrl+cmd+g` - selects current word or variable name ***CUSTOM BINDING***
         * `cmd+ctrl+shift+->` - Smart Select Grow `smartSelect.grow` This will select an entire variable, hit it again and it will grow the selection to include different results depending on what is on the line. It may just select a line or what is between brackets or quotes.
         * `cmd+ctrl+shift+<-` - Smart Select Shrink `smartSelect.shrink` This will shrink the selection. The inverse to Smart Select Grow
-        * `ctrl+m` - select the enclosing bracket or parenthesis `CUSTOM BINDING`
+        * `ctrl+m` - select the enclosing bracket or parenthesis ***CUSTOM BINDING***
+        * `cmd+l` - selects current line
+        * `cmd+alt+up` - insert cursor above
+        * `cmd+alt+down` - insert cursor below
     * #### Quick and Simple Text Selection Extension:
         * `cmd+k+"` - selects between "
         * `cmd+k+’` - selects between '
@@ -56,9 +72,9 @@
         * `ctrl+k` - deletes everything right of the cursor.
         * `ctrl+shift+k` - deletes everything left of the cursor.
         * `alt+backspace` - deletes the entire word left of the cursor.
+        * `alt+\` - deletes the entire word right of the cursor. ***CUSTOM BINDING***
         * `ctrl+alt+backspace` - deletes the partial word left of the cursor. If the word is camel case then it will delete each hump separately
-        * `alt+\` - deletes the entire word right of the cursor. `CUSTOM BINDING`
-        * `ctrl+alt+\` - deletes the partial word right of the cursor. If the word is camel case then it will delete each hump separately `CUSTOM BINDING`
+        * `ctrl+alt+\` - deletes the partial word right of the cursor. If the word is camel case then it will delete each hump separately ***CUSTOM BINDING***
 * ### Cosmetic Alterations:
     * Hide the status bar: `cmd+,` then find `workbench.statusBar.visible` and set to `false`
     * Hide the Open Editors on the left side bar: `cmd+,` then find `explorer.openEditors.visible` and set to `0`
@@ -249,8 +265,28 @@
     // Place your key bindings in this file to overwrite the defaults
     [
         {
+            "key": "cmd+;",
+            "command": "workbench.action.terminal.clear"
+        },
+        {
+            "key": "ctrl+cmd+`",
+            "command": "workbench.action.terminal.focusNext"
+        },
+        {
+            "key": "ctrl+alt+'",
+            "command": "workbench.action.terminal.focusPrevious"
+        },
+        {
+            "key": "alt+'",
+            "command": "workbench.action.terminal.focus"
+        },
+        {
             "key": "cmd+r",
             "command": "workbench.action.gotoSymbol"
+        },
+        {
+            "key": "shift+cmd+r",
+            "command": "workbench.action.showAllSymbols"
         },
         {
             "key": "shift+cmd+o",
