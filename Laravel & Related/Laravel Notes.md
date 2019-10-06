@@ -541,6 +541,77 @@
                 }
             }
             ```
+* ### Collections
+    * #### Misc Tips
+        * You can return custom keys from the `groupBy` method, instead of using the numeric values returned by default.
+
+            We want to group a collection of videos by ones created today, this week, last week & older.
+            ```php
+            $videos = Video::latest()->get()->groupBy(function($video) {
+                if ($video->created_at->isToday()) {
+                    return 'today';
+                }
+
+                if ($video->created_at->isCurrentWeek()) {
+                    return 'this week';
+                }
+
+                if ($video->created_at->isLastWeek()) {
+                    return 'last week';
+                }
+
+                return 'older';
+            });
+            ```
+    * #### Custom Collections
+        * Example covers a Laracasts episode from the [Laravel Explained](https://laracasts.com/series/laravel-explained) series called [Explain How to Group Records By Relative](https://laracasts.com/series/laravel-explained/episodes/6).
+            * We want to group a collection of videos by ones created today, this week, last week & older. This can be done by adding a new `VideoCollection` collections class to handle it.
+                ```php
+                <?php
+
+                namespace App;
+
+                use Illuminate\Database\Eloquent\Collection;
+
+                class VideoCollection extends Collection {
+                    public function groupByDate() {
+                        return $this->groupBy(function($video) {
+                            if ($video->created_at->isToday()) {
+                                return 'today';
+                            }
+
+                            if ($video->created_at->isCurrentWeek()) {
+                                return 'this week';
+                            }
+
+                            if ($video->created_at->isLastWeek()) {
+                                return 'last week';
+                            }
+
+                            return 'older';
+                        });
+                    }
+                }
+                ```
+                Place where you need the query executed, which in this case is the `routes/web.php` file
+                ```php
+                Route::get('/', function() {
+                    return Video::latest()->get()->groupByDate();
+                });
+                ```
+                You need to override the default `newCollection` method from the `vendor/laravel/framework/src/DataBase/Eloquent/Model.php` class and return our new `VideoCollection` collection class instead of the normal `Collection` class. This is done in the model. In `App\Video.php`, add the following method.
+                ```php
+                /**
+                 * Create a new Eloquent Collection instance.
+                 *
+                 * @param  array  $models
+                 * @return \Illuminate\Database\Eloquent\Collection
+                 */
+                public function newCollection(array $models = [])
+                {
+                    return new VideoCollection($models);
+                }
+                ```
 * ### Request()
     * To obtain an instance of the current HTTP request you can type-hint the `Illuminate\Http\Request` class on your controller method. `public function store(Request $request) {  }`
     * The request object can contain `POST` & `GET` data
@@ -712,7 +783,7 @@
             {
                 public function authorizations($abilities = [])
                 {
-                    return collect(array_flip($abilities))->map(function ($index, $ability)) {
+                    return tt(array_flip($abilities))->map(function ($index, $ability)) {
                         return \Gate::allows($ability,$this);
                     });
                 }
