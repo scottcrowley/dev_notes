@@ -379,6 +379,14 @@
         ```
 * ### The Global Errors Variable
     * This variable is available to all views and can be populated with different alerts
+    * There is a @error blade directive that can be used in a view, to check if an error exists for a certain input. Note: using Bulma CSS for this example.
+        ```html
+        <input class="input @error('title') is-danger @enderror" type="text" name="title" id="title">
+
+        @error('title')
+            <p class="help is-danger">{{ $errors->first('title') }}</p>
+        @enderror
+        ```
     * You can set up a simple partial to include in a page view that will display errors if they are present. The below example is using Twitter Bootstrap css for the classes.
 	    ```php
         @if (count($errors)) // OR @if ($errors->any())
