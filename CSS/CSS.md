@@ -62,6 +62,9 @@
 * ### Miscellaneous CSS add-ons & plugins
     * `Custom Margin & Padding` helper utilities. James Furey <https://github.com/furey>
 * ### How-to's
+    * #### Sticky Nav Bar
+        * Nav bar disappears when scrolling but then reappears when a section is scrolled into view. Using CSS & regular JS
+        * See [Stick Nav Bar](../Vue.js/Vue%202%20Examples.md#sticky-nav-bar) example in [Vue 2 Examples](../Vue.js/Vue%202%20Examples.md) document
     * #### Having an element be hidden if there is not content within it.
         * This can be useful in a Vue component slot that may or may not have content in it. e.g. the component has a slot named footer within a footer tag. You can assign the :empty psuedo class to the footer element, which will be hidden if there is no content within it.
             ```css
