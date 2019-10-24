@@ -141,4 +141,287 @@
                 </p>
             @endcomponent
             ```
+    * #### Tooltips
+        ```html
+        <div class="tooltip">Hover over me
+            <span class="tooltiptext">Tooltip text</span>
+        </div>
+        ```
+        ```css
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
             
+            /* Position the tooltip text - see examples below! */
+            position: absolute;
+            z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+        ```
+        Positioning
+        ```css
+        /* Right */
+        .tooltip .tooltiptext {
+            top: -5px;
+            left: 105%;
+        }
+        /* Left */
+        .tooltip .tooltiptext {
+            top: -5px;
+            right: 105%;
+        }
+        /* Top */
+        .tooltip .tooltiptext {
+            width: 120px;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+        }
+        /* Bottom */
+        .tooltip .tooltiptext {
+            width: 120px;
+            top: 100%;
+            left: 50%;
+            margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+        }
+        ```
+        Using with arrows
+        ```css
+        /* Bottom Arrow */
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: black transparent transparent transparent;
+        }
+        /* Top Arrow */
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;  /* At the top of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+        /* Left Arrow */
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            right: 100%; /* To the left of the tooltip */
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent black transparent transparent;
+        }
+        /* Right Arrow */
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            left: 100%; /* To the right of the tooltip */
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent transparent black;
+        }
+        ```
+        Using Fade In Animation
+        ```css
+        .tooltip .tooltiptext {
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            opacity: 1;
+        }
+        ```
+    * #### Animations
+        * When setting up an animation you need to name it using `animation-name: example;` and then use the `@keyframes example` rule to perform the animation.
+            ```css
+            @keyframes example {
+                from {background-color: red;}
+                to {background-color: yellow;}
+            }
+
+            /* The element to apply the animation to */
+            div {
+                width: 100px;
+                height: 100px;
+                background-color: red;
+                animation-name: example;
+                animation-duration: 4s;
+            }
+            ```
+        * Other properties for animations:
+            * `animation-duration` - defines how long time an animation should take to complete
+            * `animation-delay` - specifies a delay for the start of an animation
+                * A 2 second delay would be displayed as `2s`
+                * A negative number can be used to say that its already been running for the time provided
+            * `animation-iteration-count` - specifies the number of times an animation should run
+                * Use an integer or `infinite` to run indefinitely
+            * `animation-direction` - specifies whether an animation should be played forwards, backwards or in alternate cycles
+                * `normal` - The animation is played as normal (forwards). This is default
+                * `reverse` - The animation is played in reverse direction (backwards)
+                * `alternate` - The animation is played forwards first, then backwards
+                * `alternate-reverse` - The animation is played backwards first, then forwards
+            * `animation-timing-function` - specifies the speed curve of the animation
+                * `ease` - Specifies an animation with a slow start, then fast, then end slowly (this is default)
+                * `linear` - Specifies an animation with the same speed from start to end
+                * `ease-in` - Specifies an animation with a slow start
+                * `ease-out` - Specifies an animation with a slow end
+                * `ease-in-out` - Specifies an animation with a slow start and end
+                * `cubic-bezier(n,n,n,n)` - Lets you define your own values in a cubic-bezier function
+            * `animation-fill-mode` - specifies a style for the target element when the animation is not playing (before it starts, after it ends, or both)
+                * `none` - Default value. Animation will not apply any styles to the element before or after it is executing
+                * `forwards` - The element will retain the style values that is set by the last keyframe (depends on animation-direction and animation-iteration-count)
+                * `backwards` - The element will get the style values that is set by the first keyframe (depends on animation-direction), and retain this during the animation-delay period
+                * `both` - The animation will follow the rules for both forwards and backwards, extending the animation properties in both directions
+        * Shorthand usage
+            ```css
+            div {
+                animation-name: example;
+                animation-duration: 5s;
+                animation-timing-function: linear;
+                animation-delay: 2s;
+                animation-iteration-count: infinite;
+                animation-direction: alternate;
+            }
+
+            /* The above can be written using shorthand */
+            div {
+                animation: example 5s linear 2s infinite alternate;
+            }
+            ```
+        * @keyframe examples
+            ```css
+            @keyframes example {
+                0%   {background-color: red;}
+                25%  {background-color: yellow;}
+                50%  {background-color: blue;}
+                100% {background-color: green;}
+            }
+            @keyframes example {
+                from {background-color: red;}
+                to {background-color: yellow;}
+            }
+            @keyframes example {
+                0%   {background-color:red; left:0px; top:0px;}
+                25%  {background-color:yellow; left:200px; top:0px;}
+                50%  {background-color:blue; left:200px; top:200px;}
+                75%  {background-color:green; left:0px; top:200px;}
+                100% {background-color:red; left:0px; top:0px;}
+            }
+            ```
+        * Using the `transition` directive
+            * The transition directive waits for a change on a specific property then animates the change.
+                ```css
+                div {
+                    width: 100px;
+                    height: 100px;
+                    background: red;
+                    transition: width 2s;
+                }
+                div:hover {
+                    width: 300px;
+                }
+                ```
+                This the div will have a width of 100px until you hover over it, then it will animate a change to 300px width over 2 seconds
+            * Changing multiple properties
+                ```css
+                div {
+                    transition: width 2s, height 4s;
+                }
+                ```
+            * `transition-timing-function` & `transition-delay` can be used just like the same options available on the `animation` directive.
+            * Using with `transform`
+                ```css
+                div {
+                    transition: width 2s, height 4s, transform 2s;
+                }
+                ```
+            * Shorthand
+                ```css
+                div {
+                    transition-property: width;
+                    transition-duration: 2s;
+                    transition-timing-function: linear;
+                    transition-delay: 1s;
+                }
+
+                /* The above can be written using shorthand */
+                div {
+                    transition: width 2s linear 1s;
+                }
+                ```
+        * Using `transform`
+            * `translate()` - moves an element from its current position (according to the parameters given for the X-axis and the Y-axis)
+                ```css
+                transform: translate(50px, 100px);
+                ```
+            * `translateX()` - moves an element from its current position according to the X-axis
+                ```css
+                transform: translateX(50px);
+                ```
+            * `translateY()` - moves an element from its current position according to the Y-axis
+                ```css
+                transform: translateY(100px);
+                ```
+            * `rotate()` - rotates an element clockwise or counter-clockwise according to a given degree
+                ```css
+                transform: rotate(20deg);
+                ```
+            * `scale()` - increases or decreases the size of an element (according to the parameters given for the width and height)
+                ```css
+                /* 2 times its original width and 3 times its original height */
+                transform: scale(2, 3);
+                ```
+            * `scaleX()` - increases or decreases the width of an element
+                ```css
+                transform: scaleX(2);
+                ```
+            * `scaleY()` - increases or decreases the height of an element
+                ```css
+                transform: scaleY(3);
+                ```
+            * `skew()` - skews an element along the X and Y-axis by the given angles
+                ```css
+                transform: skew(20deg, 10deg);
+                ```
+            * `skewX()` - skews an element along the X-axis by the given angle
+                ```css
+                transform: skewX(20deg);
+                ```
+            * `skewY()` - skews an element along the Y-axis by the given angle
+                ```css
+                transform: skewY(10deg);
+                ```
+            * `matrix()` - combines all the 2D transform methods into one
+                * Parameters - `matrix(scaleX(),skewY(),skewX(),scaleY(),translateX(),translateY())`
+                    ```css
+                    transform: matrix(1, -0.3, 0, 1, 0, 0);
+                    ```
