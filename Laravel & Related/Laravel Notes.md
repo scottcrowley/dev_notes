@@ -286,6 +286,10 @@
             * This route needs to be change to `Auth::routes(['verify' => true]);` to enable verification after registration
         * There is now a new route middleware called `verified` that can be used to specify the user must be verified before the route will load.
             * Available by adding this to a route: `->middleware('verified');`
+    * You can disable user registration functionality by passing `['register' => false]` to the `Auth::routes` method.
+        ```php
+        Auth::routes(['register' => false]);
+        ```
 * ### Vardump & Die
     * To use a `vardump` in your app you can use `dump($var);` instead.
     * To die and dump a variable you can use `dd($var);`
