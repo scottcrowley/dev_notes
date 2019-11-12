@@ -202,7 +202,38 @@
     * You can then tack on `->expectsQuestion` to test that console command is doing what you want.
         * `->expectsQuestion('You being asked something here.', 'A given answer here')` The first argument is the question and the second is the answer
         * `->expectsOutput('The message when the command is completed here.')` can be used to check that the command generated a specific output.
-* ### Miscellaneous Info:
+* ### Miscellaneous Info & Tips:
+    * There may be times when you update a model after you have retrieved it and then try to perform an assertion on it, which fails. The reason it may fail is because php is much faster than sql and the update isn't being reflected in the database before the assertion is run. One way to handle this, if an update is looking at the timestamps in the model: (Taken from [The Smallest Feature We Can Implement in Seven Minutes](https://laracasts.com/series/whatcha-working-on/episodes/37) Laracast video @ around 4:52)
+        
+        ***THE FAILED TEST***
+        ```php
+        function it_knows_if_it_has_been_updated() 
+        {
+            $this->signIn();
+            $video = VideoFactory::withComment()->create();
+            $this->assertFalse($video->latestComment->edited);
+
+            $video->latestComment->update(['body' => 'Body changed']);
+            $this->assertTrue($video->fresh()->latestComment->edited);
+        }
+        ```
+        It fails because the update() command takes longer than it takes to run the next assertion.
+
+        ***SUCCESSFUL TEST***
+        ```php
+        function it_knows_if_it_has_been_updated() 
+        {
+            $this->signIn();
+            $video = VideoFactory::withComment()->create();
+            $this->assertFalse($video->latestComment->edited);
+
+            \Illuminate\Support\Carbon::setTestNow('tomorrow');
+
+            $video->latestComment->update(['body' => 'Body changed']);
+            $this->assertTrue($video->fresh()->latestComment->edited);
+        }
+        ```
+        This test passes because of `Carbon::setTestNow('tomorrow');`.  
     * Exception handling is always on, which means that laravel will handle any thrown exception. Same as running `$this->withExceptionHandling();`. That call is no longer needed. If you want to handle an exception more directly, then you need to make sure that Laravel isn't using exception handling. `$this->withoutExceptionHandling();`
     * It is handy to add a utility function file, which could contain custom versions of `factory()->make()` and `factory()->create()`
         * Create a php file within `test/utilities/functions.php`
