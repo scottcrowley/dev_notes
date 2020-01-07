@@ -1,6 +1,6 @@
 # PHP Object Oriented Programming Notes
 
-## Notes on principles of using objects in PHP
+## Notes from Laracast series [Object-Oriented Bootcamp](https://laracasts.com/series/object-oriented-bootcamp-in-php) & [Object-Oriented Principles in PHP](https://laracasts.com/series/object-oriented-principles-in-php)
 
 * ### Classes
     * **Encapsulation**
@@ -32,6 +32,44 @@
 * ### Interfaces
     * Think of `interfaces` as a contract. It sets the terms for all iterations of the instance.
     * An interface can only contain `public` method and properties
+    * An interface can be instantiated in a controller by type hinting it in a method. 
+        * For example: You have an `interface` called `Newsletter` that contains a public method `subscribe` that receives an email address as a parameter. You then have 2 separate classes for two different newsletter subscription services (i.e. Campaign Monitor & Drip). Each of these classes implements the `Newsletter` interface. Instead of hard coding the newletter class you want to use in the controller, you can use the interface to figure out which class is being used.
+        ```php
+        interface Newsletter
+        {
+            public function subscribe($email);
+        }
+
+        class CampaignMonitor implements Newsletter
+        {
+            public function subscribe($email) {
+                die('Using Campaign Monitor');
+            }
+        }
+        class Drip implements Newsletter
+        {
+            public function subscribe($email) {
+                die('Using Drip');
+            }
+        }
+
+        class NewsletterController
+        {
+            public function store(Newsletter $newsletter) 
+            {
+                $email = 'john@example.com';
+
+                $newsletter->subscribe($email);
+            }
+        }
+        ```
+        Then when the controller's `store` method is needed, the method can be called using one of the classes that implements the interface.
+        ```php
+        $controller = new NewsletterController();
+
+        $controller->store(new Drip());
+        ```
+        When the above is run, it should die with `Using Drip`. Now, if you change the service you are using, to Campaign Monitor then you only need to change the `store` method call and send it a new instance of the `CampaignMonitor` class.
 * ### Using Composer
     * `Composer` should be used for most projects. It handles loading dependencies as well as provides an autoloader for classes.
         * a `composer.json` file should exist in the root of the site. You can manually create it with an empty object `{  }`, or you can run `composer init` in the console. This is where the list of dependencies is given to Composer
