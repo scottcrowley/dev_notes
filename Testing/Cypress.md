@@ -45,7 +45,7 @@ There is some setup that should be done to simplify running tests
     ```
 * Add a check in the `bootstrap/app.php` file to see if the host is the url that was used in the last step. If it is then we need to switch to the `.env.cypress` environment file. Code should go before the `$app` is returned.
     ```php
-    if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'sitename-cypress') {
+    if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'sitename-cypress.test') {
         \Dotenv\Dotenv::create(base_path(), '.env.cypress')->overload();
     }
     ```
@@ -63,7 +63,7 @@ There is some setup that should be done to simplify running tests
 * Add a command to clear out the database before running any test. This command can be added to the c`ypress/support/index.js` file
     ```js
     beforeEach(() => {
-        cy.exec('php artisan migrate:refresh --env=cypress');
+        cy.exec('php artisan migrate:fresh --env=cypress');
     });
     ```
     The `--env` flag is very important or the command will be run in the `local` environment not the `testing` one.
