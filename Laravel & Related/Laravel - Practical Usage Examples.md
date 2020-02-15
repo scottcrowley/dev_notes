@@ -56,7 +56,7 @@ function can_fetch_developers_partial()
     ```
 
 #### Setup: 
-Minic the loading of a html table containing invoices and their status. Assume the invoices are being fetched from a third party api or something, where it may take a long time to retrieve. The regular Fetch API was used in the beginning to show how you'd do this using normal Javascript, but then the *Include Fragment Element* library was used to make everything much cleaner.
+Mimic the loading of a html table containing invoices and their status. Assume the invoices are being fetched from a third party api or something, where it may take a long time to retrieve. The regular Fetch API was used in the beginning to show how you'd do this using normal Javascript, but then the *Include Fragment Element* library was used to make everything much cleaner.
 ```html
 <div class="relative rounded overflow-hidden" id="js-invoices-partials-target">
     <script>

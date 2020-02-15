@@ -29,7 +29,9 @@ There is some setup that should be done to simplify running tests
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
         ```
-        This just adds the `database_path` to all values
+        This just adds the `database_path` to all values.
+        
+        **IMPORTANT ISSUE: Changing the database key from `env('DB_DATABASE', database_path('database.sqlite')),` to `database_path(env('DB_DATABASE', 'database.sqlite')),` makes all the phpunit test, that are using the `sqlite` driver with a `:memory:` database, no longer work,**
 * Update the `APP_ENV` key in the `.env.cypress` file
     ```
     APP_ENV=testing
