@@ -17,12 +17,12 @@ There is some setup that should be done to simplify running tests
 * Copy the current `.env` file to a new file called `.env.cypress` or `.env.acceptance`
 * Open the new environment file and modify the database connection details to the following
     ```
-    DB_CONNECTION=sqlite
+    DB_CONNECTION=sqlite-cypress
     DB_DATABASE=cypress.sqlite
     ```
-    * You may need to update the `database` key in the `sqlite` driver details in the `config/database.php` config file
+    * It seems like it is easier to add a new database driver to the `config/database.php` config file. The only thing different with this driver from the regular sqlite driver is the `database` key value. 
         ```php
-        'sqlite' => [
+        'sqlite-cypress' => [
             'driver' => 'sqlite',
             'database' => database_path(env('DB_DATABASE', 'database.sqlite')),
             'prefix' => '',
@@ -31,7 +31,7 @@ There is some setup that should be done to simplify running tests
         ```
         This just adds the `database_path` to all values.
         
-        **IMPORTANT ISSUE: Changing the database key from `env('DB_DATABASE', database_path('database.sqlite')),` to `database_path(env('DB_DATABASE', 'database.sqlite')),` makes all the phpunit test, that are using the `sqlite` driver with a `:memory:` database, no longer work,**
+        **IMPORTANT ISSUE: Changing the database key from `env('DB_DATABASE', database_path('database.sqlite')),` to `database_path(env('DB_DATABASE', 'database.sqlite')),` makes all the phpunit test, that are using the `sqlite` driver with a `:memory:` database, no longer work. This is fixed by using the new driver as outlined above.**
 * Update the `APP_ENV` key in the `.env.cypress` file
     ```
     APP_ENV=testing
