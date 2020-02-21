@@ -28,7 +28,7 @@
                 * Text:
                     * Check `Use Ligatures` (makes => or -> appear as one character). Doesn’t work with all fonts
                     * Click Change Font
-                        * You may want to change the font to `Fira Code` (see font section below) or something similar
+                        * You may want to change the font to `JetBrains Mono`, `Fira Code` (see font section below) or something similar
                         * Add a little vertical spacing
                         * Increase font size to about 13 or so
                 * General:
@@ -60,6 +60,10 @@
                 * `alias gs="git status"`
                 * `alias gl="git log"`
     * Install new fonts
+        * [JetBrains Mono](https://www.jetbrains.com/lp/mono/)
+            * Download the .zip and then navigate to the `ttf` folder
+            * Select all the fonts in this folder then right-click and select `open`.
+            * Click on `Install Fonts`
         * [Fira Code](https://github.com/tonsky/FiraCode)
             * Download the .zip and then navigate to the `distr/ttf` folder
             * Select all the fonts in this folder then right-click and select `open`.

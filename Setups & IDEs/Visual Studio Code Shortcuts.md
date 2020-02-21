@@ -207,7 +207,7 @@
     {
         "editor.tabCompletion": "on",
         "editor.minimap.enabled": false,
-        "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
         "editor.fontSize": 13,
         "editor.fontLigatures": true,
         "editor.tokenColorCustomizations": {
