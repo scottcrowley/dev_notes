@@ -101,6 +101,12 @@
     * `advanced-new-file` - *patbenatar*
     * `File Utils` - *Leistner* Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
     * `PHP Intelephense` - *Ben Mewburn*
+        * **Setup**
+            * Disable VSCodes PHP Language Features
+                * Go to `Extensions`
+                * Search for `@builtin php`
+                * Disable the `PHP Language Features` extension and reload VSCode
+            * add `"files.associations": { "*.module": "php"},` to the `settings.json` file
     * `Vim` - *vscodevim*
     * `snippet-creator` - *nikitaKunevich* DEPRICATED - Creates snippets from a selection
     * `Laravel Artisan` - *Ryan Naddy*
@@ -207,33 +213,32 @@
     {
         "editor.tabCompletion": "on",
         "editor.minimap.enabled": false,
-        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
         "editor.fontSize": 13,
         "editor.fontLigatures": true,
         "editor.tokenColorCustomizations": {
-            "textMateRules": [
-                {
-                    "scope": "comment, comment.block.html",
-                    "settings": {
-                        "fontStyle": "italic"
-                    }
+        "textMateRules": [
+            {
+                "scope": "comment, comment.block.html",
+                "settings": {
+                    "fontStyle": "italic"
                 }
-            ]
+            }
+        ]
         },
         "explorer.openEditors.visible": 0,
         "explorer.confirmDelete": false,
         "window.openFilesInNewWindow": "on",
         "window.zoomLevel": 0,
-        "workbench.statusBar.visible": false,
+        "workbench.statusBar.visible": true,
         "workbench.iconTheme": "vscode-icons",
         "workbench.colorTheme": "Slime",
-        "terminal.integrated.scrollback": 5000,
+        "terminal.integrated.scrollback": 10000,
         "blade.format.enable": true,
-        "search.useIgnoreFiles": true,
+        "search.useIgnoreFiles": false,
         "search.exclude": {
-            "**/public/[abcdefghjklmnopqrstuvwxyz]*": true,
-            "**/public/i[abcdefghijklmopqrstuvwxyz]*": true,
-            "storage/framework/views": true
+        "**/public/[abcdefghjklmnopqrstuvwxyz]*": true,
+        "**/public/i[abcdefghijklmopqrstuvwxyz]*": true,
+        "storage/framework/views": true
         },
         "css.validate": false,
         "less.validate": false,
@@ -243,7 +248,7 @@
         "php-cs-fixer.onsave": true,
         "php-cs-fixer.config": "/Users/scott/.vscode/.php_cs",
         "[php]": {
-            "editor.defaultFormatter": "junstyle.php-cs-fixer"
+        "editor.defaultFormatter": "junstyle.php-cs-fixer"
         },
         // File extensions to be parsed by the Typescript parser
         "importCost.typescriptExtensions": [
@@ -256,7 +261,26 @@
             "vue-html"
         ],
         "vetur.validation.template": false,
-        "php-cs-fixer.lastDownload": 1563489562217,
+        "php-cs-fixer.lastDownload": 1583260276435,
+        "window.newWindowDimensions": "maximized",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        "explorer.confirmDragAndDrop": false,
+        "editor.formatOnSaveTimeout": 5000,
+        "window.nativeFullScreen": false,
+        "intelephense.diagnostics.undefinedTypes": false,
+        "intelephense.diagnostics.undefinedFunctions": false,
+        "intelephense.diagnostics.undefinedConstants": false,
+        "intelephense.diagnostics.undefinedClassConstants": false,
+        "intelephense.diagnostics.undefinedMethods": false,
+        "intelephense.diagnostics.undefinedVariables": false,
+        "intelephense.diagnostics.undefinedProperties": false,
+        "files.defaultLanguage": "{activeEditorLanguage}",
+        "files.associations": {"*.module": "php"},
+        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+        "terminal.integrated.fontFamily": "'JetBrains Mono'",
+        "terminal.integrated.fontSize": 13,
+        "diffEditor.ignoreTrimWhitespace": false,
     }
     ```
 * ### Example `keybindings.json` file:
@@ -265,28 +289,8 @@
     // Place your key bindings in this file to overwrite the defaults
     [
         {
-            "key": "cmd+;",
-            "command": "workbench.action.terminal.clear"
-        },
-        {
-            "key": "ctrl+cmd+`",
-            "command": "workbench.action.terminal.focusNext"
-        },
-        {
-            "key": "ctrl+alt+'",
-            "command": "workbench.action.terminal.focusPrevious"
-        },
-        {
-            "key": "alt+'",
-            "command": "workbench.action.terminal.focus"
-        },
-        {
             "key": "cmd+r",
             "command": "workbench.action.gotoSymbol"
-        },
-        {
-            "key": "shift+cmd+r",
-            "command": "workbench.action.showAllSymbols"
         },
         {
             "key": "shift+cmd+o",
@@ -371,6 +375,26 @@
             "command": "-workbench.action.terminal.clear",
             "when": "terminalFocus"
         },
+        {
+            "key": "shift+cmd+r",
+            "command": "workbench.action.showAllSymbols"
+        },
+        {
+            "key": "cmd+t",
+            "command": "-workbench.action.showAllSymbols"
+        },
+        {
+            "key": "alt+`",
+            "command": "workbench.action.terminal.focus"
+        },
+        {
+            "key": "ctrl+cmd+`",
+            "command": "workbench.action.terminal.focusNext"
+        },
+        {
+            "key": "ctrl+alt+`",
+            "command": "workbench.action.terminal.focusPrevious"
+        },
     ]
     ```
 * ### Example Snippets:
@@ -424,15 +448,197 @@
             "prefix": "constr",
             "body": [
                 "/**",
-                "* ${TM_FILENAME_BASE} constructor",
-                "*/",
+                " * ${TM_FILENAME_BASE} constructor",
+                " */",
                 "public function __construct()",
                 "{",
                 "\t$1",
                 "}"
             ],
             "description": "Blank Class Constructor"
-        }
+        },
+        "Model Property - Timestamps": {
+            "prefix": "mptimestamps",
+            "body": [
+                "/**",
+                " * no timestamps needed",
+                " * ",
+                " * @var boolean",
+                " */",
+                "public \\$timestamps = false;"
+            ],
+            "description": "Model Property - Timestamps"
+        },
+        "Model Property - Guarded": {
+            "prefix": "mpguarded",
+            "body": [
+                "/**",
+                " * The attributes that aren't mass assignable.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$guarded = [$1];"
+            ],
+            "description": "Model Property - Guarded"
+        },
+        "Model Property - With": {
+            "prefix": "mpwith",
+            "body": [
+                "/**",
+                " * The attributes that are mass assignable.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$with = [$1];"
+            ],
+            "description": "Model Property - With"
+        },
+        "Model Property - Appends": {
+            "prefix": "mpappends",
+            "body": [
+                "/**",
+                " * The accessors to append to the model's array form.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$appends = [$1];"
+            ],
+            "description": "Model Property - Appends"
+        },
+        "Model Property - Fillable": {
+            "prefix": "mpfillable",
+            "body": [
+                "/**",
+                " * The attributes that are mass assignable.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$fillable = [$1];"
+            ],
+            "description": "Model Property - Fillable"
+        },
+        "Model Property - Hidden": {
+            "prefix": "mphidden",
+            "body": [
+                "/**",
+                " * The attributes that should be hidden for arrays.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$hidden = [$1];"
+            ],
+            "description": "Model Property - Hidden"
+        },
+        "Model Property - Visible": {
+            "prefix": "mpvisible",
+            "body": [
+                "/**",
+                " * The attributes that should be visible in arrays.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$visible = [$1];"
+            ],
+            "description": "Model Property - Visible"
+        },
+        "Model Property - Table": {
+            "prefix": "mptable",
+            "body": [
+                "/**",
+                " * The table associated with the model.",
+                " * ",
+                " * @var string",
+                " */",
+                "protected \\$table = '$1';"
+            ],
+            "description": "Model Property - Table"
+        },
+        "Model Property - Primary Key": {
+            "prefix": "mpprimary",
+            "body": [
+                "/**",
+                " * The primary key associated with the table.",
+                " * ",
+                " * @var string",
+                " */",
+                "protected \\$primaryKey = '$1';"
+            ],
+            "description": "Model Property - Primary Key"
+        },
+        "Model Property - Primary Key Type": {
+            "prefix": "mpkeytype",
+            "body": [
+                "/**",
+                " * The \"type\" of the auto-incrementing ID.",
+                " * ",
+                " * @var string",
+                " */",
+                "protected \\$keyType = 'string';"
+            ],
+            "description": "Model Property - Primary Key Type"
+        },
+        "Model Property - Incrementing Key": {
+            "prefix": "mpincrementing",
+            "body": [
+                "/**",
+                " * Indicates if the IDs are auto-incrementing.",
+                " * ",
+                " * @var bool",
+                " */",
+                "public \\$incrementing = false;"
+            ],
+            "description": "Model Property - Incrementing Key"
+        },
+        "Model Property - Dates": {
+            "prefix": "mpdates",
+            "body": [
+                "/**",
+                " * The attributes that should be mutated to dates.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$dates = ['$1'];"
+            ],
+            "description": "Model Property - Dates"
+        },
+        "Model Property - Casts": {
+            "prefix": "mpcasts",
+            "body": [
+                "/**",
+                " * The attributes that should be cast to native types.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$casts = ['$1' => '$2'];"
+            ],
+            "description": "Model Property - Casts"
+        },
+        "Model Property - Attributes": {
+            "prefix": "mpattributes",
+            "body": [
+                "/**",
+                " * The model's default values for attributes.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$attributes = ['$1' => $2];"
+            ],
+            "description": "Model Property - Attributes"
+        },
+        "Model Property - Dispatches Events": {
+            "prefix": "mpattributes",
+            "body": [
+                "/**",
+                " * The event map for the model.",
+                " * ",
+                " * @var array",
+                " */",
+                "protected \\$dispatchesEvents = [",
+                "\t'$1' => $2::class",
+                "];"
+            ],
+            "description": "Model Property - Dispatches Events"
+        },
     }
     ```
     ~/Library/Application Support/Code/User/snippets/vue.json
@@ -469,6 +675,79 @@
             ],
             "description": "New Vue Component Scafolding"
         }
+    }
+    ```
+    ~/Library/Application Support/Code/User/snippets/html.json
+    ```json
+    {
+        "Form Textarea": {
+            "prefix": "bstextarea",
+            "body": [
+                "<div class=\"form-group\">",
+                "\t<label for=\"$1\">$2</label>",
+                "\t<textarea name=\"$3\" id=\"$4\" class=\"form-control\"></textarea>",
+                "</div>"
+            ],
+            "description": "Bootstrap textarea"
+        },
+        "Bootstrap Text Field": {
+            "prefix": "bstext",
+            "body": [
+                "<div class=\"form-group\">",
+                "\t<label for=\"$1\">$2</label>",
+                "\t<input type=\"text\" class=\"form-control\" id=\"$3\" name=\"$4\" placeholder=\"$5\">",
+                "</div>"
+            ],
+            "description": "Bootstrap Text Field"
+        },
+        "Bootstrap Submit Button": {
+            "prefix": "bssubmit",
+            "body": [
+                "<div class=\"form-group\">",
+                "\t<button type=\"submit\" class=\"btn btn-default\">$1</button>",
+                "</div>"
+            ],
+            "description": "Bootstrap Submit Button"
+        }
+    }
+    ```
+    ~/Library/Application Support/Code/User/snippets/javascript.json
+    ```json
+    {
+        // Place your snippets for javascript here. Each snippet is defined under a snippet name and has a prefix, body and 
+        // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+        // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+        // same ids are connected.
+        // Example:
+        // "Print to console": {
+        // 	"prefix": "log",
+        // 	"body": [
+        // 		"console.log('$1');",
+        // 		"$2"
+        // 	],
+        // 	"description": "Log output to console"
+        // }
+
+        "Cypress describe Command": {
+            "prefix": "cyde",
+            "body": [
+                "describe('$1', () => {",
+                "\tit('$2', () => {",
+                "\t\tcy.$3",
+                "\t});",
+                "});"
+            ],
+            "description": "Cypress describe Command"
+        },
+        "Cypress it Command": {
+            "prefix": "cyit",
+            "body": [
+                "it('$1', () => {",
+                "\tcy.$2",
+                "});"
+            ],
+            "description": "Cypress it Command"
+        },
     }
     ```
 * ### Example `ESLint` config file (`.eslintrc.json`):
@@ -517,4 +796,108 @@
             ]
         }
     }
+    ```
+* ### Example `.php_cs` config file
+    * Make sure that `"php-cs-fixer.config": "/Users/scott/.vscode/.php_cs",` is added to the `settings.json` file and points to the correct directory
+
+    ~/.vscode/.php_cs
+    ```php
+    <?php
+
+    return PhpCsFixer\Config::create()
+        ->setRules(array(
+            '@PSR2' => true,
+            'array_indentation' => true,
+            'array_syntax' => array('syntax' => 'short'),
+            'combine_consecutive_unsets' => true,
+            'method_separation' => true,
+            'no_multiline_whitespace_before_semicolons' => true,
+            'single_quote' => true,
+            'binary_operator_spaces' => array(
+                'align_double_arrow' => false,
+                'align_equals' => false,
+            ),
+            // 'blank_line_after_opening_tag' => true,
+            // 'blank_line_before_return' => true,
+            'braces' => array(
+                'allow_single_line_closure' => true,
+            ),
+            // 'cast_spaces' => true,
+            // 'class_definition' => array('singleLine' => true),
+            'concat_space' => array('spacing' => 'none'),
+            'declare_equal_normalize' => true,
+            'function_typehint_space' => true,
+            'hash_to_slash_comment' => true,
+            'include' => true,
+            'lowercase_cast' => true,
+            // 'native_function_casing' => true,
+            // 'new_with_braces' => true,
+            // 'no_blank_lines_after_class_opening' => true,
+            // 'no_blank_lines_after_phpdoc' => true,
+            // 'no_empty_comment' => true,
+            // 'no_empty_phpdoc' => true,
+            // 'no_empty_statement' => true,
+            'no_extra_consecutive_blank_lines' => array(
+                'curly_brace_block',
+                'extra',
+                'parenthesis_brace_block',
+                'square_brace_block',
+                'throw',
+                'use',
+            ),
+            // 'no_leading_import_slash' => true,
+            // 'no_leading_namespace_whitespace' => true,
+            // 'no_mixed_echo_print' => array('use' => 'echo'),
+            'no_multiline_whitespace_around_double_arrow' => true,
+            // 'no_short_bool_cast' => true,
+            // 'no_singleline_whitespace_before_semicolons' => true,
+            'no_spaces_around_offset' => true,
+            // 'no_trailing_comma_in_list_call' => true,
+            // 'no_trailing_comma_in_singleline_array' => true,
+            // 'no_unneeded_control_parentheses' => true,
+            'no_unused_imports' => true,
+            'no_whitespace_before_comma_in_array' => true,
+            'no_whitespace_in_blank_line' => true,
+            // 'normalize_index_brace' => true,
+            'not_operator_with_successor_space' => true,
+            'object_operator_without_whitespace' => true,
+            'ordered_imports' => array(
+                'sort_algorithm' => 'length'
+            ),
+            // 'php_unit_fqcn_annotation' => true,
+            // 'phpdoc_align' => true,
+            // 'phpdoc_annotation_without_dot' => true,
+            // 'phpdoc_indent' => true,
+            // 'phpdoc_inline_tag' => true,
+            // 'phpdoc_no_access' => true,
+            // 'phpdoc_no_alias_tag' => true,
+            // 'phpdoc_no_empty_return' => true,
+            // 'phpdoc_no_package' => true,
+            // 'phpdoc_no_useless_inheritdoc' => true,
+            // 'phpdoc_return_self_reference' => true,
+            // 'phpdoc_scalar' => true,
+            // 'phpdoc_separation' => true,
+            // 'phpdoc_single_line_var_spacing' => true,
+            // 'phpdoc_summary' => true,
+            // 'phpdoc_to_comment' => true,
+            // 'phpdoc_trim' => true,
+            // 'phpdoc_types' => true,
+            // 'phpdoc_var_without_name' => true,
+            // 'pre_increment' => true,
+            // 'return_type_declaration' => true,
+            // 'self_accessor' => true,
+            // 'short_scalar_cast' => true,
+            'single_blank_line_before_namespace' => true,
+            // 'single_class_element_per_statement' => true,
+            // 'space_after_semicolon' => true,
+            // 'standardize_not_equals' => true,
+            'ternary_operator_spaces' => true,
+            // 'trailing_comma_in_multiline_array' => true,
+            'trim_array_spaces' => true,
+            'unary_operator_spaces' => true,
+            'whitespace_after_comma_in_array' => true,
+        ))
+        //->setIndent("\t")
+        ->setLineEnding("\n")
+    ;
     ```
