@@ -169,3 +169,72 @@ Route::get('/partials/invoices', function () {
 </table>
 ```
 * This place holder table is just eye candy and is used to make it look like how Facebook does when it is loading data into a page. Gives the illusion that there is data there but is grayed out while it loads.
+
+## Make Your Apps Faster With Turbolinks
+#### Background:
+* Tutorial taken from [Laracast - JavaScript Techniques For Server-Side Applications Ep 3](https://laracasts.com/series/javascript-techniques-for-server-side-developers/episodes/3)
+* This tutorial uses the [Turbolinks](https://github.com/turbolinks/turbolinks), which can make your app feel like a SPA with very little setup. Turbolinks will hijack all links on the page but instead of doing a new page load, it will swap out the `<body>` content for the content found by following the link. It will also do a merge of the content found in the `<head>` tag, so if there are additional page requirements for the new page, they will also be added.
+* Unpkg.com is also being used to add the *Turbolinks* package to the page using a cdn version instead of installing the full package into your project. The following script tag, located before the closing head tag, is being used to import the cdn version. Note that `turbolinks` is the package name that you would normally install using `npm install --save turbolinks`.
+    ```html
+    <script src="https://unpkg.com/turbolinks"></script>
+    ```
+
+#### Setup: 
+There really isn't any other setup required. It may just work straight away after adding the above script tag. There are some gotchas to consider though. See below.
+
+#### Gotchas:
+1. If you have any javascript, that resides in the `<head>` tag and is listening for the page to be completely loaded.
+    ```html
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('foo');
+        });
+    </script>
+    ```
+    Turbolinks will not refire the DOMContentLoaded event when a new link is click. To add this behavior back in use the following turbolinks event:
+    ```html
+    <script>
+        document.addEventListener('turbolinks:load', () => {
+            console.log('foo');
+        });
+    </script>
+    ```
+    This event will fire everytime Turbolinks has finished loading a new page.
+1. If you have some javascript in the `<body>` tag and you only want it to be fired one time, then you need to add a special `data` attribute to the `<script>` tag. There may be times where you have the `<script>` tag within the `<body>` tag, within a layout file that loads the content via partials (as outlined in other previous examples) but you only want the javascript to be fired once. Since Turbolinks swaps out the entire `<body>` tag, the javascript will be fired with every link clicked. To stop this, add `data-turbolinks-eval="false"` to the `<script>` tag within the `<body>` tag.
+    ```html
+    <script data-turbolinks-eval="false">
+        console.log('foo');
+    </script>
+    ```
+    This tells Turbolinks to ignore this tag if it has already encountered it.
+1. There maybe times when you don't want Turbolinks to hijack a link and you want the link to act normally with a regular page load. You can add the data attribute `data-turbolinks="false"` to the link you don't want Turbolinks to hijack.
+    ```html
+    <a href="/account" data-turbolinks="false">Account</a>
+    ```
+    Turbolinks will now ignore this link.
+1. If you are using a redirect within a Route, then you need to add some middleware to tell Turbolinks that a redirect has occurred. For example: You have a link that goes to `/profile` but you want it redirected to `/account` by using `Route::redirect('/profile', '/account');` in the `routes/web.php` file. So when you goto `/profile`, you'll be redirected to `/account` and the url in the browser will reflect this. However, when using Turbolinks in this scenario, the redirect will be performed but the url won't update and will still show `/profile`. To get around this, you need to add `Turbolinks-Location` to the header of the final redirect. This can be done using middleware in Laravel. More info about [redirects](https://github.com/turbolinks/turbolinks#following-redirects) on the Turbolinks site.
+    ```zsh
+    php artisan make:middleware SetTurbolinksHeader
+    ```
+    *app/Http/Middleware/SetTurbolinksHeader.php*
+    ```php
+    public function handle($request, Closure $next)
+    {
+        $response = $next($request);
+
+        $response->header('Turbolinks-Location', $request->url());
+
+        return $response;
+    }
+    ```
+    *app/Http/Kernel.php* add the following to `'web'` `$middlewareGroups` property
+    ```php
+    protected $middlewareGroups = [
+        'web' => [
+            //....
+            SetTurbolinksHeader::class, //make sure to import the class
+        ], 
+        //....
+    ];
+    ```
+    Now with every redirect, Laravel will add `Turbolinks-Location` to the header.
