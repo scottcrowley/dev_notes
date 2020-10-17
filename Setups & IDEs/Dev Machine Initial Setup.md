@@ -100,10 +100,13 @@
         ```zsh
         brew services start php@7.2
         ```
-    * [Node](https://nodejs.org/en/) Also will install `npm` at the same time
+    * `node` and `npm`
+        * Install using either of the following. Both methods will install `npm` as well. Seems better to use Homebrew but that will install the latest build and not just the latest stable.
+            * `brew install node` or `brew install node@12.9` if you want to install a certain version
+            * [Node](https://nodejs.org/en/) Also will install `npm` at the same time
     * `Yarn` is sometimes faster than `npm` <https://yarnpkg.com/en/>
         * `brew install yarn`
-        * or s`udo npm install -g yarn`
+        * or `sudo npm install -g yarn`
     * `MySQL` or `MariaDB` (drop in replacement for MySQL)
         * Both can be installed via Homebrew. Below is how to install mysql 5.7. Current version is 8
             ```zsh
