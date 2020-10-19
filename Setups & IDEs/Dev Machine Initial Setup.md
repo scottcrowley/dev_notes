@@ -52,7 +52,7 @@
                 * After that you can access the config file by typing `zshconfig` in the terminal.
             * You will want to uncomment the `export PATH` line in the config
                 * `export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$PATH`
-                * After composer is installed, make sure that `$HOME/.composer/vendor/bin:` is added to the path as well, as it is above. See the section below on Installing PHP 7.2 with Homebrew for additional path requirements. The ones listed in that section should be all that is needed.
+                * After composer is installed, make sure that `$HOME/.composer/vendor/bin:` is added to the path as well, as it is above. See the section below on Installing PHP 7.3 with Homebrew for additional path requirements. The ones listed in that section should be all that is needed.
         * If you want to use aliases in the terminal:
             * In the `.zshrc` file
                 * At the very bottom type `source ~/.aliases`
@@ -78,19 +78,21 @@
     * [Homebrew](https://brew.sh)
         * `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
         * You can use `brew search {package name}` to search for a specific package that can be installed via home-brew
-    * To install PHP 7.2 using Homebrew
+    * To install PHP 7.3 using Homebrew
+        Here is a good [article](https://stitcher.io/blog/php-73-upgrade-mac) explaining the process.
         ```zsh
         brew update
         brew upgrade
-        brew install php@7.2
-        brew link --force php@7.2
-        # --force is needed since we are installing v7.2 which is not the most current.
+        brew install php@7.3
+        brew link --force php@7.3
+        # --force is needed since we are installing v7.3 which is not the most current.
         ```
         If you have `Composer` and `Oh My Zsh` installed, replace the `export PATH` line of of the `.zshrc` file with the following:
+        ***NOTE:*** I didn't need to add these paths to my `.zshrc` file during my last install. Not really sure why.
         ```zsh
         # export PATH=$HOME/bin:/usr/local/bin:$PATH
         export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH
-        export PATH="$(brew --prefix homebrew/core/php@7.2)/bin:$HOME/.composer/vendor/bin:$PATH"
+        export PATH="$(brew --prefix homebrew/core/php@7.3)/bin:$HOME/.composer/vendor/bin:$PATH"
         ```
         You may need to resource the `.zshrc` file to have it reload the config
         ```zsh
@@ -98,7 +100,7 @@
         ```
         To actually have the service started and stay started after restarts, run the following
         ```zsh
-        brew services start php@7.2
+        brew services start php@7.3
         ```
     * `node` and `npm`
         * Install using either of the following. Both methods will install `npm` as well. Seems better to use Homebrew but that will install the latest build and not just the latest stable.
