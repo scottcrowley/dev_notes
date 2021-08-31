@@ -1,9 +1,11 @@
 # Miscellaneous Testing
 
 ## PHP Testing Jargon
-##### The following notes are from the Laracast episode [When to Reach for Data Providers](https://laracasts.com/series/php-testing-jargon/episodes/4) in the series [PHP Testing Jargon](https://laracasts.com/series/php-testing-jargon)
+#### The following notes are from the Laracast series [PHP Testing Jargon](https://laracasts.com/series/php-testing-jargon)
 
-### Using the setUp method
+### Unit Testing
+#### Using the setUp method
+##### The following notes are from the Laracast episode [Setup the World](https://laracasts.com/series/php-testing-jargon/episodes/3)
 When using the setUp method with in the test class you can removed duplicated code and assign something to a property on the class.
 ```php
 protected TagParser $parser;
@@ -15,7 +17,9 @@ protected function setUp(): void
 ```
 ***IMPORTANT:*** You have to be explicit with the "Return Type" being used. This is done by using `: void` after the method name.
 
-### Data Providers
+#### Data Providers
+##### The following notes are from the Laracast episode [When to Reach for Data Providers](https://laracasts.com/series/php-testing-jargon/episodes/4)
+
 Data Providers can be used to simplify code where the same assertion is being made but there are different data sets to test against.
 
 In the episode the same assertion is being made in several test that performs the same function call but are using different data sets and expected results. 
@@ -71,3 +75,161 @@ Each element of the root array is a different assertion to be made. In the asser
 
 The only potential downside to using Data Providers is that you lose the description of what each dataset is testing for.
 
+### Test Doubles
+**Terminology - the following are all considered to be test doubles**
+
+`dummy` - a generated object that contains no assertions and is only a placeholder used to instantiate something else.
+`stub` - like a mock but has some generated data within it but no expectations or assertions are placed on it.
+`mock` - like a stub but has expectations and assertions placed on it.
+
+#### Dummy Classes
+##### The following notes are from the Laracast episode [A Dummy is a Stand-in for the Real Thing](https://laracasts.com/series/php-testing-jargon/episodes/8)
+
+If you are using an external api or gateway, you can use a dummy class instead of actually hitting the api for your tests. You would use this because making an api call to an external source can be taxing and take a long time to get a reply. You should still have seperate tests that just verify the functionality of the api.
+
+One way to handle this is making sure that your gateway class is implementing an interface so you can jack in a fake or dummy gateway that also implements the same interface.
+
+You would first have a real Gateway class that is the interface for any other gateway.
+```php
+\App\Gateway.php
+
+interface Gateway
+{
+    public function create();
+}
+
+\App\StripeGateway.php
+
+class StripeGateway implements Gateway
+{
+    public function create()
+    {
+        // performs the real Stripe HTTP request.
+        var_dump('Slow HTTP request in progress.');
+    }
+}
+
+\App\Subscription.php
+
+class Subscription
+{
+    protected Gateway $gateway;
+
+    public function __construct(Gateway $gateway)
+    {
+        $this->gateway = $gateway;
+    }
+
+    public function create(User $user)
+    {
+        // create the subscription through Stripe.
+        $receipt = $this->gateway->create();
+    }
+}
+\Tests\DummyGateway.php
+
+use App\Gateway;
+
+class DummyGateway implements Gateway
+{
+    public function create()
+    {
+        //fills with fake data like what would be returned from the api gateway call
+    }
+}
+
+\Tests\SubscriptionTest.php
+
+use App\Subscription;
+use App\User;
+use PHPUnit\Framework\TestCase;
+
+class SubscriptionTest extends TestCase
+{
+    /** @test */
+    function creating_a_subscription_marks_the_user_as_subscribed()
+    {
+        $gateway = new DummyGateway();
+
+        $subscription = new Subscription($gateway);
+
+        $user = new User("JohnDoe");
+
+        $this->assertFalse($user->isSubscribed());
+
+        $subscription->create($user);
+
+        $this->assertTrue($user->isSubscribed());
+    }
+```
+
+#### Create Mocks with PHPUnit
+##### The following notes are from the Laracast episode [Let PHPUnit Create Your Test Doubles](https://laracasts.com/series/php-testing-jargon/episodes/9)
+
+PHPUnit can accomplish the same thing as what we did with the dummy class example by using a mock. Instead of creating a dummy class like DummyGateway, you can simply just use `$gateway = $this->createMock(Gateway::class);` in the `SubscriptionTest` file to do the same thing `$gateway = new DummyGateway();`. This would remove the need for the DummyGateway class entirely.
+
+The way the mock works in this example is that any method call to the gateway class would just return `null`. The only time that it is benefitial to use `createMock` is when it's just a placeholder for something else you are trying to instantiate. Like the `Subscription` class requires a `Gateway` when instantiated. As long as you are not expecting any data to be returned from the mocked gateway, then this is a simple and light way to do it. If you need the functionality where you expect data from the mock then a "stub" may be the best way to do it.
+
+#### Stubs
+##### The following notes are from the Laracast episode [Stubs Versus Mocks](https://laracasts.com/series/php-testing-jargon/episodes/10)
+
+Sometimes when working with a mock (see previous heading on Mocks), you need it to actually return specific data when a method is called on it. Currently, when you use `$gateway = $this->createMock(Gateway::class);` any method call on `$gateway` will return `null`. However, you can create what you expect to be returned from a method call by using the `method` and `willReturn` methods on the mocked class. 
+```php
+$gateway = $this->createMock(Gateway::class);
+$gateway->method('create')->willReturn('receipt-stub');
+```
+
+You can also use a stub but use a dummy class like in the [Dummy Classes](#) section above. You do this by creating a new class that also implements the same `Gateway` class, just like in the example but you could call the class `GatewayStub` instead of `DummyGateway`. Then inside the `create` method, on that class, you could return any data you want to test like `return 'receipt-stub';`. Make sure to update the test class with the correct stubbed gateway class. ie. in the `SubscriptionTest` class use `$subscription = new Subscription(new GatewayStub());` when instantiating the `$subscription` variable.
+
+You can also just use the mock as outlined earlier, which is usually preferred.
+
+Using the previous subscription example, we want to create a test that checks to make sure that an email is sent to the user when the `create` method is called on the `Gateway` class. To set this up, another class will be created to handle all the mailing functionality called `Mailer`. The `Mailer` class would have a `deliver` method on it. You also need to update the `Subscription` class since it will also be receiving the mailer class in the constructor.
+```php
+    protected Gateway $gateway;
+    protected Mailer $mailer;
+
+    public function __construct(Gateway $gateway, Mailer $mailer)
+    {
+        $this->gateway = $gateway;
+        $this->mailer = $mailer;
+    }
+```
+Now in the test you would create a `mailer` variable that would contain a mocked version of the `Mailer` class.
+```php
+$gateway = $this->createMock(Gateway::class);
+$mailer = $this->createMock(Mailer::class);
+$subscription = new Subscription($gateway, $mailer);
+```
+Now you can write out you expectation on the mocked `Mailer` class and on the `Gateway` class.
+```php
+$gateway->method('create')->willReturn('receipt-stub');
+
+$mailer
+    ->expects(once())
+    ->method('deliver')
+    ->with('Your receipt number is: receipt-stub');
+```
+All of the above code needs to be before any call to the `create` method in the test.
+
+### Laravel Dusk - Browser Testing
+
+Install with `composer require laravel/dusk --dev` and then run the installer composer artisan dusk:install`
+
+To create tests run `php artisan dusk:make TestName`. This will create a new test in `/tests/Browser/`
+
+To run the tests run `php artisan dusk`. This will execute all the tests in the `/tests/Browser` directory.
+
+Just like regular PHPUnit tests, make sure to use the `use DatabaseMigrations;` to import this trait.
+
+Within a test, you can start a browser session with 
+```php
+$this->browse(function(Browser $browser) {
+    //assertion and actions here use the $browser object
+});
+```
+***Available Commands*** Visit [Laravel Dusk](https://laravel.com/docs/8.x/dusk) form more info
+`->visit('/')` visit a specific page
+`->visitRoute('namedRoute')` visit a named route
+`->type('fieldName', 'test')` type `test` in a form field named `fieldName`
+`->press('Button Text')` press a button with the text `Button Text`
+`->screenshot('filename')` saves a screenshot with the name `filename`. Screenshots are saved in `/tests/Browser/screenshots/`
