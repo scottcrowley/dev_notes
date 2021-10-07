@@ -1,5 +1,54 @@
 # Miscellaneous Testing
 
+## Laravel Factory Tips (October 2021)
+#### The following notes are from the Laracast episode [Laravel Factory Tips](https://laracasts.com/series/andres-larabits/episodes/4)
+
+* #### The `for` and `has` Methods
+    * #### `for` Method
+        This can be used when creating another model to use in a different model when there is a relationship being used. For example, you have a User model that has a `hasMany` relationship with a Post model. You can use the `for` method when creating the Post model to have Laravel automatically fill the required field when provided a User model.
+        ```php
+        $user = User::factory(['name' => 'Bob'])->create();
+
+        Post::factory()->for($user)->create();
+        ```
+    * #### `has` Method
+        This is the opposite of the `for` method and when using the example above, can be used to create posts when creating the User model.
+        ```php
+        $user = User::factory(['name' => 'Bob'])->has(Post::factory(3))->create();
+        ```
+* #### Using a Seeder
+    Used to arrange the creating of certain models to be used in a test. If you have several models being created to be used in a test, you can create a seeder class to handle all of it for you. The seeder can then be accessed using the `seed` method within the test.
+    ```php
+    $this->seed(SomeSeederName::class);
+    ```
+    Don't forget to import the seeder class in the test, it is being used in.
+* #### Using a Sequence When Creating a Model
+    If you want to have the factory create a model with different values for a given property you can use sequencing to do this.
+    ```php
+    Post::factory(10)->state(new Sequence(
+        ['pinned' => true],
+        ['pinned' => false],
+        ['pinned' => false],
+    ))->create();
+    ```
+    This will create a post with the `pinned` property equal to `true` with every third model created.
+    You can also use a `sequence` method and access the iteration of the factory.
+    ```php
+    Post::factory(10)
+        ->sequence(fn ($sequence) => ['name' => 'Post ' . $sequence->index])
+        ->create();
+    ```
+    This will create a post with the incremental sequence index being added to the post name on each iteration. i.e. `Post 1`, `Post 2`, `Post 3`, etc.
+* #### Useful Faker Methods
+    * optional : Can be used to say a nullable field can sometimes be null when creating the model. The method is passed a `$weight` value that states how often the field will have a value. The values of `$weight` are to be between `0.0` - `1.0` 
+        ```php
+        'bio' => $this->faker->optional($weight = 0.3)->sentence(12);
+        ```
+    * valid : Can be used to specify the valid values of a field. The method is passed a callback that evaluates something and returns a boolean to whether or not the value in the field is valid.
+        ```php
+        'experience' => $this->faker->valid(fn ($exp) => $exp < 100)->randomNumber(),
+        ```
+        This will only create a random number less than 100 for each model created.
 ## PHP Testing Jargon
 #### The following notes are from the Laracast series [PHP Testing Jargon](https://laracasts.com/series/php-testing-jargon)
 
