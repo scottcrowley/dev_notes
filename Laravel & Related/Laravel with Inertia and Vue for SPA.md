@@ -207,3 +207,20 @@ export default {
 ```js
 <Link href="/currentPage" preserve-scroll>Like This Article</Link>
 ```
+* #### Handle Active Status Using the $page Variable
+    * Every component has access to a global $page variable, which contains information about the current page or component being used. This can be used to generate "active" styling so the user knows which page they are on.
+    * There are a couple of properties on the $page variable that can be used.
+        * `.component` : Gives the name of the current component being used
+        * `.url` : Gives the current url of the page you are on. This will also contain the query string, so it is important to remember that when trying to match to the url.
+        
+           * i.e. `$page.url === '/settings'` will match when you are on the `/settings` url but if the url has a query string then this check will no longer return true. In this case it would be better to use something like `$pages.url.startsWith('/settings')` will return true even if there is a query string.
+    * Example Link component that will add styling to an active link. Using the `.component` property seems to be a cleaner, more precise way to handle this. However, the `.url` property can be used as well, as long as you take into account the query string as stated above.
+        ```js
+        <Link 
+            href="/settings" 
+            class="text-blue-500 hover:underline"
+            :class="{'font-bold underline': $page.component === 'Settings'}"
+        >
+            Settings
+        </Link>
+        ```
