@@ -282,3 +282,10 @@ $this->browse(function(Browser $browser) {
 `->type('fieldName', 'test')` type `test` in a form field named `fieldName`
 `->press('Button Text')` press a button with the text `Button Text`
 `->screenshot('filename')` saves a screenshot with the name `filename`. Screenshots are saved in `/tests/Browser/screenshots/`
+
+### Continuous Integration Testing (CI)
+* #### CI Services
+    * [Travis CI](https://travis-ci.com)
+    * [Team City by JetBrains](https://www.jetbrains.com/teamcity/)
+    * Github Actions are available on each of your repositories.
+
