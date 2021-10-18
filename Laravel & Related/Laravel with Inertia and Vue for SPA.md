@@ -224,3 +224,59 @@ export default {
             Settings
         </Link>
         ```
+### Shared Data on All Pages
+There may be times where you want to pass the same data to all pages. This data can then be accessed using the `$page.props` property. By default, every page receives the `$errors` property that is normally available on all Laravel pages.
+#### The HandleInertiaRequests.php Middleware File
+* Located in `\app\Http\Middleware\`
+* Use the `share` method to pass any additional shared data to all pages
+* It is a good idea to namespace any properties that are being passed. For example: If you are passing a `username` property, you might want to have it namespaced to `auth.user.username`. This can be done by using the following format.
+    ```js
+    'auth' => [
+        'user' => [
+            'username' => auth()->user()->username,
+        ]
+    ]
+    ```
+    The `username` property then can be accessed in the page by using `{{ $page.props.auth.user.username }}`
+    * You can also access it using a "computed property" within your page layout file.
+        ```js
+        computed: {
+            username() {
+                return this.$page.auth.user.username;
+            }
+        }
+        ```
+        It can then be accessed on the page simply by using `{{ username }}`
+### Global Component Registration
+If you want to register a component that will be used on every page, like the `Link` component outlined above, you can add the registration to the `createInertiaApp` method call in the `resources\js\app.js` file.
+* First import the component by adding it to the import already being used for the createInertiaApp instance. Since both are part of `inertia-vue3`. `import { createInertiaApp, Link } from "@inertiajs/inertia-vue3";`
+* Now add a `.component` method call to the `setup` method call the instantiates the instance.
+    ```js
+    createInertiaApp({
+        resolve: name => require(`./Pages/${name}`),
+        setup({ el, App, props, plugin }) {
+            createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .component("Link", Link)
+            .mount(el)
+        },
+    });
+    ```
+    If you have more than one component you want to register, just add a new `.component` for each component you want to add.
+    ```js
+    .component("Link", Link)
+    .component("Head", Head)
+    ```
+* After you have registered it, you can remove any old imports and registrations from the individual page files, like what was shown in previous examples. Remove the following from any page where the `Link` component was being used.
+    ```js
+    import { Link } from '@inertiajs/inertia-vue3';
+    ```
+    &
+    ```js
+    components: { Link },
+    ```
+### Persistent Layouts
+There is a problem created when using layout files as outlined above. A layout file is technically a child component of the page that it is being used on. So, in essence, the layout is being destroyed whenever a new page is accessed. The example used in the video is that a Podcast is added to the layout file. When you start playing the Podcast on one page, you would want it to continue even after going to a different page that uses the layout file. In the current setup, this will not happen and the Podcast will start over and stop playing.
+* To declare a persistent layout, you can use the `layout` property instead of using the `components` property in each page that is using the layout file. `components: { Layout },` changes to `layout: Layout`.
+* Now you can remove the wrapping `Layout` element that is used within the `template` tag on the page using the layout specified in the `layout` property.
+* After doing this, and you check the page in Vue devtools, you'll notice that the Layout instance is no longer a child of the page instance, it is the other way around.
