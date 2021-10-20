@@ -17,6 +17,7 @@
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
             <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
+            @routes
             <script src="{{ mix('/js/app.js') }}" defer></script>
         </head>
 
@@ -26,14 +27,16 @@
 
         </html>
     ```
+    * Take note of the `@routes` Blade Directive before the scripts are added. This allows for using the routes declared in the `web.php` file within Vue components. See the section below on Ziggy
     * Install the middleware for Inertia
     ```zsh
     php artisan inertia:middleware
     ```
-    * Register the middleware by adding the following to the `web` middleware group in the App\Http\Kernel.php file
+    * Register the middleware by adding the following to the `web` middleware group in the `App\Http\Kernel.php` file
     ```php
     \App\Http\Middleware\HandleInertiaRequests::class
     ```
+
 * ### Install Client-Side Requirements:
     * Install latest Vue using npm
     ```zsh
@@ -131,6 +134,91 @@
     ```zsh
     npx mix
     ```
+## [Ziggy](https://github.com/tighten/ziggy)
+Not covered in the video series.
+
+Ziggy allows you to use the routes declared in the `web.php` file within Vue components. By adding the `@routes` Blade directive in the `head` tag of your main layout file, before the app's Javascript files are imported, you can gain access to this information. Now you can use the `route()` helper function in all your Javascript files.
+### Usage
+* Getting Routes
+    * Say you have a named route, in `web.php`, called `posts.index`. You can access the route uri in Javascript by using `route('posts.index')`. 
+    * If your route has wild cards in the definition, you can pass a second argument to the `route()` function. 
+        ```php
+        // routes\web.php
+        Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show');
+        ```
+        ```js
+        // Vue component or Javascript
+        route('posts.show', 1);
+        route('posts.show', [1]);
+        route('posts.show', { post: 1 });
+        // All return https://thesite.test/posts/1
+        ```
+    * If your route uses multiple wild cards you can pass them all through the second argument.
+        ```php
+        // routes\web.php
+        Route::get('events/{event}/venues/{venue}', [EventController::class, 'show'])->name('events.venues.show');
+        ```
+        ```js
+        // Vue component or Javascript
+        route('events.venues.show', [1, 2]);
+        route('events.venues.show', { event: 1, venue: 2 });
+        // returns https://thesite.test/events/1/venues/2
+        ```
+    * You can also pass query parameters when getting a route as well
+        ```php
+        // routes\web.php
+        Route::get('events/{event}/venues/{venue}', [EventController::class, 'show'])->name('events.venues.show');
+        ```
+        ```js
+        // Vue component or Javascript
+        route('events.venues.show', { 
+            event: 1, 
+            venue: 2,
+            page: 5,
+            count: 10
+        });
+        // returns https://thesite.test/events/1/venues/2?page=5&count=10
+        ```
+        If you have query parameters that have the same name as a wild card, then you can pass them in using the `_query` key.
+        ```js
+        // Vue component or Javascript
+        route('events.venues.show', { 
+            event: 1, 
+            venue: 2,
+            _query: {
+                event: 5,
+                page: 10
+            }
+        });
+        // returns https://thesite.test/events/1/venues/2?event=5&page=10
+        ```
+* Using the `Router` Class
+    * Calling the `route()` helper with no arguments returns an instance of the Javascript `Router` class, which has some useful methods that can be used.
+        ```js
+        // Route called 'events.index', with URI '/events'
+        // Current window URL is https://ziggy.test/events
+        route().current();               // 'events.index'
+        route().current('events.index'); // true
+        route().current('events.*');     // true
+        route().current('events.show');  // false
+
+        // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
+        // Current window URL is https://myapp.com/events/1/venues/2?authors=all
+        route().current('events.venues.show', { event: 1, venue: 2 }); // true
+        route().current('events.venues.show', { authors: 'all' });     // true
+        route().current('events.venues.show', { venue: 6 });           // false
+
+        // App has only one named route, 'home'
+        route().has('home');   // true
+        route().has('orders'); // false
+
+        // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
+        // Current window URL is https://myapp.com/events/1/venues/2?authors=all
+
+        route().params; // { event: '1', venue: '2', authors: 'all' }
+        // NOTE: values returned using .params will always be a string
+        ```
+
 ## General Usage
 
 ### General
