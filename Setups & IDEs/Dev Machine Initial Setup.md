@@ -78,7 +78,8 @@
     * [Homebrew](https://brew.sh)
         * `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
         * You can use `brew search {package name}` to search for a specific package that can be installed via home-brew
-    * To install PHP 7.3 using Homebrew
+    * To install PHP 7.3 using Homebrew. 
+    ***BEFORE GOING ANY FURTHER, CHECK OUT THE ARTICLE ABOUT SETTING UP MULTIPLE VERSIONS OF PHP ON YOUR MACHINE. THE PDF SHOULD BE IN THE ENCLOSED DIRECTORY AND THE SITE IS AT https://getgrav.org/blog/macos-bigsur-apache-multiple-php-versions***
         Here is a good [article](https://stitcher.io/blog/php-73-upgrade-mac) explaining the process.
         ```zsh
         brew update
