@@ -368,3 +368,45 @@ There is a problem created when using layout files as outlined above. A layout f
 * To declare a persistent layout, you can use the `layout` property instead of using the `components` property in each page that is using the layout file. `components: { Layout },` changes to `layout: Layout`.
 * Now you can remove the wrapping `Layout` element that is used within the `template` tag on the page using the layout specified in the `layout` property.
 * After doing this, and you check the page in Vue devtools, you'll notice that the Layout instance is no longer a child of the page instance, it is the other way around.
+
+### Dynamic Components
+There may be times where you need to generate a dynamic component based on whether something is true or not. In the episode on [Pagination](https://laracasts.com/series/build-modern-laravel-apps-using-inertia-js/episodes/17), a dynamic component is being used to generate the pagination links of the `users` object being sent to the page. The `users` object contains a `link` property containing an array of all the links for the page. When you are on the first page, the "Previous" link has no value for the `url` property. Same goes for when you are on the last page, the "Next" link has no value for the `url` property. You can use the code below to dynamically generate either a `Link` component or a `<span>` tag based on whether or not there is a `url`.
+```js
+<div class="mt-6">
+    <Component
+        :is="link.url ? 'Link' : 'span'"
+        v-for="link in users.links"
+        :href="link.url"
+        v-html="link.label"
+        class="px-1"
+        :class="{ 'text-gray-500': ! link.url, 'font-bold': link.active }"
+    /> 
+</div>
+```
+In the controller action, the `users` object was being sent to the page using a `map` function.
+```php
+    return Inertia::render('Users', [
+        'users' => User:all()->map(fn($user) => [
+            'id' => $user.id,
+            'name' => $user.name,
+        ])
+    ]);
+```
+When using a paginator this code will break because the paginator contains several other properties and puts all the data in the `data` property. The code below will break the page:
+```php
+    return Inertia::render('Users', [
+        'users' => User:paginate(10)->map(fn($user) => [
+            'id' => $user.id,
+            'name' => $user.name,
+        ])
+    ]);
+```
+Instead of using the `map` function, you can use the `through` function, which will leave the object intact while it maps over it. I was unable to find any details in the Laravel docs on how to use `through`, but there was a comment regarding it. The `through` method is only available on a paginator instance.
+```php
+    return Inertia::render('Users', [
+        'users' => User:paginate(10)->through(fn($user) => [
+            'id' => $user.id,
+            'name' => $user.name,
+        ])
+    ]);
+```
