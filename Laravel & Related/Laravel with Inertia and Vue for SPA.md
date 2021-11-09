@@ -335,6 +335,17 @@ There may be times where you want to pass the same data to all pages. This data 
         }
         ```
         It can then be accessed on the page simply by using `{{ username }}`
+* ***Flash Messages*** - This is a good use-case for adding flashed messages to a page. You can grab the value assign to a message flashed to the session.
+    ```php
+    'flash' => [
+        'message' => fn () => $request->session()->get('message')
+    ],
+    ```
+    ```html
+    <div v-if="$page.props.flash.message" class="alert">
+        {{ $page.props.flash.message }}
+    </div>
+    ```
 ### Global Component Registration
 If you want to register a component that will be used on every page, like the `Link` component outlined above, you can add the registration to the `createInertiaApp` method call in the `resources\js\app.js` file.
 * First import the component by adding it to the import already being used for the createInertiaApp instance. Since both are part of `inertia-vue3`. `import { createInertiaApp, Link } from "@inertiajs/inertia-vue3";`
@@ -410,3 +421,186 @@ Instead of using the `map` function, you can use the `through` function, which w
         ])
     ]);
 ```
+
+### Forms
+You can use the form helper provided by Inertia to help manage all aspects of a form. There are two ways to use the helper depending on if you are using the **Options API** or **Composition API**.
+```js
+//Options API
+export default {
+  data() {
+    return {
+      form: this.$inertia.form({
+        email: null,
+        password: null,
+        remember: false,
+      }),
+    }
+  },
+}
+
+//Composition API
+import { useForm } from '@inertiajs/inertia-vue3'
+
+export default {
+  setup () {
+    const form = useForm({
+      email: null,
+      password: null,
+      remember: false,
+    })
+
+    return { form }
+  },
+}
+```
+Accessing the helper's functions is performed the same way regardless of which ever API is being used.
+
+#### Submitting the Form
+You can use the following submit methods: `get`, `post`, `put`, `patch` and `delete`. The second argument can be used to specify options for the submit or to tap into events that occur during the processing.
+```js
+form.post(url,options); //replace post with any method
+
+//options:
+preserveScroll: true //boolean or callback
+preserverState: true //boolean or callback
+
+//events:
+onBefore: (visit) => {},
+onStart: (visit) => {},
+onProgress: (progress) => {},
+onSuccess: (page) => {},
+onError: (errors) => {},
+onCancel: () => {},
+onFinish: visit => {},
+```
+While the form is being processed you can use the `form.processing` property to display something or disable the submit button.
+```html
+<button type="submit" :disabled="form.processing">Submit</button>
+```
+You can also access `form.progress` or `form.progress.percentage` to display upload or processing status.
+```html
+<progress v-if="form.progress" :value="form.progress.percentage" max="100">
+  {{ form.progress.percentage }}%
+</progress>
+```
+
+#### Other Form Methods and Properties
+***transform()*** - If you need to modify data in the form before it is sent to the server, you can use `form.transform` before the submit method is called.
+```js
+form
+  .transform((data) => ({
+    ...data,
+    remember: data.remember ? 'on' : '',
+  }))
+  .post('/login')
+```
+***errors*** - If you need to modify data in the form before it is sent to the server, you can use `form.transform` before the submit method is called.
+```html
+<div v-if="form.errors.email">{{ form.errors.email }}</div>
+```
+You can also check if the form has *any* errors at all by using the `form.hasErrors` property.
+If you need to clear the errors from the form you can use the `form.clearErrors()` to clear all form errors or `form.clearErrors('field', 'anotherField')` to clear individual field errors.
+
+***reset()*** - This method can be used to clear all fields on the form `form.reset()` or clear individual fields by using `form.reset('field', 'anotherField')`.
+
+***wasSuccessful*** - This boolean property will be set to `true` if a form was submitted successfully. `form.wasSuccessful`
+
+***recentlySuccessful*** - This boolean property will be set to `true` for 2 seconds after the form was submitted successfully. This can be used to display a success flash message or some other type of user feedback. `form.recentlySuccessful`
+
+***isDirty*** - This boolean property will be set to `true` when a form has changed. This can be used to display a message that the form has changed and needs to be saved.
+```html
+<div v-if="form.isDirty">There are unsaved form changes.</div>
+```
+
+## Examples
+### Search Filtering on a List
+In this example, we will use a page that displays a list of users from the `users` table. The route is a `get` request to the `/users` route endpoint. The controller will send a `$users` variable to the page containing a paginated list of all the users in the database. We start by adding an input field to the page and assign a `v-model` to it.
+```html
+<input v-model="search" type="text" placeholder="Search..." class="border px-2 rounded-lg" />
+```
+Next we adjust the code that handles the search functionality. I included the new **Composition API** technique along with the traditional **Options API**.
+```js
+// Options API
+
+import Pagination from '../Shared/Pagination';
+
+export default {
+  components: { Pagination },
+
+  props: {
+    users: Object,
+    filters: Object
+  },
+
+  data() {
+    return {
+      search: this.filters.search
+    }
+  },
+
+  watch: {
+    search(value) {
+      this.$inertia.get('/users', { search: value }, {
+        preserveState: true,
+        replace: true
+      });
+    }
+  }
+}
+
+//Composition API
+
+<script setup>
+import Pagination from '../Shared/Pagination';
+import { ref, watch } from "vue";
+import { Inertia } from "@inertiajs/inertia";
+
+let props = defineProps({
+  users: Object,
+  filters: Object
+});
+
+let search = ref(props.filters.search);
+
+watch(search, value => {
+  Inertia.get('/users', { search: value }, {
+    preserveState: true,
+    replace: true
+  });
+});
+</script>
+```
+It's important to note that the use of `preserveState: true` makes sure that the search input field is not cleared when a letter is typed into the field. It also makes the focus remain on the field as you type. Since each time you type into the field, it is making a `GET` request to the server that would normally act as if you went to a new page.
+Also, the use of `replace: true` is good to use because each new `GET` request will replace the previous one. Without this option, there will be a new history entry made for each letter typed.
+
+Finally, the controller action, on the Laravel side, needs to be updated to handle the new search.
+```php
+return Inertia::render('Users', [
+    'users' => User::query()
+        ->when(Request::input('search'), function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+        ->paginate(10)
+        ->withQueryString()
+        ->through(fn($user) => [
+            'id' => $user->id,
+            'name' => $user->name
+        ]),
+
+    'filters' => Request::only(['search'])
+]);
+```
+Since the `Users` page component already uses the `$users` variable, the current data displayed on the page will be replaced with whatever is returned from the search query. 
+The `->when()` method allows us to just apply the filtering when there is a value in the `search` query string. 
+It is important to make sure to use `->withQueryString()` so that the pagination links are updated with the query string included. Without it, going to a new page in the data set will reset the search.
+An addition variable called `filters` is now being sent to the `Users` page. This is used to populate the search field with whatever is in the `search` query string. In the component, the default value for the search input field will be set to the `filters.search` value.
+```js
+data() {
+    return {
+        search: this.filters.search
+    }
+}
+```
+
+### Flash Messages
+See the section above called ***Shared Data on All Pages*** on how to add a flash message to all pages.
