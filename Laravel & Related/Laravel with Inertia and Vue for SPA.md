@@ -291,6 +291,14 @@ export default {
 ```js
 <Link href="/logout" method="post">Logout</Link>
 ```
+* You can also send data in a `POST` or `PATCH` request by using the `:data` directive
+```js
+<Link href="/logout" method="post" :data="{name: 'foobar'}">Logout</Link>
+```
+* A link tag can also be rendered as a button by adding the `as` directive. This prevents you from `command` clicking on a link to open it in a new tab.
+```js
+<Link href="/logout" method="post" as="button">Logout</Link>
+```
 * It is also possible to preserve the scroll position on a page when using the Link component. For example, you don't want the page to refresh when clicking on a "like button" or on a toggle sort order button. In these cases you would want the page to preserve the current scroll location. This is accomplished by using the `preserve-scroll` attribute on the Link component.
 ```js
 <Link href="/currentPage" preserve-scroll>Like This Article</Link>
