@@ -75,11 +75,13 @@
         * `alt+\` - deletes the entire word right of the cursor. ***CUSTOM BINDING***
         * `ctrl+alt+backspace` - deletes the partial word left of the cursor. If the word is camel case then it will delete each hump separately
         * `ctrl+alt+\` - deletes the partial word right of the cursor. If the word is camel case then it will delete each hump separately ***CUSTOM BINDING***
+
 * ### Cosmetic Alterations:
     * Hide the status bar: `cmd+,` then find `workbench.statusBar.visible` and set to `false`
     * Hide the Open Editors on the left side bar: `cmd+,` then find `explorer.openEditors.visible` and set to `0`
     * Hide mini map: set `editor.minimap.enabled` to `false` in `User Settings`
     * `editor.tabCompletion` should be set to `true` if you want to be able to use the tab key to auto complete snippets and other things
+
 * ### Miscellaneous Settings:
     * By default, whenever a new file is opened, within a project, Code will replace the file that is currently open, unless it has been previously edited. To have it open all files in a new window change the `Open Files in New Window` setting. 
     
@@ -97,9 +99,65 @@
             ```
     * To change how many lines are shown in the terminal scroll history, set the following in the `settings.json` file: `"terminal.integrated.scrollback": 5000,` The `5000` is a suggestion only.
     * To make it so VSC ignore the native full screen mode used in Mac OS, use: `"window.nativeFullScreen": false,`
+* ### UI Extensions:
+    * `Slime Theme` - *smlombardi*
+    * `vscode-icons` - *VSCode Icons Team*
+    * `Material Icon Theme` - *Phillip Kief*
+
 * ### Useful Extensions:
-    * `advanced-new-file` - *patbenatar*
-    * `File Utils` - *Leistner* Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
+    * `Auto Close Tag` - *Jun Han*
+    * `Auto Import` - *steoates*
+    * `Auto Rename Tag` - *Jun Han* *FOUND ON MY OWN* 
+    Renames paired HTML tags
+    * `Better PHPUnit` - *calebporzio*
+    * `DotENV` - *mikestead*
+    * `ESLint` - *Microsoft*
+    * `Import Cost` - *Wix*
+    * `IntelliSense for CSS class names in HTML` - *Zignd* *FOUND ON MY OWN* 
+    CSS classname completion
+    * `JavaScript (ES6) code snippets` - *charalampos karypidis*
+    * `Laravel Blade formatter` - *Shuhei Hayashibara*
+        * Add to your settings.json file
+            ```json
+            "[blade]": {
+                "editor.defaultFormatter": "shufo.vscode-blade-formatter",
+                "editor.formatOnSave": true,
+            },
+            "blade.format.enable": true,
+            "bladeFormatter.format.wrapAttributes": "preserve-aligned",
+            "bladeFormatter.format.wrapLineLengths": 9999,
+            ```
+            The value for `wrapLineLengths` is set so high since the formatter doesn't format long lines very well and the default is `80`. This basically disabled the wrap lines feature.
+    * `Laravel Blade Snippets` - *Winnie Lin*
+    * `Laravel goto View` - *codingyu*
+    Allows you to go to a view whereever it is being referenced. To use, just `ctrl+click` to go to the selected file.
+    * `Markdown Preview Enhanced` - *Yiyi Wang* *FOUND ON MY OWN* 
+    Added markdown functionality
+    * `Markdown Preview Github Styling` - *Matt Bierner* *FOUND ON MY OWN* 
+    Makes markdown previews look like Github
+    * `Path Intelephense` - *Christian Kohler*
+    * `PHP Constructor` - *Mehedi Hassan*
+    Mentioned in [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
+    To use open the Command Palete (`shift+cmd+p`) and type `constructor`. You should see `Insert Constructor Property`. By default the extension will add constructor properties with the *protected* visibility. To change it, add the following to the `settings.json` file: `"phpConstructor.constructorVisibility": "public",`
+    * `php cs fixer` - *junstyle*
+        * Add to your settings.json file
+            ```json
+            "[php]": {
+                "editor.defaultFormatter": "junstyle.php-cs-fixer",
+            },
+            "php-cs-fixer.autoFixByBracket": false,
+            "php-cs-fixer.config": "/Users/scott/.vscode/.php-cs-fixer.php",
+            "php-cs-fixer.exclude": [],
+            "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+            "php-cs-fixer.formatHtml": true,
+            "php-cs-fixer.lastDownload": 1639279433361,
+            "php-cs-fixer.onsave": true,
+            "php-cs-fixer.rules": "@PSR2",
+            "php-cs-fixer.showOutput": false,
+            ```
+    * `Php DocBlock Generator` - *vincentkos* *FOUND ON MY OWN*
+    * `PHP Extension Pack` - *Felix Becker* 
+    Must have PHP extension pack
     * `PHP Intelephense` - *Ben Mewburn*
         * **Setup**
             * Disable VSCodes PHP Language Features
@@ -107,37 +165,114 @@
                 * Search for `@builtin php`
                 * Disable the `PHP Language Features` extension and reload VSCode
             * add `"files.associations": { "*.module": "php"},` to the `settings.json` file
-    * `Vim` - *vscodevim*
-    * `snippet-creator` - *nikitaKunevich* DEPRICATED - Creates snippets from a selection
-    * `Laravel Artisan` - *Ryan Naddy*
-    * `Better PHPUnit` - *calebporzio*
-    * `php cs fixer` - *junstyle*
-    * `Vetur` - *Pine Wu*
-    * `Import Cost` - *Wix*
-    * `ESLint` - *Dirk Baeumer*
-    * `Laravel Blade Snippets` - *Winnie Lin*
-    * `Php DocBlock Generator` - *vincentkos* ***FOUND ON MY OWN***
-    * `Quick and Simple Text Selection` - *David Bankier* ***FOUND ON MY OWN***. CURRENTLY HAVING TROUBLE MAKING THIS RESPOND TO THE DEFAULT SHORTCUTS
-    * `stylelint` - *Shinnosuke Watanabe* ***FOUND ON MY OWN***. Use this if using tailwind.css. See note in the Miscellaneous Settings
-    * `Tailwind CSS IntelliSense` - *Brad Cornes* ***FOUND ON MY OWN***. Use this if using tailwind.css. Autocomplete for tailwind classes
-    * `Tailwind sass syntax` - *Maciej Ładoś* ***FOUND ON MY OWN***. Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
-    * `Vue VSCode Snippets` - *sarah.drasner* ***FOUND ON MY OWN***. Helpful snippets when using vue.
+    * `PHP Namespace Resolver` - *Mehedi Hassan* 
+    Mentioned in [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
+    * `PHP Parameter Hint` - *Robert*
+    Mentioned in a comment on the [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
+    Add the following to your `settings.json` file: `""phpParameterHint.opacity": 0.1,` & `"phpParameterHint.fontSize": 11`
+    * `PHP Refactor` - *Tin Trinh*
+    Mentioned in a comment on the [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
+    To use open the Command Palete (`shift+cmd+p`) and type `extract`, to extract selected code to a method.
+    * `Prettier - Code formatter` - *Prettier* https://prettier.io
+        * Install Locally - It is recommended that you still install Prettier locally even when you are using a plugin within your editor. That way, it is always using the most recent version of Prettier.
+            * Prettier
+                ```zsh
+                npm install --save-dev --save-exact prettier
+                ```
+            * If using ESLint, then you'll need these plugins as well. [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier) & [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)
+                ```zsh
+                npm install --save-dev eslint-plugin-prettier
+                npm install --save-dev eslint-config-prettier
+                ```
+                * Add the following to the `.eslintrc.json` file. If it doesn't exist, have VSCode add one by opening `command palette` and typing `eslint` and selecting `Create 'eslintrc.json’ File`. Running this command will ask you several questions in the terminal window. Once you have answered everything the config file will be added to the project root. So this will need to be done for every project being used.
+                    ```json
+                    {
+                        "extends": ["plugin:prettier/recommended"]
+                    }
+                    ```
+                    Make sure that `"plugin:prettier/recommended"` is the last plugin in the `extends` list
+        * Settings
+            * Language Specific Settings
+                ```json
+                "[html]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnSave": true,
+                },
+                "[javascript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnSave": true,
+                },
+                "[vue]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnSave": true,
+                },
+                "[css]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnSave": true,
+                }
+                ```
+            * Use this setting to make Prettier use a config file in the root of your site. The file must be named `.prettierrc` and contain an object.
+                ```json
+                "prettier.requireConfig": true,
+                ```
+            * To have prettier ignore the default formatter provided by VSCode, use the following setting. This makes sure that there aren't any conflicts between formatting rules.
+                ```json
+                "prettier.useEditorConfig": false,
+                ```
+        * `.prettierrc` Options. Might be a good idea to setup a snippet since this will have to be added to each project.
+            ```json
+            {
+                "singleQuote": true,
+                "arrowParens": "avoid",
+            }
+            ```
+        * PHP Plugin for Prettier https://github.com/prettier/plugin-php
+    * `Quick and Simple Text Selection` - *David Bankier* *FOUND ON MY OWN*
+    * `Sort JSON objects` - *richie5um2*
+    Mentioned in a comment on the [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
+    Allows you to sort JSON objects. When making a selection, make sure to include the beginning `{` and ending `}` or it won't sort the object. You can initiate the sort either by using the Command Palete (`shift+cmd+p`) and typing `sort` or by opening the context menu (right-click on the selection) and select the sort type from the list.
+    * `Tailwind CSS IntelliSense` - *Brad Cornes* *FOUND ON MY OWN*
+    Use this if using tailwind.css. Autocomplete for tailwind classes
+    * `TSLint` - *Microsoft*
+    * `Vue Language Features (Volar)` - *Johnson Chu* 
+    Use this instead of `Vetur`. Also use `Vue 3 Support - All In One`
+    * `Vue 3 Support - All In One` - *Eno Yao*
+    Should be used with `Volar`
+* ### Possible Extensions to Checkout
+    * `Tabnine` - *Tabnine*
+    This extension provides code autocomplete for all languages and uses AI & machine learning to figure out what to suggest. It looks interesting but I haven't looked into it very much.
+    * `GitHub Copilot` - *GitHub*
+    This extension is like *Tabnine* but is supposed to be much better. It is currently in a tech preview only available to select people. Should keep an eye on this when it becomes available though.
+
+* ### Older Unused Extensions:
+    * `stylelint` - *Shinnosuke Watanabe* *FOUND ON MY OWN* **NOT CURRENTLY USING**
+    Use this if using tailwind.css. See note in the Miscellaneous Settings
+    * `Vue VSCode Snippets` - *sarah.drasner* *FOUND ON MY OWN* **NOT CURRENTLY USING**
+    Helpful snippets when using vue.
         * `vmethod` - sets up the methods object within the vue instance
         * `vbase` - sets up the document from scratch
         * `vcreated` - sets up the created method
         * many more available
-    * `PHP Extension Pack` - *Felix Becker* Must have PHP extension pack
-    * `Auto Rename Tag` - *Jun Han* ***FOUND ON MY OWN*** Renames paired HTML tags
-    * `Auto-Open Markdown Preview` - *hnw* ***FOUND ON MY OWN*** Automatically opens side panel with Markdown preview
-    * `IntelliSense for CSS class names in HTML` - *Zignd* ***FOUND ON MY OWN*** CSS classname completion
-    * `Sass` - *Robin Bentley* ***FOUND ON MY OWN*** Indented Sass syntax highlighting, autocomplete & snippets
-    * `Markdown Preview Enhanced` - *Yiyi Wang* ***FOUND ON MY OWN*** Added markdown functionality
-    * `Markdown Preview Github Styling` - *Matt Bierner* ***FOUND ON MY OWN*** Makes markdown previews look like Github
-    * `Markdown Vue` - *donaldshen* ***FOUND ON MY OWN*** Formats vue code blocks in markdown files. Does not style the preview though
-    * `GitLens` - *Eric Amodio* Adds additional Github functionality
-* ### UI Extensions:
-    * `Slime Theme` - *smlombardi*
-    * `vscode-icons` - *VSCode Icons Team*
+    * `Tailwind sass syntax` - *Maciej Ładoś* *FOUND ON MY OWN* **NOT CURRENTLY USING**
+    Use this if using tailwind.css. Syntax highlighting for tailwind directives and classes.
+    * `Auto-Open Markdown Preview` - *hnw* *FOUND ON MY OWN* **NOT CURRENTLY USING**
+    Automatically opens side panel with Markdown preview
+    * `Markdown Vue` - *donaldshen* *FOUND ON MY OWN*  **NOT CURRENTLY USING**
+    Formats vue code blocks in markdown files. Does not style the preview though
+    * `GitLens` - *Eric Amodio* **NOT CURRENTLY USING**
+    Adds additional Github functionality
+    * `Sass` - *Robin Bentley* *FOUND ON MY OWN*  **NOT CURRENTLY USING**
+    Indented Sass syntax highlighting, autocomplete & snippets
+    * `advanced-new-file` - *patbenatar* **NOT CURRENTLY USING**
+    * `Vim` - *vscodevim* **NOT CURRENTLY USING**
+    * `snippet-creator` - *nikitaKunevich* **NOT CURRENTLY USING** 
+    DEPRICATED - Creates snippets from a selection
+    * `Laravel Artisan` - *Ryan Naddy* **NOT CURRENTLY USING**
+    * `Vetur` - *Pine Wu* **NOT CURRENTLY USING** 
+    NO LONGER RECOMMENDED BY VUE. USE VOLAR INSTEAD
+    * `File Utils` - *Leistner* **NOT CURRENTLY USING** 
+    Use command palette cmd+shift+p to access file utils like rename, delete, duplicate, etc
+
 * ### Useful Tips:
     * #### Preview Mode:
         * When you normally open a file by clicking on it in the sidebar or by selecting it in the command palatte, it is being opened in Preview Mode. This means that when you open a different file, the new file will close the current file in Preview Mode then display the new file in Preview Mode. You can tell a file is in Preview Mode by looking at the file name in the editors tab. It will be italic when its in Preview Mode. There are several ways to have a file stay open and not be in Preview Mode:
@@ -172,6 +307,7 @@
     * Set up `XDebug`. See <https://tighten.co/blog/configure-vscode-to-debug-phpunit-tests-with-xdebug>
     * To have `Import Cost` extension see `.vue` files directly, you need to add `"importCost.typescriptExtensions": [ "\\.vue?$" ]` to the `User Settings` file
     * When using Laravel Blade Snippets, you can type '`b:`’, followed by the command (i.e. `extend`, `yield`, `content`, etc), to bring up a contextual window with blade snippets to use.
+
 * ### Code Specific User File Locations
     * In the event that you need to install VSCode from scratch, below is where some of the common setup files are located.
         * `settings.json` - `Users/scott/Library/Application Support/Code/User/`
@@ -179,20 +315,24 @@
         * `php.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
         * `html.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
         * `vue.json` - `Users/scott/Library/Application Support/Code/User/snippets/`
+
 * ### Multiple Cursors
     * Using the mouse you can click some where and then hold `alt` while click elsewhere to create multiple cursors
     * `cmd+D` will select the next occurrence of what is selected.
     * `ctrl+cmd+G` will select all occurrences. 
+
 * ### Configure ESLint
+    * ***If using `Prettier` then look at the plugin section above about how to integrate `Prettier` with `ESLint`.***
     * With `ESLint` installed make sure that `.vue` files are added to the `eslint.validate` property. Go into `User Settings` and search for `eslint.validate` and copy settings to `User Settings`. Then add `"vue", "vue-html"` to the existing array that has `"javascript", "javascriptreact"`
     * You will also need an .`eslintrc.json` file.
-        * Add one by opening `command palette` and typing `eslint` and selecting `Create 'eslintrc.json’ File`. This file is added to your project root. So this will need to be done for every project being used.
-        * or type `eslint --init` in the terminal and answer the questions asked.
+        * Add one by opening `command palette` and typing `eslint` and selecting `Create 'eslintrc.json’ File`. Running this command will ask you several questions in the terminal window. Once you have answered everything the config file will be added to the project root. So this will need to be done for every project being used.
+        * or type `node_modules/.bin/eslint --init` in the terminal and answer the questions asked.
         * See below for an example `.eslintrc.json` file.
     * GETTING AN ERROR TRYING TO RUN THE ABOVE COMMAND. MAY NEED TO INSTALL A DIFFERENT WAY Not an issue anymore for some reason
     * You will also need an `eslint-plugin-vue` plugin. Type `npm install -g eslint-plugin-vue` into the terminal to install it globally.
         * `"plugin:vue/recommended"` needs to be added to the `extends` key array in the `.eslintrc.json` file
         * Make sure if you have the `Vetur` extension installed that you set the `"vetur.validation.template":` setting to `false` in your `User Settings`.
+
 * ### Configuring PHP CS FIXER
     * Make sure extension is installed
     * If a config file doesn’t already exist in `vscode` directory do so by:
@@ -207,83 +347,117 @@
         * `'single_quote' => true`
         * `'not_operator_with_successor_space’ => true`
         * `'ordered_imports' => array('sort_algorithm' => 'length')`
-* ### Example `settings.json` file:
+
+* ### Example `settings.json` file: *Updated 11/18/21*
     ~/Library/Application Support/Code/User/settings.json
     ```json
     {
-        "editor.tabCompletion": "on",
-        "editor.minimap.enabled": false,
-        "editor.fontSize": 13,
-        "editor.fontLigatures": true,
-        "editor.tokenColorCustomizations": {
-        "textMateRules": [
-            {
-                "scope": "comment, comment.block.html",
-                "settings": {
-                    "fontStyle": "italic"
-                }
-            }
-        ]
+        "[html]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.formatOnSave": true,
         },
-        "explorer.openEditors.visible": 0,
-        "explorer.confirmDelete": false,
-        "window.openFilesInNewWindow": "on",
-        "window.zoomLevel": 0,
-        "workbench.statusBar.visible": true,
-        "workbench.iconTheme": "vscode-icons",
-        "workbench.colorTheme": "Slime",
-        "terminal.integrated.scrollback": 10000,
-        "blade.format.enable": true,
-        "search.useIgnoreFiles": false,
-        "search.exclude": {
-        "**/public/[abcdefghjklmnopqrstuvwxyz]*": true,
-        "**/public/i[abcdefghijklmopqrstuvwxyz]*": true,
-        "storage/framework/views": true
+        "[javascript]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.formatOnSave": true,
         },
-        "css.validate": false,
-        "less.validate": false,
-        "scss.validate": false,
-        "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
-        "php-cs-fixer.formatHtml": true,
-        "php-cs-fixer.onsave": true,
-        "php-cs-fixer.config": "/Users/scott/.vscode/.php_cs",
+        "[vue]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.formatOnSave": true,
+        },
+        "[css]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.formatOnSave": true,
+        },
         "[php]": {
-        "editor.defaultFormatter": "junstyle.php-cs-fixer"
+            "editor.defaultFormatter": "junstyle.php-cs-fixer",
         },
-        // File extensions to be parsed by the Typescript parser
-        "importCost.typescriptExtensions": [
-            "\\.vue?$"
-        ],
+        "auto-close-tag.SublimeText3Mode": true,
+        "auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
+        "blade.format.enable": true,
+        "css.validate": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "diffEditor.renderSideBySide": false,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+        "editor.fontLigatures": true,
+        "editor.fontSize": 13,
+        "editor.formatOnSave": true,
+        "editor.guides.bracketPairs": "active",
+        "editor.minimap.enabled": false,
+        "editor.tabCompletion": "on",
+        "editor.tokenColorCustomizations": {
+            "textMateRules": [
+                {
+                    "scope": "comment, comment.block.html",
+                    "settings": {
+                        "fontStyle": "italic"
+                    }
+                }
+            ]
+        },
         "eslint.validate": [
             "javascript",
             "javascriptreact",
             "vue",
             "vue-html"
         ],
-        "vetur.validation.template": false,
-        "php-cs-fixer.lastDownload": 1583260276435,
-        "window.newWindowDimensions": "maximized",
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        "explorer.confirmDelete": false,
         "explorer.confirmDragAndDrop": false,
-        "editor.formatOnSaveTimeout": 5000,
-        "window.nativeFullScreen": false,
-        "intelephense.diagnostics.undefinedTypes": false,
-        "intelephense.diagnostics.undefinedFunctions": false,
-        "intelephense.diagnostics.undefinedConstants": false,
-        "intelephense.diagnostics.undefinedClassConstants": false,
-        "intelephense.diagnostics.undefinedMethods": false,
-        "intelephense.diagnostics.undefinedVariables": false,
-        "intelephense.diagnostics.undefinedProperties": false,
+        "explorer.openEditors.visible": 0,
+        "files.associations": {
+            "*.module": "php"
+        },
         "files.defaultLanguage": "{activeEditorLanguage}",
-        "files.associations": {"*.module": "php"},
-        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+        "importCost.typescriptExtensions": [
+            "\\.vue?$"
+        ],
+        "intelephense.diagnostics.undefinedClassConstants": false,
+        "intelephense.diagnostics.undefinedConstants": false,
+        "intelephense.diagnostics.undefinedFunctions": false,
+        "intelephense.diagnostics.undefinedMethods": false,
+        "intelephense.diagnostics.undefinedProperties": false,
+        "intelephense.diagnostics.undefinedTypes": false,
+        "intelephense.diagnostics.undefinedVariables": false,
+        "less.validate": false,
+        "markdown-preview-enhanced.scrollSync": true,
+        "php-cs-fixer.autoFixByBracket": false,
+        "php-cs-fixer.config": "/Users/scott/.vscode/.php-cs-fixer.php",
+        "php-cs-fixer.exclude": [],
+        "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+        "php-cs-fixer.formatHtml": true,
+        "php-cs-fixer.lastDownload": 1639279433361,
+        "php-cs-fixer.onsave": true,
+        "php-cs-fixer.rules": "@PSR2",
+        "php-cs-fixer.showOutput": false,
+        "phpConstructor.constructorVisibility": "public",
+        "phpParameterHint.fontSize": 11,
+        "phpParameterHint.opacity": 0.1,
+        "prettier.requireConfig": true,
+        "prettier.useEditorConfig": false,
+        "scss.validate": false,
+        "search.exclude": {
+            "**/public/[abcdefghjklmnopqrstuvwxyz]*": true,
+            "**/public/i[abcdefghijklmopqrstuvwxyz]*": true,
+            "storage/framework/views": true
+        },
+        "search.useIgnoreFiles": false,
+        "terminal.integrated.defaultProfile.osx": "zsh",
         "terminal.integrated.fontFamily": "'JetBrains Mono'",
         "terminal.integrated.fontSize": 13,
-        "diffEditor.ignoreTrimWhitespace": false,
+        "terminal.integrated.scrollback": 10000,
+        "typescript.suggest.paths": false,
+        "window.nativeFullScreen": false,
+        "window.newWindowDimensions": "maximized",
+        "window.openFilesInNewWindow": "on",
+        "window.zoomLevel": 0,
+        "workbench.colorTheme": "Slime",
+        "workbench.iconTheme": "material-icon-theme",
+        "workbench.statusBar.visible": true
     }
     ```
-* ### Example `keybindings.json` file:
+
+* ### Example `keybindings.json` file: *Updated 11/18/21*
     ~/Library/Application Support/Code/User/keybindings.json
     ```json
     // Place your key bindings in this file to overwrite the defaults
@@ -394,6 +568,18 @@
         {
             "key": "ctrl+alt+`",
             "command": "workbench.action.terminal.focusPrevious"
+        },
+        {
+            "key": "cmd+k shift+alt+cmd+right",
+            "command": "editor.emmet.action.balanceOut"
+        },
+        {
+            "key": "cmd+k shift+alt+cmd+left",
+            "command": "editor.emmet.action.balanceIn"
+        },
+        {
+            "key": "cmd+k shift+alt+cmd+up",
+            "command": "editor.emmet.action.wrapWithAbbreviation"
         },
     ]
     ```
@@ -750,7 +936,37 @@
         },
     }
     ```
+    
 * ### Example `ESLint` config file (`.eslintrc.json`):
+    Might be a good idea to use the config file generated by running `node_modules/.bin/eslint --init` and add any of the rules listed below if needed. Also see the plugin section above for info on how to integrate with `Prettier`.
+    ***LATEST***
+    ```json
+    {
+        "env": {
+            "browser": true,
+            "es2021": true
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:vue/essential",
+            "plugin:prettier/recommended"
+        ],
+        "parserOptions": {
+            "ecmaVersion": "latest",
+            "sourceType": "module"
+        },
+        "plugins": [
+            "vue",
+            "prettier"
+        ],
+        "rules": {
+            "prettier/prettier": "error",
+            "singleQuote": true,
+            "arrowParens": "avoid"
+        }
+    }
+    ```
+    ***OLDER***
     ```json
     {
         "env": {
@@ -797,6 +1013,15 @@
         }
     }
     ```
+
+* ### Example `.prettierrc` config file for Prettier plugin
+    ```json
+    {
+        "singleQuote": true,
+        "arrowParens": "avoid"
+    }
+    ```
+
 * ### Example `.php_cs` config file
     * Make sure that `"php-cs-fixer.config": "/Users/scott/.vscode/.php_cs",` is added to the `settings.json` file and points to the correct directory
 
