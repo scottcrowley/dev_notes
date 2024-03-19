@@ -414,7 +414,7 @@ In the controller action, the `users` object was being sent to the page using a 
 When using a paginator this code will break because the paginator contains several other properties and puts all the data in the `data` property. The code below will break the page:
 ```php
     return Inertia::render('Users', [
-        'users' => User:paginate(10)->map(fn($user) => [
+            'users' => User:paginate(10)->map(fn($user) => [
             'id' => $user.id,
             'name' => $user.name,
         ])
@@ -454,12 +454,12 @@ import { useForm } from '@inertiajs/inertia-vue3'
 
 let form = useForm({
     name: '',  
-	email: '',
+    email: '',
     password: '',
 });
 
 let submit = () => {
-	form.post('/users/');
+    form.post('/users/');
 };
 </script>
 ```
@@ -541,7 +541,7 @@ use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-	public function create()
+    public function create()
     {
     	return Inertia::render('Auth/Login');
     }
@@ -549,18 +549,18 @@ class LoginController extends Controller
     public function store(Request $request) 
     {
     	$credentials = $request->validate([
-        	'email' => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required']
         ]);
         
         if (Auth::attempt($credentials)) {
-        	$request->session()->regenerate();
+            $request->session()->regenerate();
             
             return redirec()->intended();
         }
         
         return back()->withErrors([
-        	'email' => 'The provided credentials do not match our records.'
+            'email' => 'The provided credentials do not match our records.'
         ]);
     }
     
