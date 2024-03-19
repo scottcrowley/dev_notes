@@ -434,6 +434,7 @@ Instead of using the `map` function, you can use the `through` function, which w
 You can use the form helper provided by Inertia to help manage all aspects of a form. There are two ways to use the helper depending on if you are using the **Options API** or **Composition API**.
 ```js
 //Options API
+<script>
 export default {
   data() {
     return {
@@ -445,21 +446,22 @@ export default {
     }
   },
 }
+</script>
 
 //Composition API
+<script setup>
 import { useForm } from '@inertiajs/inertia-vue3'
 
-export default {
-  setup () {
-    const form = useForm({
-      email: null,
-      password: null,
-      remember: false,
-    })
+let form = useForm({
+    name: '',  
+	email: '',
+    password: '',
+});
 
-    return { form }
-  },
-}
+let submit = () => {
+	form.post('/users/');
+};
+</script>
 ```
 Accessing the helper's functions is performed the same way regardless of which ever API is being used.
 
@@ -519,6 +521,60 @@ If you need to clear the errors from the form you can use the `form.clearErrors(
 ```html
 <div v-if="form.isDirty">There are unsaved form changes.</div>
 ```
+
+## Authentication with Inertia
+The `web.php` should have the following routes set up
+```php
+Route::get('login'. [LoginController::class, 'create'])->name('login');
+Route::post('login', [LoginController::class, 'store']);
+Route::post('logout', [LoginContoller::class, 'destroy'])->middleware('auth');
+```
+
+The `LoginController` should have a `create` method that renders an `Auth/Login` vue page and a `store` method that actually logs the user in.
+```php
+namespace App/Http/Controllers/Auth;
+
+use App\Http\Contollers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+
+class LoginController extends Controller
+{
+	public function create()
+    {
+    	return Inertia::render('Auth/Login');
+    }
+    
+    public function store(Request $request) 
+    {
+    	$credentials = $request->validate([
+        	'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+        
+        if (Auth::attempt($credentials)) {
+        	$request->session()->regenerate();
+            
+            return redirec()->intended();
+        }
+        
+        return back()->withErrors([
+        	'email' => 'The provided credentials do not match our records.'
+        ]);
+    }
+    
+    public function destroy()
+    {
+    	Auth::logout();
+        
+        return redirect()->route('login');
+    }
+}
+```
+
+Create a new page in `resources/js/Pages/Auth` called `Login.vue`. This page will have the login form that will use Inertia's `form` object to submit the login form to the login endpoint.
+
 
 ## Examples
 ### Search Filtering on a List
@@ -608,6 +664,29 @@ data() {
         search: this.filters.search
     }
 }
+```
+#### Throttling and Debounce the Ajax Request
+There are too many requests generated when the search is used and therefore some throttling should be used on the `watch` listener. This is done using `lodash`. Difference between `throttle` and `debounce` is that `debounce` will wait the specified time after you stop typing. So if you keep typing, no request is sent to the server. The request is then sent `x` amount of ms after you stop. 
+```js
+//add the import to where the other imports are used.
+import throttle from "lodash/throttle";
+//import debounce from "lodash/debounce";
+
+//change the previous watch method to the following. Adds 500ms delay
+watch(search, throttle(function (value) {
+  Inertia.get('/users', { search: value }, {
+    preserveState: true,
+    replace: true
+  });
+}, 500));
+
+//change the previous watch method to the following. Adds 300ms delay after user stops typing
+//watch(search, debounce(function (value) {
+//  Inertia.get('/users', { search: value }, {
+//    preserveState: true,
+//    replace: true
+//  });
+//}, 300));
 ```
 
 ### Flash Messages
