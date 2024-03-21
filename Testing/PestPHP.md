@@ -241,4 +241,83 @@ when()
 ### Repeating Test
 * After the `it` method, you can add on a `->repeat(100)` to have a test repeat the given number of times.
 ## Exceptions - [Docs](https://pestphp.com/docs/exceptions)
-*
+* If you want to test for a certain exception message you can use the `throws()` method. This method can receive the expected exception class along with an expected message.
+    ```php
+    it('throws exception', function () {
+        throw new Exception('Something happened.');
+    })->throws(Exception::class, 'Something happened.');
+    ```
+* If the exception class is irrelevant then you can leave that out and just provide the expected message to the `throws()` method.
+* You can use the `throwsIf()` method to use a conditional to verify the exception.
+    ```php
+    it('throws exception', function () {
+        //
+    })->throwsIf(fn() => DB::getDriverName() === 'mysql', Exception::class, 'MySQL is not supported.');
+    ```
+* The `throwsUnless()` method can be used to return false unless the given condition is met. It’s the opposite of `throwsIf()`.
+* If you want to check for an exception on a given expectation you can use the `toThrow()` method.
+    ```php
+    it('throws exception', function () {
+        expect(fn() => throw new Exception('Something happened.'))->toThrow(Exception::class);
+    });
+    ```
+* To verify that no exception is thrown you can use the `throwsNoException()` method added to the `it` method.
+    ```php
+    it('throws no exceptions', function () {
+        $result = 1 + 1;
+    })->throwsNoExceptions();
+    ```
+* The `fail()` method can be used inside the closure of the `it()` method to make a test fail. A custom message can also be passed to the `fail()` method.
+* The `fails()` method can be added after the `it()` method when you expect the test to fail.
+    ```php
+    it('fails', function () {
+        throw new Exception('Something happened.');
+    })->fails('Something went wrong.');
+    ```
+## Test Filtering
+* To execute a test, use the command `pest` or `.vendor/bin/pest` if the previous doesn’t work.
+* Options that can be added to the `pest` command to filter tests or perform a certain task.
+* `—-bail` - stops execution on first error
+* `—-dirty` - only runs tests that have uncommitted changes accordingly to Git.
+* `—-filter “description”` - runs only test where the given text or regular expression matches the file name, test description, dataset, etc
+* `—-group=integration,browser` - if you have grouping set up on the tests, you can execute on the given groups. More on [Grouping Test](https://pestphp.com/docs/grouping-tests)
+* `—-exclude-group=integration,browser` - opposite of `—-group`
+* `—-retry` - only runs tests that previously failed.
+* `—-todo` - only executes tests marked as a todo (`todo()` method added to the `it()` method)
+## Skipping Tests
+* You can use the `skip()` method, added on to the `it()` method, to skip a certain test. This will create a yellow `WARN` message in the test results.
+* The `skip()` method can receive text, condition followed by text or a closure.
+    ```php
+    it('has home', function () {
+        //
+    })->skip('temporarily unavailable');
+    
+    it('has home', function () {
+        //
+    })->skip($condition == true, 'temporarily unavailable');
+    
+    it('has home', function () {
+        //
+    })->skip(fn () => DB::getDriverName() !== 'mysql', 'db driver not supported');
+    ```
+* You can skip a test based on operating system by using the `skipOnWindows()`, `skipOnMac()` and `skipOnLinux()` methods.
+* You can also do the opposite by using the `onlyOnWindows()`, `onlyOnMac()` and `onlyOnLinux()` methods.
+* You can skip a test based on certain versions of PHP by using the `skipOnPhp(‘>=8.0.0’)` method. Valid operators are `=`,`>=`, `>`, `<`, `<=`
+## Creating Todos
+* You can mark a test as a todo by adding the `todo()` method onto the end of the `it()` method. This will display a blue `TODO` in the test results.
+* You can then execute only the test marked as todo by using the `—-todo` option flag when you execute the tests.
+## Optimizing Tests
+### Parallel Testing
+* By default all tests are executed in a linear fashion in a single process. By using the `—-parallel` option flag, all the tests are executed in parallel mode using multiple processes and is up to 80% faster.
+* You can limit the number of processes parallel mode uses by passing the `—-processes=10` flag along with `—-parallel`. 
+    ```bash
+    .vendor/bin/pest —-parallel —-processes=10
+    ```
+* The following points need to be considered when using parallel mode:
+    1. Database resources may not be shared between tests: Each test should be isolated and independent from other tests.
+    2. Test order may not be guaranteed: Tests should not rely on any specific order of execution.
+    3. Tests may be affected by race conditions: Race conditions can occur when multiple processes or threads are accessing shared resources. Make sure to design your tests to handle potential race conditions and avoid them whenever possible.    
+### Profiling
+* You can use this mode to find slow running tests. The execution time is included in the test results. Use the `—-profile` options flag to run in profile mode.
+### Compact Printer
+* To make the test results appear in a more compact fashion you can use the `—-compact` options flag. Each passing test will appear as a `.` and each failing test will appear with a red `x`. It will still tell you the details about any failing tests.
