@@ -274,7 +274,7 @@ when()
         throw new Exception('Something happened.');
     })->fails('Something went wrong.');
     ```
-## Test Filtering
+## Test Filtering - [Docs](https://pestphp.com/docs/filtering-tests)
 * To execute a test, use the command `pest` or `.vendor/bin/pest` if the previous doesn’t work.
 * Options that can be added to the `pest` command to filter tests or perform a certain task.
 * `—-bail` - stops execution on first error
@@ -284,7 +284,7 @@ when()
 * `—-exclude-group=integration,browser` - opposite of `—-group`
 * `—-retry` - only runs tests that previously failed.
 * `—-todo` - only executes tests marked as a todo (`todo()` method added to the `it()` method)
-## Skipping Tests
+## Skipping Tests - [Docs](https://pestphp.com/docs/skipping-tests)
 * You can use the `skip()` method, added on to the `it()` method, to skip a certain test. This will create a yellow `WARN` message in the test results.
 * The `skip()` method can receive text, condition followed by text or a closure.
     ```php
@@ -306,7 +306,7 @@ when()
 ## Creating Todos
 * You can mark a test as a todo by adding the `todo()` method onto the end of the `it()` method. This will display a blue `TODO` in the test results.
 * You can then execute only the test marked as todo by using the `—-todo` option flag when you execute the tests.
-## Optimizing Tests
+## Optimizing Tests - [Docs](https://pestphp.com/docs/optimizing-tests)
 ### Parallel Testing
 * By default all tests are executed in a linear fashion in a single process. By using the `—-parallel` option flag, all the tests are executed in parallel mode using multiple processes and is up to 80% faster.
 * You can limit the number of processes parallel mode uses by passing the `—-processes=10` flag along with `—-parallel`. 
