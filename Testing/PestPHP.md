@@ -146,12 +146,27 @@ sequence()
 unless()
 when()
 ```
-## Hooks - [Docs](https://pestphp.com/docs/hooks)
+## Hooks
+### Local - [Docs](https://pestphp.com/docs/hooks)
 * These are hooks that can be used to tap into certain points of time during a test. Each hook method accepts a closure to run when that hook is encountered.
     * `beforeEach()` - Executes before every test in the current file. Can be used to initialize properties that utilized across all tests
     * `afterEach()` - Executes after every test in the current file. Can be used to perform a cleanup like resetting a userRespository.
     * `beforeAll()` - Executes before any test in the current file is run. The `$this` variable is not available since there is no instance of the test class.
     * `afterAll()` - Executes after all the tests in the current file have run. The `$this` variable is also not available since there is not longer a test instance.
+### Global - [Docs](https://pestphp.com/docs/global-hooks)
+* Global hooks are the same as the local hooks except they are configured in the `Pest.php` config file.
+    ```php
+    uses(TestCase::class)->beforeAll(function () {
+        // Runs before each file...
+    })->beforeEach(function () {
+        // Runs before each test...
+    })->afterEach(function () {
+        // Runs after each test...
+    })->afterAll(function () {
+        // Runs after each file...
+    })->group('integration')->in('Feature');
+    ```
+* Any before* hooks defined in the Pest.php configuration file will be executed prior to hooks defined in individual test files. Similarly, any after* hooks specified in the Pest.php configuration file will be executed after any hooks defined in individual test files.
 ## Datasets - [Docs](https://pestphp.com/docs/datasets)
 ### General
 * Used to define an array of test data where the same test will be run for each item in the set. Pest will add test descriptions to each test run for the dataset so you will have a better understanding of where an issue may be.
@@ -321,3 +336,236 @@ when()
 * You can use this mode to find slow running tests. The execution time is included in the test results. Use the `—-profile` options flag to run in profile mode.
 ### Compact Printer
 * To make the test results appear in a more compact fashion you can use the `—-compact` options flag. Each passing test will appear as a `.` and each failing test will appear with a red `x`. It will still tell you the details about any failing tests.
+## Grouping Tests - [Docs](https://pestphp.com/docs/grouping-tests)
+* You can assign the tests located in a certain directory to a group name so they can all be executed together. This is good when you may have a group of slow running tests.
+* One use of this is to add the group to the `Pest.php` config file.
+    ```php
+    uses(TestCase::class)
+        ->group('feature')
+        ->in('Feature');
+    ```
+* You can then execute the group by using the `—-group` option flag on the `pest` command.
+    ```bash
+    ./vendor/bin/pest --group=feature
+    ```
+* You can also add the `group()` method to the end of the `it()` test function.
+    ```php
+    // single group
+    it('has home', function () {
+        //
+    })->group('feature');
+    
+    // multiple groups
+    it('has home', function () {
+        //
+    })->group('feature', 'browser');
+    ```
+* If you want the entire test file to be part of a group you can use the `uses()` method along with `group()`.
+    ```php
+    uses()->group('feature');
+ 
+    it('has home', function () {
+        //
+    });
+    ```
+## Mocking - [Docs](https://pestphp.com/docs/mocking)
+* Pest recommends using the [Mockery](https://github.com/mockery/mockery/) library but I’m not sure what comes installed with Laravel.
+    * Install `Mockery`
+        ```bash
+        composer require mockery/mockery --dev
+        ```
+* To create a mock of a class, use the `Mockery::mock()` method and then specify the method you expect to receive by using the `shouldReceive()` method.
+    ```php
+    use App\Repositories\BookRepository;
+    use Mockery;
+ 
+    it('may buy a book', function () {
+        $client = Mockery::mock(PaymentClient::class);
+        $client->shouldReceive('post');
+ 
+        $books = new BookRepository($client);
+        $books->buy(); // The API is not actually invoked since `$client->post()` has been mocked...
+    });
+    ```
+* You can also specify specific arguments that should be used the the `shouldReceive()` method by using the `with()` method.
+    ```php
+    $client->shouldReceive('post')
+        ->with($firstArgument, $secondArgument);
+    ```
+* To match any argument, you can use the `Mockery::all()` method in place of any of the provided arguments.
+    ```php
+    $client->shouldReceive('post')
+        ->with($firstArgument, Mockery::any());
+    ```
+* To tell Mockery what should be returned from the mocked method, you can use the `andReturn()` method
+    ```php
+    $client->shouldReceive('post')->andReturn('post response');
+    ```
+* Multiple values can be returned as well
+    ```php
+    $client->shouldReceive('post')->andReturn(1, 2);
+ 
+    $client->post(); // int(1)
+    $client->post(); // int(2)
+    ```
+* If you need to calculate what is returned you can use the `andReturnUsing()` method
+    ```php
+    $mock->shouldReceive('post')
+        ->andReturnUsing(
+            fn () => 1,
+            fn () => 2,
+        );
+    ```
+* If you want to return an exception you can use the `andThrow()` method
+    ```php
+    $client->shouldReceive('post')->andThrow(new Exception);
+    ```
+* You can also specify how many times a method should be invoked:
+    ```php
+    $mock->shouldReceive('post')->once();
+    $mock->shouldReceive('put')->twice();
+    $mock->shouldReceive('delete')->times(3);
+    // ...
+    ```
+* The `atLeast()` and `atMost()` methods can be used to set limits on how many times a method should be invoked.
+    ```php
+    $mock->shouldReceive('delete')->atLeast()->times(3);
+    $mock->shouldReceive('delete')->atMost()->times(3);
+    ```
+## Plugins - [Docs](https://pestphp.com/docs/plugins)
+Some official and community plugins used to extend Pest:
+* Faker - [Source](https://github.com/pestphp/pest-plugin-faker) [Docs](https://fakerphp.github.io/)
+    * Install
+        ```php
+        composer require pestphp/pest-plugin-faker --dev
+        ```
+    * Used to generate fake data
+        ```php
+        use function Pest\Faker\fake;
+ 
+        it('generates a name', function () {
+            $name = fake()->name; // random name...
+ 
+            //
+        });
+        ```
+* Laravel - [Source](https://github.com/pestphp/pest-plugin-laravel) [Docs](https://laravel.com/docs/10.x/testing)
+    * Install
+        ```bash
+        composer require pestphp/pest-plugin-laravel --dev
+        ```
+    * Artisan commands now available
+        ```php
+        // Create a new test in the tests/Feature directory
+        php artisan pest:test UsersTest
+        
+        // Create a new test in the tests/Unit directory
+        php artisan pest:test UsersTest --unit
+        
+        // Create a new Dataset in the tests/Datasets directory 
+        php artisan pest:dataset Emails
+        ```
+    * You can bypass using the $this variable in the test by importing the corresponding function being used. In this case it is `get()`
+        ```php
+        // Using the $this variable as you normally would
+        it('has a welcome page', function () {
+            $this->get('/')->assertStatus(200);
+        });
+        
+        // Now the function is imported and $this is no longer needed
+        use function Pest\Laravel\{get};
+ 
+        it('has a welcome page', function () {
+            get('/')->assertStatus(200);
+            // same as $this->get('/')...
+        });
+        ```
+    * Another example of not using $this with the actingAs method
+        ```php
+        use App\Models\User;
+        use function Pest\Laravel\{actingAs};
+ 
+        test('authenticated user can access the dashboard', function () {
+            $user = User::factory()->create();
+ 
+            actingAs($user)->get('/dashboard')
+            ->assertStatus(200);
+        });
+        ```
+* Livewire - [Source](https://github.com/pestphp/pest-plugin-livewire)
+    * Install
+        ```bash
+        composer require pestphp/pest-plugin-livewire --dev
+        ```
+    * Now you can use the Livewire namespaced functions to access your Livewire components
+        ```php
+        use function Pest\Livewire\livewire;
+ 
+        it('can be incremented', function () {
+            livewire(Counter::class)
+                ->call('increment')
+                ->assertSee(1);
+        });
+ 
+        it('can be decremented', function () {
+            livewire(Counter::class)
+                ->call('decrement')
+                ->assertSee(-1);
+        });
+        ```
+* Watch - [Source](https://github.com/pestphp/pest-plugin-watch)
+    * Install
+        ```bash
+        composer require pestphp/pest-plugin-watch --dev
+        ```
+    * [fswatch](https://github.com/emcrisostomo/fswatch#getting-fswatch) also need to be installed so Pest can monitor changes to files
+    * When you run a test with `pest —-watch`, Pest can keep track of and automatically rerun a test when the file changes.
+    * By default the plugin monitors the following directories: `tests/`, `app/` and `src/`.
+    * To specify which directories to watch you can supply a list of comma separated directories (relative to the site root)
+        ```bash
+        pest --watch=app,routes,tests
+        ```
+## Architecture Testing - [Docs](https://pestphp.com/docs/arch-testing#expect-toBeClasses)
+If you want to test whether or not your code adheres to a certain set of architectural rules, you can use Architecture Testing to specify your expectations. I.e. Make sure that your `Traits` or `Concerns` directory contains only files that are traits.
+### Expectations
+* The following are some expectations that can be run after the `arch()` method:
+    ```php
+    toBeAbstract()
+    toBeClasses()
+    toBeEnums()
+    toBeIntBackedEnums()
+    toBeInterfaces()
+    toBeInvokable()
+    toBeFinal()
+    toBeReadonly()
+    toBeStringBackedEnums()
+    toBeTraits()
+    toBeUsed()
+    toBeUsedIn()
+    toExtend()
+    toExtendNothing()
+    toImplement()
+    toImplementNothing()
+    toHaveAttribute()
+    toHaveMethod()
+    toHavePrefix()
+    toHaveSuffix()
+    toHaveConstructor()
+    toHaveDestructor()
+    toOnlyImplement()
+    toOnlyUse()
+    toOnlyBeUsedIn()
+    toUse()
+    toUseNothing()
+    toUseStrictTypes()
+    ```
+* Check the docs are further explanation on how these expectations work.
+### Modifiers
+* If you want to exclude certain namespaces or types of files, modifiers can be used:
+    ```php
+    classes()
+    enums()
+    ignoring()
+    interfaces()
+    traits()
+    ```
