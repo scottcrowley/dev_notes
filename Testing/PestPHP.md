@@ -569,3 +569,228 @@ If you want to test whether or not your code adheres to a certain set of archite
     interfaces()
     traits()
     ```
+## Test Dependency - [Docs](https://pestphp.com/docs/test-dependencies)
+* If a test depends on another test to complete before it should run then you can use the `depends()` method to specify that dependency.
+    ```php
+    test('parent', function () {
+        expect(true)->toBeTrue();
+     
+        $this->assertTrue(true);
+    });
+     
+    test('child', function () {
+        expect(false)->toBeFalse();
+    })->depends('parent');
+    ```
+* It is important to remember that the `it()` function adds the word "it" onto the beginning of the test name. You need to make sure to have the correct name specified in the `depends()` method.
+    ```php
+    it('is the parent', function () {
+        expect(true)->toBeTrue();
+    });
+     
+    test('child', function () {
+        expect(false)->toBeFalse();
+    })->depends('it is the parent');
+    ```
+* The parent test can also pass along an argument to the child class
+    ```php
+    test('parent', function () {
+        expect(true)->toBeTrue();
+     
+        return 'from parent';
+    });
+     
+    test('child', function ($parentValue) {
+        var_dump($parentValue); // from parent
+     
+        expect($parentValue)->toBe('from parent');
+    })->depends('parent');
+    ```
+* A test could also have multiple dependencies.
+    ```php
+    test('a', function () {
+        expect(true)->toBeTrue();
+     
+        return 'a';
+    });
+     
+    test('b', function () {
+        expect(true)->toBeTrue();
+     
+        return 'b';
+    });
+     
+    test('c', function () {
+        expect(true)->toBeTrue();
+     
+        return 'c';
+    });
+     
+    test('d', function ($testA, $testC, $testB) {
+        var_dump($testA); // a
+        var_dump($testB); // b
+        var_dump($testC); // c
+    })->depends('a', 'b', 'c');
+    ```
+## Migrating from PHPUnit - [Docs](https://pestphp.com/docs/migrating-from-phpunit-guide)
+The `pestphp/pest-plugin-drift` package can be used to migrate PHPUnit tests in your existing project over to Pest.
+* Install
+    ```bash
+    composer require pestphp/pest-plugin-drift --dev
+    ```
+* Use the `--drift` option flag on the `pest` command to execute the migration
+    ```bash
+    ./vendor/bin/pest --drift
+    ```
+* Before and after migration
+    ```php   
+    // PHPUnit test 
+    namespace Tests\Unit;
+     
+    use PHPUnit\Framework\TestCase;
+     
+    class ExampleTest extends TestCase
+    {
+        public function test_that_true_is_true(): void
+        {
+            $this->assertTrue(true);
+        }
+    }
+    
+    // After migration
+    test('true is true', function () {
+        expect(true)->toBeTrue();
+    });
+    ```
+* The output will contain a summary of the conversion process, as well as a list of the files that were converted.
+## Custom Helpers - [Docs](https://pestphp.com/docs/custom-helpers)
+* Helpers should be simple functions and can defined in the test file itself, the `tests/Pest.php` file, the `tests/Helpers.php` file or a separate file with the `tests/Helpers` directory. Helpers in any of these locations will automatically be added to Pest.
+* In situations where your helper needs access to the underlying test class, instead of using the `$test` variable, you should use the `test()` method.
+    ```php
+    use App\Models\User;
+    use Tests\TestCase;
+     
+    function asAdmin(): TestCase
+    {
+        $user = User::factory()->create([
+            'admin' => true,
+        ]);
+     
+        return test()->actingAs($user);
+    }
+     
+    it('can manage users', function () {
+        asAdmin()->get('/users')->assertOk();
+    })
+    ```
+* If you do want to use the `$this` variable in your tests then the helper should be defined within the base test class.
+    ```php
+    use App\Clients\PaymentClient;
+    use PHPUnit\Framework\TestCase as BaseTestCase;
+    use Mockery;
+     
+    // tests/TestCase.php
+    class TestCase extends BaseTestCase
+    {
+        public function mockPayments(): void
+        {
+            $client = Mockery::mock(PaymentClient::class);
+    
+            return $client;
+        }
+    }
+     
+    // tests/Pest.php
+    uses(TestCase::class)->in('Features');
+     
+    // tests/Features/PaymentsTest.php
+    it('may buy a book', function () {
+        $client = $this->mockPayments();
+    })
+    ```
+## Higher Order Testing - [Docs](https://pestphp.com/docs/higher-order-testing)
+* The idea with Higher Order Testing is that you want to make the tests as simple as possible by eliminating unneeded closures.
+    ```php
+    // Old way
+    it('works', function () {
+        $this->get('/')
+            ->assertStatus(200);
+    });
+	
+    // Higher Order way
+    it('works')
+        ->get('/')
+        ->assertStatus(200);
+	
+    // Old way
+    it('has a name', function () {
+        $user = User::create([
+            'name' => 'Nuno Maduro',
+        ]);
+     
+        expect($user->name)->toBe('Nuno Maduro');
+    });
+
+    // Higher Order way
+    it('has a name')
+        ->expect(fn () => User::create(['name' => 'Nuno Maduro'])->name)
+        ->toBe('Nuno Maduro');
+    ```
+* It is crucial to use lazy evaluation for the expectation value by passing a closure to the `expect()` method. This ensures that the expected value is created only when the test runs and not before. If you need to make assertions on an object that requires lazy evaluation at runtime, you can use the `defer()` method.
+    ```php
+    // assertion will be called on the result of the closesure passed to defer()
+    it('creates admins')
+        ->defer(fn () => $this->artisan('user:create --admin'))
+        ->assertDatabaseHas('users', ['id' => 1]);
+    ```
+### Higher Order Expectations
+* With Higher Order Expectations, you can perform expectations directly on the `properties` or `methods` of the expectation `$value`.
+    ```php
+    // Old way
+    expect($user->name)->toBe('Nuno');
+    expect($user->surname)->toBe('Maduro');
+    expect($user->addTitle('Mr.'))->toBe('Mr. Nuno Maduro');
+    
+    // Higher Order Expectations
+    expect($user)
+        ->name->toBe(‘Nuno’)
+        ->surname->toBe(‘Maduro’)
+        ->addTitle(‘Mr.’)->toBe(‘Mr. Nuno Maduro’);
+    ```
+* When working with arrays, you may also access the $value array keys and perform expectations on them.
+    ```php
+    expect(['name' => 'Nuno', 'projects' => ['Pest', 'OpenAI', 'Laravel Zero']])
+        ->name->toBe('Nuno’)
+        ->projects->toHaveCount(3)
+        ->each->toBeString();
+     
+    expect([‘Dan’, ‘Luke’, ‘Nuno’])
+        ->{0}->toBe(‘Dan’);
+    ```
+* You can even create Higher Order Expectations within closures
+    ```php
+    expect(['name' => 'Nuno', 'projects' => ['Pest', 'OpenAI', 'Laravel Zero']])
+        ->name->toBe(‘Nuno’)
+        ->projects->toHaveCount(3)
+        ->sequence(
+            fn ($project) => $project->toBe(‘Pest’),
+            fn ($project) => $project->toBe(‘OpenAI’),
+            fn ($project) => $project->toBe(‘Laravel Zero’),
+        );
+    ```
+* With Scoped Higher Order Expectations, you may use the method scoped() and a closure to gain access and lock an expectation in to a certain level in the chain. This is very useful for Laravel Eloquent models, where you want to check properties of a child relation.
+    ```php
+    expect($user)
+    ->name->toBe(‘Nuno’)
+    ->email->toBe(‘enunomaduro@gmail.com’)
+    ->address()->scoped(fn ($address) => $address
+        ->line1->toBe(‘1 Pest Street’)
+        ->city->toBe(‘Lisbon’)
+        ->country->toBe(‘Portugal’)
+    );
+    ```
+	
+
+
+
+
