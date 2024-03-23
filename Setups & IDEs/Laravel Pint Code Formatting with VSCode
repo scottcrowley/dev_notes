@@ -1,0 +1,108 @@
+# Laravel Pint + VSCode
+### Laravel Pint is a code fixer plugin built on top of PHP-CS-Fixer and is used to keep PHP code clean and consistent.
+* [Laravel Pint Docs](https://laravel.com/docs/11.x/pint) or [GitHub](https://github.com/laravel/pint)
+## Install & Setup
+* `Laravel Pint` is installed in all newer Laravel projects but if you need to install it in an older project use the command below. To check if you already have it installed, just check the `composer.json` file to see if it is already required.
+    ```bash
+    composer require laravel/pint --dev
+    ```
+* To run `Pint` run `./vendor/bin/pint`
+* You can also execute `Pint` on specific directories or files
+    ```bash
+    ./vendor/bin/pint app/Models
+    ./vendor/bin/pint app/Models/User.php
+    ```
+* `Pint` will display basic info about what it did, but if you want additional details use the `-v` flag
+    ```bash
+    ./vendor/bin/pint -v
+    ```
+* To run `Pint` without changing any files and just see what it will change you can use the `—-test` flag
+    ```bash
+    .vendor/bin/pint —-test
+    ```
+* To run `Pint` only on files that are uncommitted according to Git then you can use the `—-dirty` flag
+    ```bash
+    .vendor/bin/pint —-dirty
+    ```
+### Add Command to composer.json file
+* Open the `composer.json` file and go to the `”scripts”` section. Add `”pint”: “vendor/bin/pint”,` to the top of the `scripts` section. Now you can run any of the above commands with `composer pint` instead of `.vendor/bin/pint`.
+### Config File
+* `Pint` doesn’t need any configuration but if you want to change rules or customize the presets then you can create a config file in the root of your site called `pint.json` and contain the following:
+    ```json
+    {
+        “preset”: “laravel”
+    }
+    ```
+### Presets
+* By default `Pint` uses the `laravel` preset but if you’d like to change it to either `pre`, `psr12`, or `symfony` then you can update the `pint.json` config file with:
+    ```json
+    {
+        “preset”: “psr12”
+    }
+    ```
+### Rules
+* The default rules that come with `Pint` should be fine for most projects but if you want to modify them you can add the changes to the `pint.json` config file. Since `Pint` is built on top of PHP-CS-Fixer, you can use any of their configuration changes listed in the [PHP-CS-Fixer Configuator](https://mlocati.github.io/php-cs-fixer-configurator) docs.
+    ```json
+    {
+        “preset”: “laravel”,
+        “rules”: {
+            “simplified_null_return”: true,
+            “braces”: false,
+            “new_with_braces”: {
+                “anonymous_class”: false,
+                “named_class”: false
+            }
+        }
+    }
+    ```
+### Excluding Files/Folders
+* By default `Pint` will evaluate all `.php` files in the project but if you want to exclude certain directories you can use the `exclude` option in the `pint.json` config
+    ```json
+    {
+        “exclude”: [
+            “my-specific/folder”
+        ]
+    }
+    ```
+* If you want to exclude all files according to a certain name pattern then you can use the `notName` option in the config file
+    ```json
+    {
+        “notName”: [
+            “*-my-file.php”
+        ]
+    }
+    ```
+* If you want to exclude a specific file you can use the `notPath` option in the config file.
+    ```json
+    {
+        “notPath”: [
+            “path/to/excluded-file.php”
+        ]
+    }
+    ```
+## VSCode Integration
+* The following extension needs to be installed. `Laravel Pint` by `Open Southeners`
+### Using Pint with ALL PHP Projects
+* If you want to use `Laravel Pint` to format code in _all_ projects then you need to update the User configuration `.json` file. Type `ctrl + ,` to open the settings then make sure `User` is selected then click the button to `Open Settings (JSON)` located at the top right of the window. Should look like a file with a folded corner and arrow on the left side. This will open up the Global settings `.json` file.
+* Towards the bottom of the file you should see a section that looks like the code below:
+    ```json
+    “[php]”: {
+        “editor.defaultFormatter”: “junstyle.php-cs-fixer”,
+        “editor.formatOnSave”: true
+    },
+    
+    “laravel-pint.enable”: true
+    ```
+* You will need to change the default formatter to `”editor.defaultFormatter”: “open-southeners.laravel-pint”,`
+### Using Pint with just the current Laravel Project
+* If you want to use `Pint` with just the current Laravel project then you need to update the `Workspace Settings`. Type `ctrl + ,` to open the settings then make sure `Workspace` is selected then click the button to `Open Settings (JSON)` located at the top right of the window. Should look like a file with a folded corner and arrow on the left side. This will open up the Workspace settings `.json` file.
+* In this file you will need to add the following code. Make sure to either delete or comment out any reference to `php-cs-fixer`.
+    ```json
+    “[php]”: {
+        “editor.defaultFormatter”: “open-southeners.laravel-pint”,
+        “editor.formatOnSave”: true
+    },
+    
+    “laravel-pint.enable”: true
+    ```
+* Then in the `User Settings` you will need to change the line that says `“laravel-pint.enable”: true` to `“laravel-pint.enable”: false`.
