@@ -1,0 +1,94 @@
+# # Tailwind CSS Setup - Updated
+## Installation for use with Laravel
+* Install Tailwind CSS and create config file
+	```bash
+  npm install -D tailwindcss postcss autoprefixer
+  npx tailwindcss init
+  ```
+* In the `webpack.mix.js` file, add `tailwindcss` as a PostCSS plugin
+  ```js
+  mix.js("resources/js/app.js", "public/js")
+  	.postCss("resources/css/app.css", "public/css", [
+  		require("tailwindcss"),
+  	]);
+  ```
+* Add paths to call template files that Tailwind should look for.
+  ```js
+  /** @type {import('tailwindcss').Config} */
+  export default {
+    content: [
+      "./resources/**/*.blade.php",
+      "./resources/**/*.js",
+      "./resources/**/*.vue",
+    ],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
+  }
+  ```
+* Add Tailwind directives to your base CSS file. i.e. `.resources/css/app.css`
+  ```css
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  ```
+* Start the build process watcher
+  ```bash
+  npm run watch
+  ```
+* Include the compiles css file in the `<head>` tag of your main template
+  ```php
+  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  ```
+## Editor Setup
+### IntelliSense for VSCode
+* Install the official `Tailwind CSS Intellisense` plugin for VSCode from `Tailwind Labs`. 
+* Recommended Settings
+  * Use the `files.associations` setting to tell VSCode to always open `.css` files in Tailwind CSS Mode
+		```
+		"files.associations": {
+			"*.css": "tailwindcss"
+		}
+		```
+  * By default VS Code will not trigger completions when editing "string" content, for example within JSX attribute values. Updating the editor.quickSuggestions setting may improve your experience:
+		```
+    "editor.quickSuggestions": {
+    	"strings": "on"
+    }
+    ```
+### Prettier Plugin
+* Can be used to automatically sort classes
+* This is a plugin that can be installed in your project but a `Prettier` plugin will also need to be installed into VSCode
+* Install
+  ```bash
+  npm install -D prettier prettier-plugin-tailwindcss
+  ```
+* Add the plugin to the `prettier.config.js` file in the root of the site
+  ```js
+  module.exports = {
+  	plugins: ['prettier-plugin-tailwindcss'],
+  }
+  ```
+### Prettier Extension for VSCode
+* Install the `Prettier - Code formatter` for VSCode by `Prettier prettier.io`
+* Create an empty object in the `.prettierrc.json` file in the root of the site
+  ```json
+  // .prettierrc.json
+  {
+  }
+  ```
+* Make sure the `editor.defaultFormatter` is set correctly in the User Settings of VSCode. You can set this globally for all language types or you can have a different formatter for each language
+  ```json
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[javascript]": {
+  	"editor.defaultFormatter": "esbenp.prettier-vscode",
+  	"editor.formatOnSave": true
+  }
+  ```
+* Other options in the User Settings of VSCode to verify
+  ```json
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": false,
+  ```
