@@ -38,7 +38,7 @@
   npm run watch
   ```
 * Include the compiles css file in the `<head>` tag of your main template
-  ```php
+  ```html
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   ```
 ## Editor Setup
@@ -46,13 +46,13 @@
 * Install the official `Tailwind CSS Intellisense` plugin for VSCode from `Tailwind Labs`. 
 * Recommended Settings
   * Use the `files.associations` setting to tell VSCode to always open `.css` files in Tailwind CSS Mode
-		```
+    ```
 		"files.associations": {
 			"*.css": "tailwindcss"
 		}
-		```
+    ```
   * By default VS Code will not trigger completions when editing "string" content, for example within JSX attribute values. Updating the editor.quickSuggestions setting may improve your experience:
-		```
+    ```
     "editor.quickSuggestions": {
     	"strings": "on"
     }
