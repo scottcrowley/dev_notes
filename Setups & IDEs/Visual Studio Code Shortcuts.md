@@ -110,9 +110,15 @@
     * `Auto Rename Tag` - *Jun Han* *FOUND ON MY OWN* 
     Renames paired HTML tags
     * `Better PHPUnit` - *calebporzio*
+    * `Better Pest` - *Miguel Piedrafita*
+    * `Composer` - *DEVSENSE*
     * `DotENV` - *mikestead*
+    * `Duplicate action` - *mrmlnc*
+    Allows you to duplicate files from the the project tree
     * `ESLint` - *Microsoft*
+    * `Highlight Matching Tag` - *vincaslt*
     * `Import Cost` - *Wix*
+    * `IntelliPHP - AI Autocomplete for PHP` - *DEVSENSE*
     * `IntelliSense for CSS class names in HTML` - *Zignd* *FOUND ON MY OWN* 
     CSS classname completion
     * `JavaScript (ES6) code snippets` - *charalampos karypidis*
@@ -129,6 +135,8 @@
             ```
             The value for `wrapLineLengths` is set so high since the formatter doesn't format long lines very well and the default is `80`. This basically disabled the wrap lines feature.
     * `Laravel Blade Snippets` - *Winnie Lin*
+    * `Laravel Blade Spacer` - *Austen Cameron*
+    * `Laravel Extra Intellisense` - *amir*
     * `Laravel goto View` - *codingyu*
     Allows you to go to a view whereever it is being referenced. To use, just `ctrl+click` to go to the selected file.
     * `Markdown Preview Enhanced` - *Yiyi Wang* *FOUND ON MY OWN* 
@@ -136,6 +144,8 @@
     * `Markdown Preview Github Styling` - *Matt Bierner* *FOUND ON MY OWN* 
     Makes markdown previews look like Github
     * `Path Intelephense` - *Christian Kohler*
+    * `PHP` - *DEVSENSE*
+    Replacement for PHP IntelliSense
     * `PHP Constructor` - *Mehedi Hassan*
     Mentioned in [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
     To use open the Command Palete (`shift+cmd+p`) and type `constructor`. You should see `Insert Constructor Property`. By default the extension will add constructor properties with the *protected* visibility. To change it, add the following to the `settings.json` file: `"phpConstructor.constructorVisibility": "public",`
@@ -155,6 +165,7 @@
             "php-cs-fixer.rules": "@PSR2",
             "php-cs-fixer.showOutput": false,
             ```
+    * `Php DocBlock` - *Neil Brayfield*
     * `Php DocBlock Generator` - *vincentkos* *FOUND ON MY OWN*
     * `PHP Extension Pack` - *Felix Becker* 
     Must have PHP extension pack
@@ -170,6 +181,8 @@
     * `PHP Parameter Hint` - *Robert*
     Mentioned in a comment on the [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
     Add the following to your `settings.json` file: `""phpParameterHint.opacity": 0.1,` & `"phpParameterHint.fontSize": 11`
+    * `PHP Profiler` - *DEVSENSE*
+    For use with PHP Xdebug
     * `PHP Refactor` - *Tin Trinh*
     Mentioned in a comment on the [Larabit Video](https://laracasts.com/series/andrews-larabits/episodes/1)
     To use open the Command Palete (`shift+cmd+p`) and type `extract`, to extract selected code to a method.
@@ -234,6 +247,7 @@
     * `Tailwind CSS IntelliSense` - *Brad Cornes* *FOUND ON MY OWN*
     Use this if using tailwind.css. Autocomplete for tailwind classes
     * `TSLint` - *Microsoft*
+    * `Vue - Official` - *Vue*
     * `Vue Language Features (Volar)` - *Johnson Chu* 
     Use this instead of `Vetur`. Also use `Vue 3 Support - All In One`
     * `Vue 3 Support - All In One` - *Eno Yao*
