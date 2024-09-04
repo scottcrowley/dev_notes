@@ -476,125 +476,143 @@
     ```json
     // Place your key bindings in this file to overwrite the defaults
     [
-        {
-            "key": "cmd+r",
-            "command": "workbench.action.gotoSymbol"
-        },
-        {
-            "key": "shift+cmd+o",
-            "command": "-workbench.action.gotoSymbol"
-        },
-        {
-            "key": "cmd+t",
-            "command": "better-phpunit.run"
-        },
-        {
-            "key": "shift+cmd+t",
-            "command": "better-phpunit.run-previous"
-        },
-        {
-            "key": "alt+t",
-            "command": "better-phpunit.run-suite"
-        },
-        {
-            "key": "shift+alt+f",
-            "command": "php-cs-fixer.fix2"
-        },
-        {
-            "key": "shift+alt+d",
-            "command": "php-docblock-generator.createDocBlock"
-        },
-        {
-            "key": "ctrl+s",
-            "command": "editor.action.triggerSuggest",
-            "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "ctrl+shift+k",
-            "command": "deleteAllLeft",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "cmd+backspace",
-            "command": "-deleteAllLeft",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "alt+\\",
-            "command": "deleteWordRight",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "alt+delete",
-            "command": "-deleteWordRight",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "ctrl+alt+\\",
-            "command": "deleteWordPartRight",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "ctrl+alt+delete",
-            "command": "-deleteWordPartRight",
-            "when": "textInputFocus && !editorReadonly"
-        },
-        {
-            "key": "ctrl+cmd+g",
-            "command": "editor.action.selectHighlights",
-            "when": "editorFocus"
-        },
-        {
-            "key": "shift+cmd+l",
-            "command": "-editor.action.selectHighlights",
-            "when": "editorFocus"
-        },
-        {
-            "key": "ctrl+m",
-            "command": "editor.action.selectToBracket"
-        },
-        {
-            "key": "cmd+;",
-            "command": "workbench.action.terminal.clear",
-            "when": "terminalFocus"
-        },
-        {
-            "key": "cmd+k",
-            "command": "-workbench.action.terminal.clear",
-            "when": "terminalFocus"
-        },
-        {
-            "key": "shift+cmd+r",
-            "command": "workbench.action.showAllSymbols"
-        },
-        {
-            "key": "cmd+t",
-            "command": "-workbench.action.showAllSymbols"
-        },
-        {
-            "key": "alt+`",
-            "command": "workbench.action.terminal.focus"
-        },
-        {
-            "key": "ctrl+cmd+`",
-            "command": "workbench.action.terminal.focusNext"
-        },
-        {
-            "key": "ctrl+alt+`",
-            "command": "workbench.action.terminal.focusPrevious"
-        },
-        {
-            "key": "cmd+k shift+alt+cmd+right",
-            "command": "editor.emmet.action.balanceOut"
-        },
-        {
-            "key": "cmd+k shift+alt+cmd+left",
-            "command": "editor.emmet.action.balanceIn"
-        },
-        {
-            "key": "cmd+k shift+alt+cmd+up",
-            "command": "editor.emmet.action.wrapWithAbbreviation"
-        },
+      /**
+      * Multiple Cursors from Caleb Porzio VSCode Class
+      **/
+      {
+        "key": "cmd+backspace",
+        "command": "editor.action.moveSelectionToPreviousFindMatch",
+        "when": "editorFocus && editorHasMultipleSelections"
+      },
+      {
+        "key": "cmd+k cmd+d",
+        "command": "-editor.action.moveSelectionToNextFindMatch",
+        "when": "editorFocus && editorHasMultipleSelections"
+      },
+      {
+         "key": "cmd+right",
+         "command": "editor.action.insertCursorAtEndOfEachLineSelected",
+         "when": "editorFocus && editorHasSelection"
+      },
+      {
+         "key": "cmd+r",
+         "command": "workbench.action.gotoSymbol"
+      },
+      {
+         "key": "shift+cmd+o",
+         "command": "-workbench.action.gotoSymbol"
+      },
+      {
+         "key": "cmd+t",
+         "command": "better-phpunit.run"
+      },
+      {
+         "key": "shift+cmd+t",
+         "command": "better-phpunit.run-previous"
+      },
+      {
+         "key": "alt+t",
+         "command": "better-phpunit.run-suite"
+      },
+      {
+         "key": "shift+alt+f",
+         "command": "php-cs-fixer.fix2"
+      },
+      {
+         "key": "shift+alt+d",
+         "command": "php-docblock-generator.createDocBlock"
+      },
+      {
+         "key": "ctrl+s",
+         "command": "editor.action.triggerSuggest",
+         "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "ctrl+shift+k",
+         "command": "deleteAllLeft",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "cmd+backspace",
+         "command": "-deleteAllLeft",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "alt+\\",
+         "command": "deleteWordRight",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "alt+delete",
+         "command": "-deleteWordRight",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "ctrl+alt+\\",
+         "command": "deleteWordPartRight",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "ctrl+alt+delete",
+         "command": "-deleteWordPartRight",
+         "when": "textInputFocus && !editorReadonly"
+      },
+      {
+         "key": "ctrl+cmd+g",
+         "command": "editor.action.selectHighlights",
+         "when": "editorFocus"
+      },
+      {
+         "key": "shift+cmd+l",
+         "command": "-editor.action.selectHighlights",
+         "when": "editorFocus"
+      },
+      {
+         "key": "ctrl+m",
+         "command": "editor.action.selectToBracket"
+      },
+      {
+         "key": "cmd+;",
+         "command": "workbench.action.terminal.clear",
+         "when": "terminalFocus"
+      },
+      {
+         "key": "cmd+k",
+         "command": "-workbench.action.terminal.clear",
+         "when": "terminalFocus"
+      },
+      {
+         "key": "shift+cmd+r",
+         "command": "workbench.action.showAllSymbols"
+      },
+      {
+         "key": "cmd+t",
+         "command": "-workbench.action.showAllSymbols"
+      },
+      {
+         "key": "alt+`",
+         "command": "workbench.action.terminal.focus"
+      },
+      {
+         "key": "ctrl+cmd+`",
+         "command": "workbench.action.terminal.focusNext"
+      },
+      {
+         "key": "ctrl+alt+`",
+         "command": "workbench.action.terminal.focusPrevious"
+      },
+      {
+         "key": "cmd+k shift+alt+cmd+right",
+         "command": "editor.emmet.action.balanceOut"
+      },
+      {
+         "key": "cmd+k shift+alt+cmd+left",
+         "command": "editor.emmet.action.balanceIn"
+      },
+      {
+         "key": "cmd+k shift+alt+cmd+up",
+         "command": "editor.emmet.action.wrapWithAbbreviation"
+      },
     ]
     ```
 * ### Example Snippets:
